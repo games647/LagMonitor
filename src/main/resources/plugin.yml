@@ -1,0 +1,44 @@
+# project informations for Bukkit in order to register our plugin with all it components
+# ${-} are variables from Maven (pom.xml) which will be replaced after the build
+name: ${project.name}
+version: ${project.version}
+main: ${project.groupId}.${project.artifactId}.${project.name}
+
+# meta informations for plugin managers
+authors: [games647, 'https://github.com/games647/LagMonitor/graphs/contributors']
+description: |
+    ${project.description}
+website: ${project.url}
+dev-url: ${project.url}
+
+commands:
+    ping:
+        description: ''
+        permission: ''
+        usage: ''
+    stacktrace:
+        description: ''
+        permission: ''
+        usage: ''
+    thread:
+        description: ''
+        permission: ''
+        usage: ''
+    tpshistory:
+        description: ''
+        permission: ''
+        usage: ''
+    mbean:
+        description: ''
+        permission: ''
+        usage: ''
+    system:
+        description: ''
+        permission: ''
+        usage: ''
+
+permissions:
+    bla:
+        description: ''
+        child:
+            - dad
