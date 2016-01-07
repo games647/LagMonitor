@@ -31,10 +31,10 @@ public class PingCommand implements CommandExecutor {
         if (args.length > 0) {
             Player targetPlayer = Bukkit.getPlayer(args[0]);
             int ping = getReflectionPing((Player) sender);
-            sender.sendMessage(ChatColor.DARK_GREEN + targetPlayer.getName() + "'s ping is:" + ping + "ms");
+            sender.sendMessage(ChatColor.DARK_GREEN + targetPlayer.getName() + "'s ping is: " + ping + "ms");
         } else if (sender instanceof Player) {
             int ping = getReflectionPing((Player) sender);
-            sender.sendMessage(ChatColor.DARK_GREEN + "Your ping is:" + ping + "ms");
+            sender.sendMessage(ChatColor.DARK_GREEN + "Your ping is: " + ping + "ms");
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "You have to be ingame in order to see your ping");
         }

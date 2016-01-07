@@ -21,6 +21,11 @@ public class ThreadCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
         for (Thread thread : allStackTraces.keySet()) {
+            if (thread.getContextClassLoader() == null) {
+                //ignore java system threads like reference handler
+                continue;
+            }
+
             sender.sendMessage(ChatColor.GOLD + thread.getName());
         }
 

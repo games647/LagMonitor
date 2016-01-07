@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.ChatPaginator;
 
 public class StackCommand implements CommandExecutor {
 
@@ -42,13 +41,13 @@ public class StackCommand implements CommandExecutor {
     }
 
     private void printStackTrace(CommandSender sender, StackTraceElement[] stackTrace) {
-        for (int i = 0; i < ChatPaginator.OPEN_CHAT_PAGE_HEIGHT * 3; i++) {
+        //begin from the top
+        for (int i = stackTrace.length - 1; i > 0; i--) {
             StackTraceElement traceElement = stackTrace[i];
 
             String className = traceElement.getClassName();
-            String methodName = traceElement.getMethodName();
             int lineNumber = traceElement.getLineNumber();
-            sender.sendMessage(ChatColor.GOLD + className + methodName + lineNumber);
+            sender.sendMessage(ChatColor.GOLD + className + ':' + lineNumber);
         }
     }
 }

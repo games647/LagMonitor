@@ -15,27 +15,29 @@ commands:
     ping:
         description: ''
         permission: ''
-        usage: ''
+        usage: '/<command> [player]'
     stacktrace:
         description: ''
         permission: ''
-        usage: ''
+        usage: '/<command> [threadName]'
     thread:
         description: ''
         permission: ''
-        usage: ''
+        usage: '/<command>'
     tpshistory:
         description: ''
+        aliases: [tps]
         permission: ''
-        usage: ''
+        usage: '/<command>'
     mbean:
         description: ''
+        aliases: [bean]
         permission: ''
-        usage: ''
+        usage: '/<command>'
     system:
         description: ''
         permission: ''
-        usage: ''
+        usage: '/<command>'
 
 permissions:
     bla:

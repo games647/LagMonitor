@@ -25,7 +25,7 @@ public class LagMonitor extends JavaPlugin {
 
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
-        getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 10 * 20L, 1L);
+        getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 10 * 20L, 3 * 20L);
     }
 
     public TpsHistoryTask getTpsHistoryTask() {
