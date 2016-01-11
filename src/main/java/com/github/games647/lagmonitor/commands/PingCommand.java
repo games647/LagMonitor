@@ -36,7 +36,7 @@ public class PingCommand implements CommandExecutor {
             int ping = getReflectionPing((Player) sender);
             sender.sendMessage(ChatColor.DARK_GREEN + "Your ping is: " + ping + "ms");
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "You have to be ingame in order to see your ping");
+            sender.sendMessage(ChatColor.DARK_RED + "You have to be ingame in order to see your own ping");
         }
 
         return true;

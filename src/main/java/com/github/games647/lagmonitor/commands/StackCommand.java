@@ -42,7 +42,7 @@ public class StackCommand implements CommandExecutor {
 
     private void printStackTrace(CommandSender sender, StackTraceElement[] stackTrace) {
         //begin from the top
-        for (int i = stackTrace.length - 1; i > 0; i--) {
+        for (int i = stackTrace.length - 1; i >= 0; i--) {
             StackTraceElement traceElement = stackTrace[i];
 
             String className = traceElement.getClassName();

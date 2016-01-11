@@ -26,7 +26,7 @@ public class ThreadCommand implements CommandExecutor {
                 continue;
             }
 
-            sender.sendMessage(ChatColor.GOLD + thread.getName());
+            sender.sendMessage(ChatColor.GOLD + thread.getName() + " State: " + thread.getState());
         }
 
         return true;
