@@ -39,7 +39,7 @@ public class MbeanCommand implements CommandExecutor {
                     MBeanAttributeInfo[] attributes = mbeanServer.getMBeanInfo(beanObject).getAttributes();
                     for (MBeanAttributeInfo attribute : attributes) {
                         if (attribute.getName().equals("ObjectName")) {
-                            //ignore the object name
+                            //ignore the object name - it's already known if the user invoke the command
                             continue;
                         }
 

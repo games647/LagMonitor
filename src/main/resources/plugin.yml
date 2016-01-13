@@ -38,6 +38,10 @@ commands:
         description: ''
         permission: ''
         usage: '/<command>'
+    graph:
+        description: ''
+        permission: ''
+        usage: '/<command>'
 
 permissions:
     bla:

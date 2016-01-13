@@ -1,5 +1,6 @@
 package com.github.games647.lagmonitor;
 
+import com.github.games647.lagmonitor.commands.GraphCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
 import com.github.games647.lagmonitor.commands.PingCommand;
 import com.github.games647.lagmonitor.commands.StackCommand;
@@ -22,6 +23,7 @@ public class LagMonitor extends JavaPlugin {
         getCommand("tpshistory").setExecutor(new TpsHistoryCommand(this));
         getCommand("mbean").setExecutor(new MbeanCommand(this));
         getCommand("system").setExecutor(new SystemCommand(this));
+        getCommand("graph").setExecutor(new GraphCommand(this));
 
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
