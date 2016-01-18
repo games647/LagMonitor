@@ -13,38 +13,26 @@ dev-url: ${project.url}
 
 commands:
     ping:
-        description: ''
-        permission: ''
+        description: 'Gets the ping of the selected player'
         usage: '/<command> [player]'
     stacktrace:
-        description: ''
-        permission: ''
+        description: 'Gets the execution stacktrace of selected thread'
         usage: '/<command> [threadName]'
     thread:
-        description: ''
-        permission: ''
-        usage: '/<command>'
+        description: 'Outputs all running threads with their current state'
+        usage: '/<command> [threadName]'
     tpshistory:
-        description: ''
+        description: 'Outputs the current tps'
         aliases: [tps]
-        permission: ''
-        usage: '/<command>'
     mbean:
-        description: ''
+        description: 'Outputs mbeans attributes (java environment information)'
         aliases: [bean]
-        permission: ''
-        usage: '/<command>'
+        usage: '/<command> [beanName] [attribute]'
     system:
-        description: ''
-        permission: ''
-        usage: '/<command>'
+        description: 'Gives you some general information about your server like free ram, or cpu usage'
+    timing:
+        description: 'Outputs your server timings ingame'
+    monitor:
+        description: 'Monitors the CPU usage of methods'
     graph:
-        description: ''
-        permission: ''
-        usage: '/<command>'
-
-permissions:
-    bla:
-        description: ''
-        child:
-            - dad
+        description: 'Gives you visual graph about your server'
