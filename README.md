@@ -9,6 +9,18 @@ these tools also in Minecraft itself. This might be useful for server owners/adm
 Furthermore it especially made for Minecraft itself. So you can also check your TPS (Ticks per seconds), player ping,
 server timings and so on.
 
+## Features
+
+* Player ping
+* Access to Stacktraces of running threads
+* Shows your ticks per second
+* Shows system performance usage
+* Visual graph ingame
+* Ingame timings viewer
+* Access to Java environment variables (mbeans)
+* Free
+* Open Source
+
 ## Permissions
 
 None
@@ -21,7 +33,7 @@ None
 * /stacktrace <threadName> - Gets the execution stacktrace of selected thread
 * /thread - Outputs all running threads with their current state
 * /tps - Outputs the current tps
-* /mbean - List all available mbeans (java environment information)
+* /mbean - List all available mbeans (java environment information, JMX)
 * /mbean <beanName> - List all available attributes of this mbean
 * /mbean <beanName> <attribute> - Outputs the value of this attribute
 * /system - Gives you some general information about your server like free ram, number of running threads or cpu usage

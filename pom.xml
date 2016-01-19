@@ -12,7 +12,7 @@
     <inceptionYear>2015</inceptionYear>
     <url>http://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
-        Monitors your Minecraft for Lags
+        Monitors your Minecraft server for Lags
     </description>
 
     <properties>

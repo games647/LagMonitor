@@ -9,11 +9,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class StackCommand implements CommandExecutor {
+public class StackTraceCommand implements CommandExecutor {
 
     private final LagMonitor plugin;
 
-    public StackCommand(LagMonitor plugin) {
+    public StackTraceCommand(LagMonitor plugin) {
         this.plugin = plugin;
     }
 

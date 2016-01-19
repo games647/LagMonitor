@@ -12,10 +12,13 @@ import org.bukkit.map.MinecraftFont;
 
 public class GraphRenderer extends MapRenderer {
 
-    //R: 235 G: 171 B: 96
+    private static final int MAX_WIDTH = 128;
+    private static final int MAX_HEIGHT = 128;
+
+    //orange
     private static final byte MAX_HEAP_COLOR = MapPalette.matchColor(235, 171, 96);
 
-    //R: 105 G: 182 B: 212
+    //blue
     private static final byte USED_HEAP_COLOR = MapPalette.matchColor(105, 182, 212);
 
     private int nextUpdate;
@@ -27,7 +30,7 @@ public class GraphRenderer extends MapRenderer {
         if (nextUpdate <= 0) {
             nextUpdate = 10;
 
-            if (nextPosX >= 128) {
+            if (nextPosX >= MAX_WIDTH) {
                 //start again from the beginning
                 nextPosX = 0;
             }
@@ -46,8 +49,8 @@ public class GraphRenderer extends MapRenderer {
             int usedHeight = getHeightPercent(roundedMax, used);
 
             //x=0 y=0 is the left top point so convert it
-            int convertedMaxHeight = 128 - maxHeight;
-            int convertedUsedHeight = 128 - usedHeight;
+            int convertedMaxHeight = MAX_HEIGHT - maxHeight;
+            int convertedUsedHeight = MAX_HEIGHT - usedHeight;
             canvas.setPixel(nextPosX, convertedMaxHeight, MAX_HEAP_COLOR);
             for (int yPos = convertedMaxHeight; yPos < 128; yPos++) {
                 canvas.setPixel(nextPosX, yPos, MAX_HEAP_COLOR);
@@ -58,10 +61,11 @@ public class GraphRenderer extends MapRenderer {
                 canvas.setPixel(nextPosX, yPos, USED_HEAP_COLOR);
             }
 
+            //override the color
             canvas.drawText(0, 0, MinecraftFont.Font, "Heap Usage (MB)");
             canvas.drawText(110, 0, MinecraftFont.Font, Integer.toString(roundedMax));
             canvas.drawText(110, 64, MinecraftFont.Font, Integer.toString(roundedMax / 2));
-            canvas.drawText(128 - MinecraftFont.Font.getWidth("0"), 120, MinecraftFont.Font, "0");
+            canvas.drawText(MAX_WIDTH - MinecraftFont.Font.getWidth("0"), 120, MinecraftFont.Font, "0");
             nextPosX++;
         }
 
@@ -69,18 +73,18 @@ public class GraphRenderer extends MapRenderer {
     }
 
     private int getHeightPercent(int maxValue, int value) {
-        return 128 * value / maxValue;
+        return MAX_HEIGHT * value / maxValue;
     }
 
     private void clearMap(MapCanvas canvas, int posX) {
         //resets the complete y coords on this x in order to free unused
-        for (int yPos = 0; yPos < 128; yPos++) {
+        for (int yPos = 0; yPos < MAX_HEIGHT; yPos++) {
             canvas.setPixel(posX, yPos, (byte) 0);
         }
     }
 
     private void clearMap(MapCanvas canvas) {
-        for (int xPos = 0; xPos < 128; xPos++) {
+        for (int xPos = 0; xPos < MAX_WIDTH; xPos++) {
             for (int yPos = 0; yPos < 128; yPos++) {
                 canvas.setPixel(xPos, yPos, (byte) 0);
             }
