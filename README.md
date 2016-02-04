@@ -12,6 +12,8 @@ server timings and so on.
 ## Features
 
 * Player ping
+* Sample CPU usage
+* Analyze RAM usage
 * Access to Stacktraces of running threads
 * Shows your ticks per second
 * Shows system performance usage
@@ -23,7 +25,20 @@ server timings and so on.
 
 ## Permissions
 
-None
+lagmonitor.* - Access to all LagMonitor features
+
+lagmonitor.commands.* - Access to all commands
+
+#### All command permissions
+lagmonitor.command.ping
+lagmonitor.command.stacktrace
+lagmonitor.command.thread
+lagmonitor.command.tps
+lagmonitor.command.mbean
+lagmonitor.command.system
+lagmonitor.command.timing
+lagmonitor.command.monitor
+lagmonitor.command.graph
 
 ## Commands
 

@@ -15,24 +15,52 @@ commands:
     ping:
         description: 'Gets the ping of the selected player'
         usage: '/<command> [player]'
+        permission: ${project.artifactId}.command.ping
     stacktrace:
         description: 'Gets the execution stacktrace of selected thread'
         usage: '/<command> [threadName]'
+        permission: ${project.artifactId}.command.stacktrace
     thread:
         description: 'Outputs all running threads with their current state'
         usage: '/<command> [threadName]'
+        permission: ${project.artifactId}.command.thread
     tpshistory:
         description: 'Outputs the current tps'
         aliases: [tps]
+        permission: ${project.artifactId}.command.tps
     mbean:
         description: 'Outputs mbeans attributes (java environment information)'
         aliases: [bean]
         usage: '/<command> [beanName] [attribute]'
+        permission: ${project.artifactId}.command.mbean
     system:
         description: 'Gives you some general information about your server like free ram, or cpu usage'
+        permission: ${project.artifactId}.command.system
     timing:
         description: 'Outputs your server timings ingame'
+        permission: ${project.artifactId}.command.timing
     monitor:
         description: 'Monitors the CPU usage of methods'
+        permission: ${project.artifactId}.command.monitor
     graph:
         description: 'Gives you visual graph about your server'
+        permission: ${project.artifactId}.command.graph
+
+permissions:
+    ${project.artifactId}.*:
+        description: Gives access to all ${project.name} Features
+        children:
+            ${project.artifactId}.commands.*: true
+
+    ${project.artifactId}.commands.*:
+        description: Gives access to all ${project.name} commands
+        children:
+            ${project.artifactId}.command.ping: true
+            ${project.artifactId}.command.stacktrace: true
+            ${project.artifactId}.command.thread: true
+            ${project.artifactId}.command.tps: true
+            ${project.artifactId}.command.mbean: true
+            ${project.artifactId}.command.system: true
+            ${project.artifactId}.command.timing: true
+            ${project.artifactId}.command.monitor: true
+            ${project.artifactId}.command.graph: true
