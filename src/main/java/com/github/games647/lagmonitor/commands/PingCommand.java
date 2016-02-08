@@ -30,8 +30,12 @@ public class PingCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0) {
             Player targetPlayer = Bukkit.getPlayer(args[0]);
-            int ping = getReflectionPing((Player) sender);
-            sender.sendMessage(ChatColor.DARK_GREEN + targetPlayer.getName() + "'s ping is: " + ping + "ms");
+            if (targetPlayer != null) {
+                int ping = getReflectionPing((Player) sender);
+                sender.sendMessage(ChatColor.DARK_GREEN + targetPlayer.getName() + "'s ping is: " + ping + "ms");
+            } else {
+                sender.sendMessage(ChatColor.DARK_RED + "Player " + args[0] + " is not online or does not extist.");
+            }
         } else if (sender instanceof Player) {
             int ping = getReflectionPing((Player) sender);
             sender.sendMessage(ChatColor.DARK_GREEN + "Your ping is: " + ping + "ms");
