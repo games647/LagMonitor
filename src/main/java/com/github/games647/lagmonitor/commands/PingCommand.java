@@ -29,12 +29,17 @@ public class PingCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0) {
-            Player targetPlayer = Bukkit.getPlayer(args[0]);
-            if (targetPlayer != null) {
-                int ping = getReflectionPing((Player) sender);
-                sender.sendMessage(ChatColor.DARK_GREEN + targetPlayer.getName() + "'s ping is: " + ping + "ms");
+            if (sender.hasPermission(plugin.getName().toLowerCase() + command.getPermission() + ".other")) {
+                String playerName = args[0];
+                Player targetPlayer = Bukkit.getPlayer(playerName);
+                if (targetPlayer != null) {
+                    int ping = getReflectionPing((Player) sender);
+                    sender.sendMessage(ChatColor.DARK_GREEN + playerName + "'s ping is: " + ping + "ms");
+                } else {
+                    sender.sendMessage(ChatColor.DARK_RED + "Player " + playerName + " is not online");
+                }
             } else {
-                sender.sendMessage(ChatColor.DARK_RED + "Player " + args[0] + " is not online or does not extist.");
+                sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission");
             }
         } else if (sender instanceof Player) {
             int ping = getReflectionPing((Player) sender);
