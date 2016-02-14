@@ -30,15 +30,15 @@ lagmonitor.* - Access to all LagMonitor features
 lagmonitor.commands.* - Access to all commands
 
 #### All command permissions
-lagmonitor.command.ping
-lagmonitor.command.stacktrace
-lagmonitor.command.thread
-lagmonitor.command.tps
-lagmonitor.command.mbean
-lagmonitor.command.system
-lagmonitor.command.timing
-lagmonitor.command.monitor
-lagmonitor.command.graph
+* lagmonitor.command.ping
+* lagmonitor.command.stacktrace
+* lagmonitor.command.thread
+* lagmonitor.command.tps
+* lagmonitor.command.mbean
+* lagmonitor.command.system
+* lagmonitor.command.timing
+* lagmonitor.command.monitor
+* lagmonitor.command.graph
 
 ## Commands
 
