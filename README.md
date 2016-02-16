@@ -39,6 +39,7 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.timing
 * lagmonitor.command.monitor
 * lagmonitor.command.graph
+* lagmonitor.command.environment
 
 ## Commands
 
@@ -51,10 +52,11 @@ lagmonitor.commands.* - Access to all commands
 * /mbean - List all available mbeans (java environment information, JMX)
 * /mbean <beanName> - List all available attributes of this mbean
 * /mbean <beanName> <attribute> - Outputs the value of this attribute
-* /system - Gives you some general information about your server like free ram, number of running threads or cpu usage
+* /system - Gives you some general information (minecraft server related)
 * /timing - Outputs your server timings ingame
 * /monitor - Monitors the CPU usage of methods
 * /graph - Gives you visual graph about your server (currently only the heap usage)
+* /env - Gives you some general information (OS related)
 
 ## Images
 

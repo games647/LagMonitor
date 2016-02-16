@@ -34,7 +34,7 @@ commands:
         usage: '/<command> [beanName] [attribute]'
         permission: ${project.artifactId}.command.mbean
     system:
-        description: 'Gives you some general information about your server like free ram, or cpu usage'
+        description: 'Gives you some general information (minecraft server related)'
         permission: ${project.artifactId}.command.system
     timing:
         description: 'Outputs your server timings ingame'
@@ -45,6 +45,10 @@ commands:
     graph:
         description: 'Gives you visual graph about your server'
         permission: ${project.artifactId}.command.graph
+    environment:
+        description: 'Gives you some general information (OS related)'
+        permission: ${project.artifactId}.command.environment
+        aliases: [env]
 
 permissions:
     ${project.artifactId}.*:
