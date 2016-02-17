@@ -27,6 +27,7 @@ public class SystemCommand implements CommandExecutor {
 
         Runtime runtime = Runtime.getRuntime();
         sender.sendMessage(ChatColor.DARK_GREEN + "Uptime: " + uptimeFormat);
+        sender.sendMessage(ChatColor.DARK_GREEN + "Max RAM (MB): " + convertBytesToMegaBytes(runtime.totalMemory()));
         sender.sendMessage(ChatColor.DARK_GREEN + "Free RAM (MB): " + convertBytesToMegaBytes(runtime.freeMemory()));
         sender.sendMessage(ChatColor.DARK_GREEN + "Threads: " + Thread.getAllStackTraces().size());
         sender.sendMessage(ChatColor.DARK_GREEN + "TPS: " + plugin.getTpsHistoryTask().getLastTicks());
