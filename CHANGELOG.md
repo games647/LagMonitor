@@ -4,6 +4,7 @@
 
 * Added environment command
 * Added server version to the system command
+* Added more graphs (Threads, CPU usage)
 
 ## 0.1.1
 

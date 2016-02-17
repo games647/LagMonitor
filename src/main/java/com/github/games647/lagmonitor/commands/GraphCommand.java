@@ -1,7 +1,10 @@
 package com.github.games647.lagmonitor.commands;
 
-import com.github.games647.lagmonitor.GraphRenderer;
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.graphs.CpuGraph;
+import com.github.games647.lagmonitor.graphs.GraphRenderer;
+import com.github.games647.lagmonitor.graphs.HeapGraph;
+import com.github.games647.lagmonitor.graphs.ThreadsGraph;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,9 +30,27 @@ public class GraphCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+
+            //default is heap usage
+            GraphRenderer graphRenderer = new HeapGraph();
+            if (args.length > 0) {
+                String graph = args[0];
+
+                if ("cpu".equalsIgnoreCase(graph)) {
+                    graphRenderer = new CpuGraph();
+                } else if ("heap".equalsIgnoreCase(graph)) {
+                    graphRenderer = new HeapGraph();
+                } else if ("threads".equalsIgnoreCase(graph)) {
+                    graphRenderer = new ThreadsGraph();
+                } else {
+                    sender.sendMessage(ChatColor.DARK_RED + "Unknown graph type");
+                    return true;
+                }
+            }
+
             PlayerInventory inventory = player.getInventory();
 
-            MapView mapView = installRenderer(player);
+            MapView mapView = installRenderer(player, graphRenderer);
             //amount=0 makes the item disappear if the user drop or try to use it
             ItemStack mapItem = new ItemStack(Material.MAP, 0, mapView.getId());
             inventory.addItem(mapItem);
@@ -43,13 +64,13 @@ public class GraphCommand implements CommandExecutor {
         return true;
     }
 
-    private MapView installRenderer(Player player) {
+    private MapView installRenderer(Player player, GraphRenderer graphType) {
         MapView mapView = Bukkit.createMap(player.getWorld());
         for (MapRenderer mapRenderer : mapView.getRenderers()) {
             mapView.removeRenderer(mapRenderer);
         }
 
-        mapView.addRenderer(new GraphRenderer());
+        mapView.addRenderer(graphType);
         return mapView;
     }
 }
