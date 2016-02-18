@@ -23,8 +23,13 @@ public class ThreadsGraph extends GraphRenderer {
         int threadHeight = getHeightPercent(roundedMax, threadCount);
         int daemonHeight = getHeightPercent(roundedMax, daemonCount);
 
-        canvas.setPixel(nextPosX, threadHeight, MAX_COLOR);
-        canvas.setPixel(nextPosX, daemonHeight, USED_COLOR);
+        for (int yPos = MAX_HEIGHT - threadHeight; yPos < 128; yPos++) {
+            canvas.setPixel(nextPosX, yPos, MAX_COLOR);
+        }
+
+        for (int yPos = MAX_HEIGHT - daemonHeight; yPos < 128; yPos++) {
+            canvas.setPixel(nextPosX, yPos, USED_COLOR);
+        }
 
         //these is the max number of all threads
         return threadCount;

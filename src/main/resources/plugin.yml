@@ -23,6 +23,7 @@ commands:
     thread:
         description: 'Outputs all running threads with their current state'
         usage: '/<command> [threadName]'
+        aliases: [threads]
         permission: ${project.artifactId}.command.thread
     tpshistory:
         description: 'Outputs the current tps'
@@ -44,6 +45,7 @@ commands:
         permission: ${project.artifactId}.command.monitor
     graph:
         description: 'Gives you visual graph about your server'
+        usage: '/<command> [heap/cpu/threads]'
         permission: ${project.artifactId}.command.graph
     environment:
         description: 'Gives you some general information (OS related)'

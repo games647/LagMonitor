@@ -14,6 +14,9 @@ import org.bukkit.command.CommandSender;
 
 public class SystemCommand implements CommandExecutor {
 
+    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.DARK_GREEN;
+
     private final LagMonitor plugin;
 
     public SystemCommand(LagMonitor plugin) {
@@ -23,20 +26,28 @@ public class SystemCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
-        String uptimeFormat = new SimpleDateFormat("HH 'hour(s)':mm 'minute(s)'").format(runtimeBean.getUptime());
+        long uptime = runtimeBean.getUptime() - 60 * 60 * 1000;
+        String uptimeFormat = new SimpleDateFormat("HH 'hour' mm 'minutes' ss 'seconds'").format(uptime);
+
+        int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
 
         Runtime runtime = Runtime.getRuntime();
-        sender.sendMessage(ChatColor.DARK_GREEN + "Uptime: " + uptimeFormat);
-        sender.sendMessage(ChatColor.DARK_GREEN + "Max RAM (MB): " + convertBytesToMegaBytes(runtime.totalMemory()));
-        sender.sendMessage(ChatColor.DARK_GREEN + "Free RAM (MB): " + convertBytesToMegaBytes(runtime.freeMemory()));
-        sender.sendMessage(ChatColor.DARK_GREEN + "Threads: " + Thread.getAllStackTraces().size());
-        sender.sendMessage(ChatColor.DARK_GREEN + "TPS: " + plugin.getTpsHistoryTask().getLastTicks());
+        double maxMemoryFormatted = convertBytesToMegaBytes(runtime.totalMemory());
+        double freeMemoryFormatted = convertBytesToMegaBytes(runtime.freeMemory());
 
-        sender.sendMessage(ChatColor.DARK_GREEN + "Server version: " + Bukkit.getBukkitVersion());
+        sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
+
+        sender.sendMessage(PRIMARY_COLOR + "Max RAM (MB): " + SECONDARY_COLOR + maxMemoryFormatted);
+        sender.sendMessage(PRIMARY_COLOR + "Free RAM (MB): " + SECONDARY_COLOR + freeMemoryFormatted);
+
+        sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
+        sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastTicks());
+
+        sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getBukkitVersion());
         return true;
     }
 
     private double convertBytesToMegaBytes(long bytes) {
-        return bytes / 1_000 / 1_000;
+        return bytes / 1_024 / 1_024;
     }
 }

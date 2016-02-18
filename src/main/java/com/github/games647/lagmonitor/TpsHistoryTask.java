@@ -26,7 +26,7 @@ public class TpsHistoryTask implements Runnable {
 
         //how many ticks passed since the last check * 1000 to convert to seconds
         float tps = 3 * 20 * 1000.0F / (timeSpent / (1000 * 1000));
-        if (tps >= 0.0F && tps < 25.0F) {
+        if (tps >= 0.0F && tps < 20.0F) {
             //Prevent all invalid values
             lastTicks = tps;
         }

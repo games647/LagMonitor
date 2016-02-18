@@ -26,7 +26,7 @@ public class LagMonitor extends JavaPlugin {
         getCommand("tpshistory").setExecutor(new TpsHistoryCommand(this));
         getCommand("mbean").setExecutor(new MbeanCommand(this));
         getCommand("system").setExecutor(new SystemCommand(this));
-        getCommand("system").setExecutor(new EnvironmentCommand(this));
+        getCommand("env").setExecutor(new EnvironmentCommand(this));
         getCommand("monitor").setExecutor(new MonitorCommand(this));
         getCommand("timing").setExecutor(new TimingCommand(this));
         getCommand("graph").setExecutor(new GraphCommand(this));

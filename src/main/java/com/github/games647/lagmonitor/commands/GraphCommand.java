@@ -5,20 +5,23 @@ import com.github.games647.lagmonitor.graphs.CpuGraph;
 import com.github.games647.lagmonitor.graphs.GraphRenderer;
 import com.github.games647.lagmonitor.graphs.HeapGraph;
 import com.github.games647.lagmonitor.graphs.ThreadsGraph;
+import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
-public class GraphCommand implements CommandExecutor {
+public class GraphCommand implements TabExecutor {
 
     private final LagMonitor plugin;
 
@@ -72,5 +75,26 @@ public class GraphCommand implements CommandExecutor {
 
         mapView.addRenderer(graphType);
         return mapView;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> result = Lists.newArrayListWithExpectedSize(3);
+
+        String lastArg = args[args.length - 1];
+        if ("cpu".startsWith(lastArg)) {
+            result.add("cpu");
+        }
+
+        if ("heap".startsWith(lastArg)) {
+            result.add("heap");
+        }
+
+        if ("threads".startsWith(lastArg)) {
+            result.add("threads");
+        }
+
+        Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
+        return result;
     }
 }

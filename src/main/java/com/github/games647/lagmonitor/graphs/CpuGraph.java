@@ -21,8 +21,16 @@ public class CpuGraph extends GraphRenderer {
             int systemLoad = (int) (sunOsBean.getSystemCpuLoad() * 100);
             int processLoad = (int) (sunOsBean.getProcessCpuLoad() * 100);
 
-            canvas.setPixel(nextPosX, systemLoad, MAX_COLOR);
-            canvas.setPixel(nextPosX, processLoad, USED_COLOR);
+            int systemHeight = getHeightPercent(100, systemLoad);
+            int processHeight = getHeightPercent(100, processLoad);
+
+            for (int yPos = MAX_HEIGHT - systemHeight; yPos < 128; yPos++) {
+                canvas.setPixel(nextPosX, yPos, MAX_COLOR);
+            }
+
+            for (int yPos = MAX_HEIGHT - processHeight; yPos < 128; yPos++) {
+                canvas.setPixel(nextPosX, yPos, USED_COLOR);
+            }
 
             //set max height as 100%
             return 100;

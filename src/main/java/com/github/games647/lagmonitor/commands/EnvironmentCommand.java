@@ -15,6 +15,9 @@ import org.bukkit.command.CommandSender;
 
 public class EnvironmentCommand implements CommandExecutor {
 
+    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.DARK_GREEN;
+
     private final LagMonitor plugin;
 
     public EnvironmentCommand(LagMonitor plugin) {
@@ -27,18 +30,19 @@ public class EnvironmentCommand implements CommandExecutor {
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 
         //os general info
-        sender.sendMessage(ChatColor.DARK_GREEN + "OS Name: " + osBean.getName());
-        sender.sendMessage(ChatColor.DARK_GREEN + "OS Version: " + osBean.getVersion());
-        sender.sendMessage(ChatColor.DARK_GREEN + "OS Arch: " + osBean.getArch());
+        sender.sendMessage(PRIMARY_COLOR + "OS Name: " + SECONDARY_COLOR + osBean.getName());
+        sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
+        sender.sendMessage(PRIMARY_COLOR + "OS Arch: " + SECONDARY_COLOR + osBean.getArch());
 
         //java info
-        sender.sendMessage(ChatColor.DARK_GREEN + "Java VM: " + runtimeBean.getVmName());
-        sender.sendMessage(ChatColor.DARK_GREEN + "Java Version: " + runtimeBean.getVmVersion());
-        sender.sendMessage(ChatColor.DARK_GREEN + "Java Vendor: " + runtimeBean.getVmVendor());
+        sender.sendMessage(PRIMARY_COLOR + "Java VM: " + SECONDARY_COLOR + runtimeBean.getVmName());
+        sender.sendMessage(PRIMARY_COLOR + "Java Version: " + SECONDARY_COLOR + System.getProperty("java.version"));
+        sender.sendMessage(PRIMARY_COLOR + "Java Vendor: " + SECONDARY_COLOR
+                + runtimeBean.getVmVendor() + ' ' + runtimeBean.getVmVersion());
 
         //CPU
-        sender.sendMessage(ChatColor.DARK_GREEN + "Cores: " + osBean.getAvailableProcessors());
-        sender.sendMessage(ChatColor.DARK_GREEN + "CPU Name: " + System.getenv("PROCESSOR_IDENTIFIER"));
+        sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
+        sender.sendMessage(PRIMARY_COLOR + "CPU Name: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean sunOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
 
@@ -48,23 +52,27 @@ public class EnvironmentCommand implements CommandExecutor {
             decimalFormat.setMultiplier(100);
             double systemCpuLoad = sunOsBean.getSystemCpuLoad();
             double processCpuLoad = sunOsBean.getProcessCpuLoad();
+            String systemLoadFormat = decimalFormat.format(systemCpuLoad);
+            String processLoadFormat = decimalFormat.format(processCpuLoad);
 
-            sender.sendMessage(ChatColor.DARK_GREEN + "System load: " + decimalFormat.format(systemCpuLoad));
-            sender.sendMessage(ChatColor.DARK_GREEN + "Process load: " + decimalFormat.format(processCpuLoad));
+            sender.sendMessage(PRIMARY_COLOR + "System load: " + SECONDARY_COLOR + systemLoadFormat);
+            sender.sendMessage(PRIMARY_COLOR + "Process load: " + SECONDARY_COLOR + processLoadFormat);
 
             //planned todo -> use sigar API?
-//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Speed: " + osBean.getName());
-//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Physical: " + osBean.getName());
-//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Logical: " + osBean.getName());
+//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Speed: " + SECONDARY_COLOR + osBean.getName());
+//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Physical: " + SECONDARY_COLOR + osBean.getName());
+//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Logical: " + SECONDARY_COLOR + osBean.getName());
 
             //RAM
             //include swap memory?
             long totalMemorySize = sunOsBean.getTotalPhysicalMemorySize();
             long freeMemorySize = sunOsBean.getFreePhysicalMemorySize();
-            sender.sendMessage(ChatColor.DARK_GREEN + "Total OS RAM: " + convertBytesToMegaBytes(totalMemorySize));
-            sender.sendMessage(ChatColor.DARK_GREEN + "Free OS RAM: " + convertBytesToMegaBytes(freeMemorySize));
+            int totalRamFormatted = convertBytesToMega(totalMemorySize);
+            sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + totalRamFormatted + "MB");
+            int freeRamFormatted = convertBytesToMega(freeMemorySize);
+            sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + freeRamFormatted + "MB");
             //planned todo -> use sigar API
-//            sender.sendMessage(ChatColor.DARK_GREEN + "RAM speed: " + osBean.getName());
+//            sender.sendMessage(ChatColor.DARK_GREEN + "RAM speed: " + SECONDARY_COLOR + osBean.getName());
         }
 
         File[] listRoots = File.listRoots();
@@ -76,16 +84,16 @@ public class EnvironmentCommand implements CommandExecutor {
         }
 
         //Disk info
-        sender.sendMessage(ChatColor.DARK_GREEN + "Disk size: " + humanReadableByteCount(totalSpace, true));
-        sender.sendMessage(ChatColor.DARK_GREEN + "Free space: " + humanReadableByteCount(freeSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Disk size: " + SECONDARY_COLOR + humanReadableByteCount(totalSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free space: " + SECONDARY_COLOR + humanReadableByteCount(freeSpace, true));
         return true;
     }
 
-    private double convertBytesToMegaBytes(long bytes) {
-        return bytes / 1_000 / 1_000;
+    private int convertBytesToMega(long bytes) {
+        return (int) (bytes / 1_024 / 1_024);
     }
 
-    public static String humanReadableByteCount(long bytes, boolean si) {
+    private String humanReadableByteCount(long bytes, boolean si) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
         int unit = si ? 1000 : 1024;
         if (bytes < unit) {

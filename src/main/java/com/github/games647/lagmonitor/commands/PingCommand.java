@@ -17,6 +17,8 @@ import org.bukkit.entity.Player;
 
 public class PingCommand implements CommandExecutor {
 
+    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
+
     private final LagMonitor plugin;
 
     private Method getHandleMethod;
@@ -34,7 +36,8 @@ public class PingCommand implements CommandExecutor {
                 Player targetPlayer = Bukkit.getPlayer(playerName);
                 if (targetPlayer != null) {
                     int ping = getReflectionPing((Player) sender);
-                    sender.sendMessage(ChatColor.DARK_GREEN + playerName + "'s ping is: " + ping + "ms");
+                    sender.sendMessage(PRIMARY_COLOR + playerName + "'s ping is: "
+                            + ChatColor.DARK_GREEN + ping + "ms");
                 } else {
                     sender.sendMessage(ChatColor.DARK_RED + "Player " + playerName + " is not online");
                 }
@@ -43,7 +46,7 @@ public class PingCommand implements CommandExecutor {
             }
         } else if (sender instanceof Player) {
             int ping = getReflectionPing((Player) sender);
-            sender.sendMessage(ChatColor.DARK_GREEN + "Your ping is: " + ping + "ms");
+            sender.sendMessage(PRIMARY_COLOR + "Your ping is: " + ChatColor.DARK_GREEN + ping + "ms");
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "You have to be ingame in order to see your own ping");
         }

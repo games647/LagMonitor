@@ -40,6 +40,8 @@ public abstract class GraphRenderer extends MapRenderer {
             }
 
             clearMap(canvas, nextPosX);
+            //make it more visual where the renderer is at the moment
+            clearMap(canvas, nextPosX + 1);
             int maxValue = renderGraphTick(canvas, nextPosX);
 
             //override the color

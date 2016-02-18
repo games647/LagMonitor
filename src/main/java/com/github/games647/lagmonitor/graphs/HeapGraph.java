@@ -1,13 +1,13 @@
 package com.github.games647.lagmonitor.graphs;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryUsage;
+import java.lang.management.MemoryMXBean;
 
 import org.bukkit.map.MapCanvas;
 
 public class HeapGraph extends GraphRenderer {
 
-    private final MemoryUsage heapUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+    private final MemoryMXBean heapUsage = ManagementFactory.getMemoryMXBean();
 
     public HeapGraph() {
         super("HeapUsage (MB)");
@@ -16,8 +16,8 @@ public class HeapGraph extends GraphRenderer {
     @Override
     public int renderGraphTick(MapCanvas canvas, int nextPosX) {
         //byte -> mega byte
-        int max = (int) (heapUsage.getCommitted() / 1024 / 1024);
-        int used = (int) (heapUsage.getUsed() / 1024 / 1024);
+        int max = (int) (heapUsage.getHeapMemoryUsage().getCommitted() / 1024 / 1024);
+        int used = (int) (heapUsage.getHeapMemoryUsage().getUsed() / 1024 / 1024);
 
         //round to the next 100 e.g. 801 -> 900
         int roundedMax = ((max + 99) / 100) * 100;
