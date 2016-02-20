@@ -7,6 +7,7 @@
 * Added more graphs (Threads, CPU usage)
 * Fixed CPU usage value
 * Improved Command output styling
+* Reduced delay start of ticks per second task
 
 ## 0.1.1
 

@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 public class SystemCommand implements CommandExecutor {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.DARK_GREEN;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private final LagMonitor plugin;
 
@@ -41,7 +41,7 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Free RAM (MB): " + SECONDARY_COLOR + freeMemoryFormatted);
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
-        sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastTicks());
+        sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastSample());
 
         sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getBukkitVersion());
         return true;

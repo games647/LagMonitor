@@ -11,6 +11,9 @@ import org.bukkit.command.CommandSender;
 
 public class StackTraceCommand implements CommandExecutor {
 
+    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
+
     private final LagMonitor plugin;
 
     public StackTraceCommand(LagMonitor plugin) {
@@ -46,8 +49,17 @@ public class StackTraceCommand implements CommandExecutor {
             StackTraceElement traceElement = stackTrace[i];
 
             String className = traceElement.getClassName();
+            String methodName = ChatColor.DARK_GREEN + traceElement.getMethodName();
+
+            boolean nativeMethod = traceElement.isNativeMethod();
             int lineNumber = traceElement.getLineNumber();
-            sender.sendMessage(ChatColor.GOLD + className + ':' + lineNumber);
+
+            String line = Integer.toString(lineNumber);
+            if (nativeMethod) {
+                line = "Native";
+            }
+
+            sender.sendMessage(PRIMARY_COLOR + className + '.' + methodName + ':' + ChatColor.DARK_PURPLE + line);
         }
     }
 }

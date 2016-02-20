@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 public class ThreadCommand implements CommandExecutor {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.DARK_GREEN;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private final LagMonitor plugin;
 

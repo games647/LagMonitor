@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender;
 public class EnvironmentCommand implements CommandExecutor {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.DARK_GREEN;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private final LagMonitor plugin;
 
@@ -48,12 +48,14 @@ public class EnvironmentCommand implements CommandExecutor {
 
             //these numbers are in percent (0.01 -> 1%)
             //we want to to have four places in a human readable percent value to multiple it wiht 100
-            DecimalFormat decimalFormat = new DecimalFormat("###.####%");
+            DecimalFormat decimalFormat = new DecimalFormat("###.#### %");
             decimalFormat.setMultiplier(100);
             double systemCpuLoad = sunOsBean.getSystemCpuLoad();
             double processCpuLoad = sunOsBean.getProcessCpuLoad();
             String systemLoadFormat = decimalFormat.format(systemCpuLoad);
             String processLoadFormat = decimalFormat.format(processCpuLoad);
+
+            sender.sendMessage(PRIMARY_COLOR + "System load: " + systemLoadFormat);
 
             sender.sendMessage(PRIMARY_COLOR + "System load: " + SECONDARY_COLOR + systemLoadFormat);
             sender.sendMessage(PRIMARY_COLOR + "Process load: " + SECONDARY_COLOR + processLoadFormat);
