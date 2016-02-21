@@ -1,11 +1,13 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.graphs.ClassesGraph;
 import com.github.games647.lagmonitor.graphs.CpuGraph;
 import com.github.games647.lagmonitor.graphs.GraphRenderer;
 import com.github.games647.lagmonitor.graphs.HeapGraph;
 import com.github.games647.lagmonitor.graphs.ThreadsGraph;
 import com.google.common.collect.Lists;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -45,6 +47,8 @@ public class GraphCommand implements TabExecutor {
                     graphRenderer = new HeapGraph();
                 } else if ("threads".equalsIgnoreCase(graph)) {
                     graphRenderer = new ThreadsGraph();
+                } else if ("classes".equalsIgnoreCase(graph)) {
+                    graphRenderer = new ClassesGraph();
                 } else {
                     sender.sendMessage(ChatColor.DARK_RED + "Unknown graph type");
                     return true;
@@ -79,7 +83,7 @@ public class GraphCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> result = Lists.newArrayListWithExpectedSize(3);
+        List<String> result = Lists.newArrayListWithExpectedSize(4);
 
         String lastArg = args[args.length - 1];
         if ("cpu".startsWith(lastArg)) {
@@ -92,6 +96,10 @@ public class GraphCommand implements TabExecutor {
 
         if ("threads".startsWith(lastArg)) {
             result.add("threads");
+        }
+
+        if ("classes".startsWith(lastArg)) {
+            result.add("classes");
         }
 
         Collections.sort(result, String.CASE_INSENSITIVE_ORDER);

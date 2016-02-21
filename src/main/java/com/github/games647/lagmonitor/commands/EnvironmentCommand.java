@@ -55,8 +55,6 @@ public class EnvironmentCommand implements CommandExecutor {
             String systemLoadFormat = decimalFormat.format(systemCpuLoad);
             String processLoadFormat = decimalFormat.format(processCpuLoad);
 
-            sender.sendMessage(PRIMARY_COLOR + "System load: " + systemLoadFormat);
-
             sender.sendMessage(PRIMARY_COLOR + "System load: " + SECONDARY_COLOR + systemLoadFormat);
             sender.sendMessage(PRIMARY_COLOR + "Process load: " + SECONDARY_COLOR + processLoadFormat);
 

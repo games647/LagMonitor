@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3
+
+* Added classes graph
+* Added command completion for all commands
+
 ## 0.2
 
 * Added environment command
