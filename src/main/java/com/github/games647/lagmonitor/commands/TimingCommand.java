@@ -10,6 +10,8 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,6 +30,12 @@ public class TimingCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!Bukkit.getServer().getPluginManager().useTimings()) {
+            sender.sendMessage(ChatColor.DARK_RED + "The server deactivated timing reports");
+            sender.sendMessage(ChatColor.DARK_RED + "Go to bukkit.yml and activate plugin-profiling");
+            return true;
+        }
+
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayStream);
 
