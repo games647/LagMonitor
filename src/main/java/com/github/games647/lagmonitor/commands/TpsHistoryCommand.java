@@ -42,7 +42,7 @@ public class TpsHistoryCommand implements CommandExecutor {
 
             ChatColor color = ChatColor.DARK_RED;
             int lines = 0;
-            if (sampleSecond > 19F) {
+            if (sampleSecond > 19.9F) {
                 lines = GRAPH_LINES;
                 color = ChatColor.DARK_GREEN;
             } else if (sampleSecond > 18F) {
@@ -73,7 +73,7 @@ public class TpsHistoryCommand implements CommandExecutor {
                 }
 
                 lines--;
-                graphLines.get(line).append(color).append(GRAPH_CHAR);
+                graphLines.get(line).append(color).append("+");
             }
         }
 

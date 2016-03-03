@@ -18,6 +18,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.TimingsCommand;
 import org.spigotmc.CustomTimingsHandler;
 
+/**
+ * Parsed from the PHP by aikar
+ * https://github.com/aikar/timings
+ */
 public class TimingCommand implements CommandExecutor {
 
     private static final String EXCLUDE_INDENTIFIER = "** ";
@@ -56,14 +60,14 @@ public class TimingCommand implements CommandExecutor {
 
     private void sendParsedOutput(String output, CommandSender sender, long sampleTime) {
         Map<String, Timing> timings = Maps.newHashMap();
-        Timing breakdownTiming = new Timing("Breakdown", 0, 0);
-        Timing minecraftTiming = new Timing("Minecraft", 0, 0);
+        Timing breakdownTiming = new Timing("Breakdown", -1, -1);
+        Timing minecraftTiming = new Timing("Minecraft");
         timings.put("Minecraft", minecraftTiming);
         timings.put("Breakdown", breakdownTiming);
 
         parseTimings(output, timings, minecraftTiming, breakdownTiming);
 
-        breakdownTiming.setTotalTime(minecraftTiming.getTotalTime() - 1);
+//        breakdownTiming.setTotalTime(minecraftTiming.getTotalTime() - 1);
 
         long total = minecraftTiming.getTotalTime();
         long numTicks = 0;
@@ -91,16 +95,26 @@ public class TimingCommand implements CommandExecutor {
         float serverLoad = 0;
 
         for (Map.Entry<String, Timing> entry : timings.entrySet()) {
-            String categoryName = entry.getKey();
+            String category = entry.getKey();
             Timing value = entry.getValue();
-            float pct = (float) value.getTotalTime() / sampleTime;
+//            float pct = (float) value.getTotalTime() / sampleTime;
+            float pct = (float) value.getTotalTime() / sampleTime * 100;
+
+            String highlightedPercent;
+            if ("Minecraft".equals(category)) {
+                highlightedPercent = highlightPct(round(pct), 20, 40, 70);
+            } else {
+                highlightedPercent = highlightPct(round(pct), 1, 3, 6);
+            }
 
             //nanoseconds -> seconds
             float totalSeconds = (float) value.getTotalTime() / 1000 / 1000 / 1000;
-            sender.sendMessage("=" + categoryName + " Total: " + round(totalSeconds) + "sec pct: " + round(pct) + "=");
+            sender.sendMessage(ChatColor.YELLOW + "== " + category + " Total: " + round(totalSeconds)
+                    + "sec: " + highlightedPercent + "% ==");
             if (value.getSubcategories() != null) {
                 for (Map.Entry<String, Timing> subEntry : value.getSubcategories().entrySet()) {
-                    String event = subEntry.getKey();
+                    String event = subEntry.getKey().replace("** ", "").replace("-", "");
+
                     Timing subValue = subEntry.getValue();
 
                     float avg = (float) subValue.getTotalTime() / subValue.getTotalCount();
@@ -109,45 +123,51 @@ public class TimingCommand implements CommandExecutor {
                         avg *= timesPerTick;
                     }
 
-                    float pctTick = avg / 1000 / 1000 / 50;
-                    float count = (float) subValue.getTotalCount() / 1000;
+//                    float pctTick = avg / 1000 / 1000 / 50 * 100;
+                    float pctTick = avg / 1000 / 1000 / 50 * 100;
+//                    float count = (float) subValue.getTotalCount() / 1000;
                     //->ms
                     avg = avg / 1000 / 1000;
-                    float pctTotal = (float) subValue.getTotalTime() / sampleTime;
-                    if (event.equalsIgnoreCase("** Full Server Tick")) {
+                    float pctTotal = (float) subValue.getTotalTime() / sampleTime * 100;
+                    if (event.equalsIgnoreCase("Full Server Tick")) {
                         serverLoad = pctTick;
                     }
 
-                    sender.sendMessage(event + " Pct: " + round(pctTotal)
-                            + " PctTick: " + round(pctTick)
-                            + " AVG: " + round(avg)
-                            + " TimeTick: " + round(timesPerTick)
-                            + " Count: " + round(count));
+                    sender.sendMessage(ChatColor.DARK_AQUA + event + ' ' + highlightPct(round(pctTotal), 10, 20, 50)
+                            + "% Tick: " + highlightPct(round(pctTick), 3, 15, 40)
+                            + "% AVG (ms): " + round(avg));
                 }
             }
         }
+
+        sender.sendMessage(ChatColor.YELLOW + "==========================================");
 
         float totalSeconds = (float) total / 1000 / 1000 / 1000;
 
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;
         float totalAvgEntities = (float) entityTicks / numTicks;
-        float activatedPercent = activatedAvgEntities / totalAvgEntities;
+//        float activatedPercent = activatedAvgEntities / totalAvgEntities;
 
         float averagePlayers = (float) playerTicks / numTicks;
 
         float desiredTicks = (float) sampleTime / 1000 / 1000 / 1000 * 20;
         float averageTicks = numTicks / desiredTicks * 20;
 
+        String format = ChatColor.DARK_AQUA + "%s" + " " + ChatColor.GRAY + "%s";
+
         //head data
-        sender.sendMessage("Avg ticks: " + round(averageTicks));
-        sender.sendMessage("Server Load: " + round(serverLoad));
-        sender.sendMessage("AVG Players: " + round(averagePlayers));
-        sender.sendMessage("Activated Percent: " + round(activatedPercent));
-        sender.sendMessage("Activated Entities: " + round(activatedAvgEntities) + " / " + round(totalAvgEntities));
-        sender.sendMessage("Total: " + round(totalSeconds));
-        sender.sendMessage("Ticks: " + round(numTicks));
+        sender.sendMessage(String.format(format, "Avg ticks:", round(averageTicks)));
+        sender.sendMessage(String.format(format, "Server Load:", round(serverLoad)));
+        sender.sendMessage(String.format(format, "AVG Players:", round(averagePlayers)));
+        sender.sendMessage(String.format(format, "Activated Entities:", round(activatedAvgEntities))
+                + " / " + round(totalAvgEntities));
+
+
+        sender.sendMessage(String.format(format, "Total (sec):", round(totalSeconds)));
+        sender.sendMessage(String.format(format, "Ticks:", round(numTicks)));
+
         //convert from nanoseconds to seconds
-        sender.sendMessage("Sample Time: " + round((float) sampleTime / 1000 / 1000 / 1000));
+        sender.sendMessage(String.format(format, "Sample Time (sec):", round((float) sampleTime / 1000 / 1000 / 1000)));
     }
 
     private void parseTimings(String output, Map<String, Timing> timings
@@ -205,6 +225,19 @@ public class TimingCommand implements CommandExecutor {
 
     private float round(float number) {
         return (float) (Math.round(number * 100.0) / 100.0);
+    }
+
+    private String highlightPct(float percent, int low, int med, int high) {
+        ChatColor prefix = ChatColor.GRAY;
+        if (percent > high) {
+            prefix = ChatColor.DARK_RED;
+        } else if (percent > med) {
+            prefix = ChatColor.GOLD;
+        } else if (percent > low) {
+            prefix = ChatColor.YELLOW;
+        }
+
+        return prefix + "" + percent + '%' + ChatColor.GRAY;
     }
 
     private String getProperty(String line, String propertyName) {

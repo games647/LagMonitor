@@ -2,8 +2,14 @@
 
 ## 0.3
 
+* Fixed: max memory output in the /system command
+* Added color highlighting for performance intensive tasks in the timings report
+* Fixed timings output
+* Added warning if timings are deactivated
 * Added classes graph
 * Added command completion for all commands
+* Updated to Minecraft 1.9
+* Added missing permission node for /ping [player] to the plugin.yml
 
 ## 0.2
 

@@ -16,9 +16,6 @@ public class Timing implements Comparable<Timing> {
 
     public Timing(String category) {
         this.category = category;
-
-        totalTime = -1;
-        totalCount = -1;
     }
 
     public Timing(String category, long totalTime, long count) {

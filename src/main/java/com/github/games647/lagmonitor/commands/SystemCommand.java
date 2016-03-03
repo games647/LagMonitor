@@ -32,7 +32,7 @@ public class SystemCommand implements CommandExecutor {
         int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
 
         Runtime runtime = Runtime.getRuntime();
-        double maxMemoryFormatted = convertBytesToMegaBytes(runtime.totalMemory());
+        double maxMemoryFormatted = convertBytesToMegaBytes(runtime.maxMemory());
         double freeMemoryFormatted = convertBytesToMegaBytes(runtime.freeMemory());
 
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
@@ -47,7 +47,7 @@ public class SystemCommand implements CommandExecutor {
         return true;
     }
 
-    private double convertBytesToMegaBytes(long bytes) {
+    private long convertBytesToMegaBytes(long bytes) {
         return bytes / 1_024 / 1_024;
     }
 }

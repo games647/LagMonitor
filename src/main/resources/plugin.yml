@@ -62,6 +62,7 @@ permissions:
         description: Gives access to all ${project.name} commands
         children:
             ${project.artifactId}.command.ping: true
+            ${project.artifactId}.command.ping.other: true
             ${project.artifactId}.command.stacktrace: true
             ${project.artifactId}.command.thread: true
             ${project.artifactId}.command.tps: true
@@ -70,3 +71,8 @@ permissions:
             ${project.artifactId}.command.timing: true
             ${project.artifactId}.command.monitor: true
             ${project.artifactId}.command.graph: true
+
+    ${project.artifactId}.command.ping.other:
+        description: 'Get the ping from other players'
+        children:
+            ${project.artifactId}.command.ping: true
