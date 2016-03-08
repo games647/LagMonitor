@@ -11,6 +11,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
 public class SystemCommand implements CommandExecutor {
 
@@ -33,18 +35,41 @@ public class SystemCommand implements CommandExecutor {
 
         Runtime runtime = Runtime.getRuntime();
         double maxMemoryFormatted = convertBytesToMegaBytes(runtime.maxMemory());
-        double freeMemoryFormatted = convertBytesToMegaBytes(runtime.freeMemory());
+        double freeMemoryFormatted = convertBytesToMegaBytes(runtime.maxMemory() - runtime.totalMemory());
 
+        //runtime specific
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
 
-        sender.sendMessage(PRIMARY_COLOR + "Max RAM (MB): " + SECONDARY_COLOR + maxMemoryFormatted);
-        sender.sendMessage(PRIMARY_COLOR + "Free RAM (MB): " + SECONDARY_COLOR + freeMemoryFormatted);
+        sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + maxMemoryFormatted + "MB");
+        sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + freeMemoryFormatted + "MB");
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
+        //minecraft specific
         sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastSample());
 
-        sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getBukkitVersion());
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        Plugin[] plugins = pluginManager.getPlugins();
+        sender.sendMessage(PRIMARY_COLOR + "Plugins: "
+                + SECONDARY_COLOR + getEnabledPlugins(plugins) + '/' + plugins.length);
+
+        int onlinePlayers = Bukkit.getOnlinePlayers().size();
+        int maxPlayers = Bukkit.getMaxPlayers();
+        sender.sendMessage(PRIMARY_COLOR + "Players: " + SECONDARY_COLOR + onlinePlayers + '/' + maxPlayers);
+
+        sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
+        sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getVersion());
         return true;
+    }
+
+    private int getEnabledPlugins(Plugin[] plugins) {
+        int enabled = 0;
+        for (Plugin toCheck : plugins) {
+            if (toCheck.isEnabled()) {
+                enabled++;
+            }
+        }
+
+        return enabled;
     }
 
     private long convertBytesToMegaBytes(long bytes) {
