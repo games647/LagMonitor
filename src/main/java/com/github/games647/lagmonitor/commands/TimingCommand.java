@@ -67,16 +67,13 @@ public class TimingCommand implements CommandExecutor {
 
         parseTimings(output, timings, minecraftTiming, breakdownTiming);
 
-//        breakdownTiming.setTotalTime(minecraftTiming.getTotalTime() - 1);
-
-        long total = minecraftTiming.getTotalTime();
-        long numTicks = 0;
-        long entityTicks = 0;
         long playerTicks = 0;
         long activatedEntityTicks = 0;
+        long entityTicks = 0;
+        long numTicks = 0;
 
-        if (breakdownTiming.getSubcategories() != null) {
-            for (Map.Entry<String, Timing> entry : breakdownTiming.getSubcategories().entrySet()) {
+        if (breakdownTiming.getSubCategories() != null) {
+            for (Map.Entry<String, Timing> entry : breakdownTiming.getSubCategories().entrySet()) {
                 String key = entry.getKey();
                 Timing value = entry.getValue();
                 if ("** tickEntity - EntityPlayer".equalsIgnoreCase(key)) {
@@ -109,11 +106,15 @@ public class TimingCommand implements CommandExecutor {
 
             //nanoseconds -> seconds
             float totalSeconds = (float) value.getTotalTime() / 1000 / 1000 / 1000;
-            sender.sendMessage(ChatColor.YELLOW + "== " + category + " Total: " + round(totalSeconds)
-                    + "sec: " + highlightedPercent + "% ==");
-            if (value.getSubcategories() != null) {
-                for (Map.Entry<String, Timing> subEntry : value.getSubcategories().entrySet()) {
+            sender.sendMessage(ChatColor.YELLOW + "=== " + category + " Total: " + round(totalSeconds)
+                    + "sec: " + highlightedPercent + "% " + ChatColor.YELLOW + "===");
+            if (value.getSubCategories() != null) {
+                for (Map.Entry<String, Timing> subEntry : value.getSubCategories().entrySet()) {
                     String event = subEntry.getKey().replace("** ", "").replace("-", "");
+                    int lastPackage = event.lastIndexOf('.');
+                    if (lastPackage != -1) {
+                        event = event.substring(lastPackage + 1);
+                    }
 
                     Timing subValue = subEntry.getValue();
 
@@ -123,7 +124,6 @@ public class TimingCommand implements CommandExecutor {
                         avg *= timesPerTick;
                     }
 
-//                    float pctTick = avg / 1000 / 1000 / 50 * 100;
                     float pctTick = avg / 1000 / 1000 / 50 * 100;
 //                    float count = (float) subValue.getTotalCount() / 1000;
                     //->ms
@@ -134,15 +134,13 @@ public class TimingCommand implements CommandExecutor {
                     }
 
                     sender.sendMessage(ChatColor.DARK_AQUA + event + ' ' + highlightPct(round(pctTotal), 10, 20, 50)
-                            + "% Tick: " + highlightPct(round(pctTick), 3, 15, 40)
-                            + "% AVG (ms): " + round(avg));
+                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40)
+                            + " AVG: " + round(avg) + "ms");
                 }
             }
         }
 
         sender.sendMessage(ChatColor.YELLOW + "==========================================");
-
-        float totalSeconds = (float) total / 1000 / 1000 / 1000;
 
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;
         float totalAvgEntities = (float) entityTicks / numTicks;
@@ -162,8 +160,6 @@ public class TimingCommand implements CommandExecutor {
         sender.sendMessage(String.format(format, "Activated Entities:", round(activatedAvgEntities))
                 + " / " + round(totalAvgEntities));
 
-
-        sender.sendMessage(String.format(format, "Total (sec):", round(totalSeconds)));
         sender.sendMessage(String.format(format, "Ticks:", round(numTicks)));
 
         //convert from nanoseconds to seconds

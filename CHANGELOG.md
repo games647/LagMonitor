@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4
+
+* Added lazy loading for thread monitor to reduce memory usage
+* Added worlds, players and plugins count to the system command
+* Added samples count for thread monitor
+
+* Improved tons of command styling
+
+* Fixed thread safety
+* Fixed free memory value
+* Fixed memory leak for thread monitor
+* Fixed ping method only displaying the own ping
+
 ## 0.3
 
 * Fixed: max memory output in the /system command

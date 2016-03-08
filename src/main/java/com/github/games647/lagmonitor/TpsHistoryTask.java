@@ -2,11 +2,14 @@ package com.github.games647.lagmonitor;
 
 import com.google.common.collect.Lists;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class TpsHistoryTask implements Runnable {
 
-    private final List<Float> lastSeconds = Lists.newArrayListWithExpectedSize(60);
+    private static final int ONE_MINUTE = 60;
+
+    private final LinkedList<Float> lastSeconds = Lists.newLinkedList();
 
     //the last time we updated the ticks
     private long lastCheck = System.nanoTime();
@@ -16,7 +19,7 @@ public class TpsHistoryTask implements Runnable {
             return 20F;
         }
 
-        return lastSeconds.get(lastSeconds.size() - 1);
+        return lastSeconds.getLast();
     }
 
     public List<Float> getLastSeconds() {
@@ -36,8 +39,8 @@ public class TpsHistoryTask implements Runnable {
         if (tps >= 0.0F && tps < 25.0F) {
             //Prevent all invalid values
             lastSeconds.add(tps);
-            if (lastSeconds.size() >= 61) {
-                lastSeconds.remove(0);
+            if (lastSeconds.size() >= ONE_MINUTE + 1) {
+                lastSeconds.removeFirst();
             }
         }
     }

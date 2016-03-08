@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.graphs;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
+
 import org.bukkit.map.MapCanvas;
 
 public class ClassesGraph extends GraphRenderer {

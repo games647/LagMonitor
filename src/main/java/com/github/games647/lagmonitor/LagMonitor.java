@@ -34,7 +34,7 @@ public class LagMonitor extends JavaPlugin {
 
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
-        getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 1 * 20L, 1 * 20L);
+        getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 20L, 20L);
     }
 
     public ChatColor getHighlightColor(int percent) {

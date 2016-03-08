@@ -85,6 +85,10 @@ public class GraphCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> result = Lists.newArrayListWithExpectedSize(4);
 
+        if (args.length != 1) {
+            return Collections.emptyList();
+        }
+
         String lastArg = args[args.length - 1];
         if ("cpu".startsWith(lastArg)) {
             result.add("cpu");

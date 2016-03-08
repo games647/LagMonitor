@@ -55,7 +55,7 @@ public class MbeanCommand implements TabExecutor {
         } else {
             Set<ObjectInstance> allBeans = mBeanServer.queryMBeans(null, null);
             for (ObjectInstance mbean : allBeans) {
-                sender.sendMessage(ChatColor.GOLD + mbean.getObjectName().getCanonicalName());
+                sender.sendMessage(ChatColor.DARK_AQUA + mbean.getObjectName().getCanonicalName());
             }
         }
 

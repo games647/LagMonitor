@@ -32,6 +32,17 @@ public class TpsHistoryCommand implements CommandExecutor {
             graphLines.add(new StringBuilder(ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH * 2));
         }
 
+        buildGraph(lastSeconds, graphLines);
+
+        for (StringBuilder graphLine : graphLines) {
+            sender.sendMessage(graphLine.toString());
+        }
+
+        sender.sendMessage(PRIMARY_COLOR + "Current TPS: " + plugin.getTpsHistoryTask().getLastSample());
+        return true;
+    }
+
+    private void buildGraph(List<Float> lastSeconds, List<StringBuilder> graphLines) {
         //in x-direction
         int xPos = 1;
         for (float sampleSecond : lastSeconds) {
@@ -41,7 +52,7 @@ public class TpsHistoryCommand implements CommandExecutor {
             }
 
             ChatColor color = ChatColor.DARK_RED;
-            int lines = 0;
+            int lines = 6;
             if (sampleSecond > 19.9F) {
                 lines = GRAPH_LINES;
                 color = ChatColor.DARK_GREEN;
@@ -60,9 +71,6 @@ public class TpsHistoryCommand implements CommandExecutor {
             } else if (sampleSecond > 13F) {
                 lines = GRAPH_LINES - 5;
                 color = ChatColor.DARK_RED;
-            } else if (sampleSecond > 10F) {
-                lines = GRAPH_LINES - 6;
-                color = ChatColor.DARK_RED;
             }
 
             //in y-direction in reverse order
@@ -73,15 +81,8 @@ public class TpsHistoryCommand implements CommandExecutor {
                 }
 
                 lines--;
-                graphLines.get(line).append(color).append("+");
+                graphLines.get(line).append(color).append(GRAPH_CHAR);
             }
         }
-
-        for (StringBuilder graphLine : graphLines) {
-            sender.sendMessage(graphLine.toString());
-        }
-
-        sender.sendMessage(PRIMARY_COLOR + "Current TPS: " + plugin.getTpsHistoryTask().getLastSample());
-        return true;
     }
 }

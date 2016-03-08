@@ -4,21 +4,37 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
-    private final String name;
+    private static final int MAX_DEPTH = 25;
 
-    private final Map<String, MethodMeasurement> childInvokes = Maps.newHashMap();
+    private final String id;
+    private final String className;
+    private final String method;
+
+    private Map<String, MethodMeasurement> childInvokes;
     private long totalTime;
 
-    public MethodMeasurement(String className, String methodName) {
-        this.name = className + '.' + methodName;
+    public MethodMeasurement(String className, String method, String id) {
+        this.className = className;
+        this.method = method;
+
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getClassName() {
+        return className;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public long getTotalTime() {
@@ -26,6 +42,10 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     }
 
     public Map<String, MethodMeasurement> getChildInvokes() {
+        if (childInvokes == null) {
+            return Collections.emptyMap();
+        }
+
         return ImmutableMap.copyOf(childInvokes);
     }
 
@@ -37,16 +57,24 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     public void onMeasurement(StackTraceElement[] stackTrace, int skipElements, long time) {
         totalTime += time;
 
-        if (skipElements >= stackTrace.length) {
+        if (skipElements >= stackTrace.length || skipElements >= MAX_DEPTH) {
             //we reached the end
             return;
         }
 
-        StackTraceElement nextChildElement = stackTrace[stackTrace.length - 1 - skipElements];
+        StackTraceElement nextChildElement = stackTrace[stackTrace.length - skipElements - 1];
+        String nextClass = nextChildElement.getClassName();
+        String nextMethod = nextChildElement.getMethodName();
+
         String idName = nextChildElement.getClassName() + '.' + nextChildElement.getMethodName();
+        if (childInvokes == null) {
+            //lazy loading
+            childInvokes = Maps.newHashMap();
+        }
+
         MethodMeasurement child = childInvokes.get(idName);
         if (child == null) {
-            child = new MethodMeasurement(nextChildElement.getClassName(), nextChildElement.getMethodName());
+            child = new MethodMeasurement(nextClass, nextMethod, idName);
             childInvokes.put(idName, child);
         }
 
@@ -56,9 +84,8 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("name", name)
+                .add("name", id)
                 .add("totalTime", totalTime)
-                .add("children", childInvokes)
                 .toString();
     }
 

@@ -23,6 +23,15 @@ server timings and so on.
 * Free
 * Open Source
 
+## Planning
+
+* Traffic (Bandwith) counter - OS and minecraft (can be done by hooking into Netty) process only
+* Heap usage
+* Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
+more detailed
+* Pagination for commands bean, monitor and timing
+* Caching of the timings or running it async
+
 ## Permissions
 
 lagmonitor.* - Access to all LagMonitor features
@@ -64,4 +73,23 @@ lagmonitor.commands.* - Access to all commands
 
 Live visualizer of heap usage:
 
+### Timing command
+![timing command](https://i.imgur.com/wAxnIxt.png)
+
+### CPU Graph (blue=process, yellow=system) - Process load
+![cpu graph](https://i.imgur.com/DajnZmP.png)
+
+### Stacktrace and Threads command
+![stacktrace and threads](http://i.imgur.com/XY7r9wz.png)
+
+### Ping Command
+![ping command](http://i.imgur.com/LITJKWw.png)
+
+### Thread Sampler (Monitor command)
+![thread sample](https://i.imgur.com/OXOakN6.png)
+
+### System command
+![system command](https://i.imgur.com/DYrNtGS.png)
+
+### Heap usage graph (yellow=allocated, blue=used)
 ![heap usage map](http://i.imgur.com/Yiz9h6G.png)

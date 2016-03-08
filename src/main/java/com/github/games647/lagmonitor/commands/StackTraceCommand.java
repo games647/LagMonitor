@@ -2,10 +2,10 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Lists;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.Collections;
-
 import java.util.List;
 import java.util.Map;
 
@@ -70,10 +70,17 @@ public class StackTraceCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> result = Lists.newArrayList();
-        String lastArg = args[args.length - 1];
+
+        StringBuilder builder = new StringBuilder();
+        for (String arg : args) {
+            builder.append(arg).append(' ');
+        }
+
+        String requestName = builder.toString();
+
         ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads(false, false);
         for (ThreadInfo thread : threads) {
-            if (thread.getThreadName().startsWith(lastArg)) {
+            if (thread.getThreadName().startsWith(requestName)) {
                 result.add(thread.getThreadName());
             }
         }

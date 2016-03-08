@@ -36,10 +36,6 @@ public class Timing implements Comparable<Timing> {
         this.totalTime += total;
     }
 
-    public void setTotalTime(long totalTime) {
-        this.totalTime = totalTime;
-    }
-
     public long getTotalCount() {
         return totalCount;
     }
@@ -48,7 +44,7 @@ public class Timing implements Comparable<Timing> {
         this.totalCount += count;
     }
 
-    public Map<String, Timing> getSubcategories() {
+    public Map<String, Timing> getSubCategories() {
         return subcategories;
     }
 

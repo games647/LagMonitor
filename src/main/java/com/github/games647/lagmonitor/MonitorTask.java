@@ -1,8 +1,6 @@
 package com.github.games647.lagmonitor;
 
 import com.github.games647.lagmonitor.commands.MonitorCommand;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import java.util.Map;
 import java.util.TimerTask;
@@ -10,37 +8,60 @@ import java.util.TimerTask;
 public class MonitorTask extends TimerTask {
 
     private final LagMonitor plugin;
+    private final long threadId;
 
-    private Map<String, MethodMeasurement> sampleResults = Maps.newConcurrentMap();
+    private MethodMeasurement rootNode;
+    private int samples;
 
-    public MonitorTask(LagMonitor plugin) {
+    public MonitorTask(LagMonitor plugin, long threadId) {
         this.plugin = plugin;
+        this.threadId = threadId;
     }
 
-    public Map<String, MethodMeasurement> getSampleResults() {
-        return ImmutableMap.copyOf(sampleResults);
+    public MethodMeasurement getRootSample() {
+        return rootNode;
+    }
+
+    public int getSamples() {
+        return samples;
     }
 
     @Override
     public void run() {
-        Map<Thread, StackTraceElement[]> stacktraces = Thread.getAllStackTraces();
-        for (Map.Entry<Thread, StackTraceElement[]> entry : stacktraces.entrySet()) {
-            Thread thread = entry.getKey();
-            StackTraceElement[] stacktrace = entry.getValue();
+        synchronized (this) {
+            samples++;
 
-            if (Thread.currentThread().equals(thread) || stacktrace.length == 0) {
-                //don't analyze our own thread and ignore empty threads
-                continue;
+            Map<Thread, StackTraceElement[]> stacktraces = Thread.getAllStackTraces();
+            for (Map.Entry<Thread, StackTraceElement[]> entry : stacktraces.entrySet()) {
+                Thread thread = entry.getKey();
+
+                if (thread.getId() != threadId) {
+                    //don't analyze our own thread and ignore empty threads
+                    continue;
+                }
+
+                StackTraceElement[] stackTrace = entry.getValue();
+                if (stackTrace.length > 0) {
+                    StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
+                    if (rootNode == null) {
+                        String rootClass = rootElement.getClassName();
+                        String rootMethod = rootElement.getMethodName();
+
+                        String id = rootClass + '.' + rootMethod;
+                        rootNode = new MethodMeasurement(rootClass, rootMethod, id);
+                    }
+
+                    rootNode.onMeasurement(stackTrace, 0, MonitorCommand.SAMPLE_INTERVALL);
+                }
             }
-
-            StackTraceElement rootElement = stacktrace[stacktrace.length - 1];
-            MethodMeasurement methodMeasurement = sampleResults.get(thread.getName());
-            if (methodMeasurement == null) {
-                methodMeasurement = new MethodMeasurement(rootElement.getClassName(), rootElement.getMethodName());
-                sampleResults.put(thread.getName(), methodMeasurement);
-            }
-
-            methodMeasurement.onMeasurement(stacktrace, 0, MonitorCommand.SAMPLE_INTERVALL);
         }
     }
+
+//    public void resume() {
+//
+//    }
+//
+//    public void pause() {
+//
+//    }
 }
