@@ -31,19 +31,7 @@ public class PingCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0) {
-            if (sender.hasPermission(plugin.getName().toLowerCase() + command.getPermission() + ".other")) {
-                String playerName = args[0];
-                Player targetPlayer = Bukkit.getPlayer(playerName);
-                if (targetPlayer != null) {
-                    int ping = getReflectionPing(targetPlayer);
-                    sender.sendMessage(ChatColor.WHITE + playerName + PRIMARY_COLOR + "'s ping is: "
-                            + ChatColor.DARK_GREEN + ping + "ms");
-                } else {
-                    sender.sendMessage(ChatColor.DARK_RED + "Player " + playerName + " is not online");
-                }
-            } else {
-                sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission");
-            }
+            displayPingOther(sender, command, args);
         } else if (sender instanceof Player) {
             int ping = getReflectionPing((Player) sender);
             sender.sendMessage(PRIMARY_COLOR + "Your ping is: " + ChatColor.DARK_GREEN + ping + "ms");
@@ -52,6 +40,22 @@ public class PingCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private void displayPingOther(CommandSender sender, Command command, String[] args) {
+        if (sender.hasPermission(plugin.getName().toLowerCase() + command.getPermission() + ".other")) {
+            String playerName = args[0];
+            Player targetPlayer = Bukkit.getPlayer(playerName);
+            if (targetPlayer != null) {
+                int ping = getReflectionPing(targetPlayer);
+                sender.sendMessage(ChatColor.WHITE + playerName + PRIMARY_COLOR + "'s ping is: "
+                        + ChatColor.DARK_GREEN + ping + "ms");
+            } else {
+                sender.sendMessage(ChatColor.DARK_RED + "Player " + playerName + " is not online");
+            }
+        } else {
+            sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission");
+        }
     }
 
     private int getReflectionPing(Player player) {

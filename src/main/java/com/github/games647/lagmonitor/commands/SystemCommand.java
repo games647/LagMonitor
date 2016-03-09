@@ -27,6 +27,12 @@ public class SystemCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        displayRuntimeInfo(sender);
+        displayMinecraftInfo(sender);
+        return true;
+    }
+
+    private void displayRuntimeInfo(CommandSender sender) {
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
         long uptime = runtimeBean.getUptime() - 60 * 60 * 1000;
         String uptimeFormat = new SimpleDateFormat("HH 'hour' mm 'minutes' ss 'seconds'").format(uptime);
@@ -44,6 +50,9 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + freeMemoryFormatted + "MB");
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
+    }
+
+    private void displayMinecraftInfo(CommandSender sender) {
         //minecraft specific
         sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastSample());
 
@@ -58,7 +67,6 @@ public class SystemCommand implements CommandExecutor {
 
         sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
         sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getVersion());
-        return true;
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {

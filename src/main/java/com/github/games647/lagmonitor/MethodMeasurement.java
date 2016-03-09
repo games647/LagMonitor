@@ -9,8 +9,6 @@ import java.util.Map;
 
 public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
-    private static final int MAX_DEPTH = 25;
-
     private final String id;
     private final String className;
     private final String method;
@@ -57,7 +55,7 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     public void onMeasurement(StackTraceElement[] stackTrace, int skipElements, long time) {
         totalTime += time;
 
-        if (skipElements >= stackTrace.length || skipElements >= MAX_DEPTH) {
+        if (skipElements >= stackTrace.length) {
             //we reached the end
             return;
         }

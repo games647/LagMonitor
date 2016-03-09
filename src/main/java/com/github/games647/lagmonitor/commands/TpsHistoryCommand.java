@@ -51,38 +51,42 @@ public class TpsHistoryCommand implements CommandExecutor {
                 break;
             }
 
-            ChatColor color = ChatColor.DARK_RED;
-            int lines = 6;
-            if (sampleSecond > 19.9F) {
-                lines = GRAPH_LINES;
-                color = ChatColor.DARK_GREEN;
-            } else if (sampleSecond > 18F) {
-                lines = GRAPH_LINES - 1;
-                color = ChatColor.GREEN;
-            } else if (sampleSecond > 17F) {
-                lines = GRAPH_LINES - 2;
-                color = ChatColor.YELLOW;
-            } else if (sampleSecond > 16F) {
-                lines = GRAPH_LINES - 3;
-                color = ChatColor.GOLD;
-            } else if (sampleSecond > 15F) {
-                lines = GRAPH_LINES - 4;
-                color = ChatColor.RED;
-            } else if (sampleSecond > 13F) {
-                lines = GRAPH_LINES - 5;
-                color = ChatColor.DARK_RED;
+            buildLine(sampleSecond, graphLines);
+        }
+    }
+
+    private void buildLine(float sampleSecond, List<StringBuilder> graphLines) {
+        ChatColor color = ChatColor.DARK_RED;
+        int lines = 6;
+        if (sampleSecond > 19.9F) {
+            lines = GRAPH_LINES;
+            color = ChatColor.DARK_GREEN;
+        } else if (sampleSecond > 18F) {
+            lines = GRAPH_LINES - 1;
+            color = ChatColor.GREEN;
+        } else if (sampleSecond > 17F) {
+            lines = GRAPH_LINES - 2;
+            color = ChatColor.YELLOW;
+        } else if (sampleSecond > 16F) {
+            lines = GRAPH_LINES - 3;
+            color = ChatColor.GOLD;
+        } else if (sampleSecond > 15F) {
+            lines = GRAPH_LINES - 4;
+            color = ChatColor.RED;
+        } else if (sampleSecond > 13F) {
+            lines = GRAPH_LINES - 5;
+            color = ChatColor.DARK_RED;
+        }
+
+        //in y-direction in reverse order
+        for (int line = GRAPH_LINES - 1; line >= 0; line--) {
+            if (lines == 0) {
+                graphLines.get(line).append(' ');
+                continue;
             }
 
-            //in y-direction in reverse order
-            for (int line = GRAPH_LINES - 1; line >= 0; line--) {
-                if (lines == 0) {
-                    graphLines.get(line).append(' ');
-                    continue;
-                }
-
-                lines--;
-                graphLines.get(line).append(color).append(GRAPH_CHAR);
-            }
+            lines--;
+            graphLines.get(line).append(color).append(GRAPH_CHAR);
         }
     }
 }

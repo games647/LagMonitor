@@ -31,6 +31,10 @@ server timings and so on.
 more detailed
 * Pagination for commands bean, monitor and timing
 * Caching of the timings or running it async
+* Warning alert if the main thread is WAITING, BLOCKING, SLEEPING -> Example: for SQL-/HTTP-/File-Operations
+which should be run async
+* Average TPS and player ping
+* Output the last samples of a player ping (ping is refreshed every 40 ticks)
 
 ## Permissions
 
@@ -90,6 +94,9 @@ Live visualizer of heap usage:
 
 ### System command
 ![system command](https://i.imgur.com/DYrNtGS.png)
+
+### Environment command
+![environment command](http://i.imgur.com/gQwr126.png)
 
 ### Heap usage graph (yellow=allocated, blue=used)
 ![heap usage map](http://i.imgur.com/Yiz9h6G.png)

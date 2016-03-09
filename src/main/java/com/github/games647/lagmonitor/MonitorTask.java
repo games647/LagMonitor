@@ -2,10 +2,13 @@ package com.github.games647.lagmonitor;
 
 import com.github.games647.lagmonitor.commands.MonitorCommand;
 
-import java.util.Map;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.util.TimerTask;
 
 public class MonitorTask extends TimerTask {
+
+    private static final int MAX_DEPTH = 25;
 
     private final LagMonitor plugin;
     private final long threadId;
@@ -31,28 +34,20 @@ public class MonitorTask extends TimerTask {
         synchronized (this) {
             samples++;
 
-            Map<Thread, StackTraceElement[]> stacktraces = Thread.getAllStackTraces();
-            for (Map.Entry<Thread, StackTraceElement[]> entry : stacktraces.entrySet()) {
-                Thread thread = entry.getKey();
+            ThreadInfo threadInfo = ManagementFactory.getThreadMXBean().getThreadInfo(threadId, MAX_DEPTH);
 
-                if (thread.getId() != threadId) {
-                    //don't analyze our own thread and ignore empty threads
-                    continue;
+            StackTraceElement[] stackTrace = threadInfo.getStackTrace();
+            if (stackTrace.length > 0) {
+                StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
+                if (rootNode == null) {
+                    String rootClass = rootElement.getClassName();
+                    String rootMethod = rootElement.getMethodName();
+
+                    String id = rootClass + '.' + rootMethod;
+                    rootNode = new MethodMeasurement(rootClass, rootMethod, id);
                 }
 
-                StackTraceElement[] stackTrace = entry.getValue();
-                if (stackTrace.length > 0) {
-                    StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
-                    if (rootNode == null) {
-                        String rootClass = rootElement.getClassName();
-                        String rootMethod = rootElement.getMethodName();
-
-                        String id = rootClass + '.' + rootMethod;
-                        rootNode = new MethodMeasurement(rootClass, rootMethod, id);
-                    }
-
-                    rootNode.onMeasurement(stackTrace, 0, MonitorCommand.SAMPLE_INTERVALL);
-                }
+                rootNode.onMeasurement(stackTrace, 0, MonitorCommand.SAMPLE_INTERVALL);
             }
         }
     }
