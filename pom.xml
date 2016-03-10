@@ -8,8 +8,8 @@
     <packaging>jar</packaging>
 
     <name>LagMonitor</name>
-    <version>0.4</version>
-    <inceptionYear>2015</inceptionYear>
+    <version>0.5</version>
+    <inceptionYear>2016</inceptionYear>
     <url>http://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
         Monitors your Minecraft server for Lags

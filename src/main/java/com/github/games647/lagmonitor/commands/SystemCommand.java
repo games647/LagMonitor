@@ -5,9 +5,11 @@ import com.github.games647.lagmonitor.LagMonitor;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -65,8 +67,25 @@ public class SystemCommand implements CommandExecutor {
         int maxPlayers = Bukkit.getMaxPlayers();
         sender.sendMessage(PRIMARY_COLOR + "Players: " + SECONDARY_COLOR + onlinePlayers + '/' + maxPlayers);
 
-        sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
+        displayWorldInfo(sender);
         sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getVersion());
+    }
+
+    private void displayWorldInfo(CommandSender sender) {
+        List<World> worlds = Bukkit.getWorlds();
+        int entities = 0;
+        int chunks = 0;
+        int livingEntities = 0;
+
+        for (World world : worlds) {
+            livingEntities += world.getLivingEntities().size();
+            entities += world.getEntities().size();
+            chunks += world.getLoadedChunks().length;
+        }
+
+        sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
+        sender.sendMessage(PRIMARY_COLOR + "Loaded chunks: " + SECONDARY_COLOR + chunks);
+        sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {

@@ -42,7 +42,7 @@ public class EnvironmentCommand implements CommandExecutor {
 
         //CPU
         sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
-        sender.sendMessage(PRIMARY_COLOR + "CPU Name: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
+        sender.sendMessage(PRIMARY_COLOR + "CPU: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean sunOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
 
@@ -58,11 +58,6 @@ public class EnvironmentCommand implements CommandExecutor {
             sender.sendMessage(PRIMARY_COLOR + "System load: " + SECONDARY_COLOR + systemLoadFormat);
             sender.sendMessage(PRIMARY_COLOR + "Process load: " + SECONDARY_COLOR + processLoadFormat);
 
-            //planned todo -> use sigar API?
-//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Speed: " + SECONDARY_COLOR + osBean.getName());
-//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Physical: " + SECONDARY_COLOR + osBean.getName());
-//            sender.sendMessage(ChatColor.DARK_GREEN + "CPU Logical: " + SECONDARY_COLOR + osBean.getName());
-
             //RAM
             //include swap memory?
             long totalMemorySize = sunOsBean.getTotalPhysicalMemorySize();
@@ -71,10 +66,13 @@ public class EnvironmentCommand implements CommandExecutor {
             sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + totalRamFormatted + "MB");
             int freeRamFormatted = convertBytesToMega(freeMemorySize);
             sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + freeRamFormatted + "MB");
-            //planned todo -> use sigar API
-//            sender.sendMessage(ChatColor.DARK_GREEN + "RAM speed: " + SECONDARY_COLOR + osBean.getName());
         }
 
+        displayDiskSpace(sender);
+        return true;
+    }
+
+    private void displayDiskSpace(CommandSender sender) {
         File[] listRoots = File.listRoots();
         long totalSpace = 0;
         long freeSpace = 0;
@@ -86,7 +84,6 @@ public class EnvironmentCommand implements CommandExecutor {
         //Disk info
         sender.sendMessage(PRIMARY_COLOR + "Disk size: " + SECONDARY_COLOR + humanReadableByteCount(totalSpace, true));
         sender.sendMessage(PRIMARY_COLOR + "Free space: " + SECONDARY_COLOR + humanReadableByteCount(freeSpace, true));
-        return true;
     }
 
     private int convertBytesToMega(long bytes) {

@@ -19,7 +19,7 @@ public class ClassesGraph extends GraphRenderer {
 
         //round up to the nearest multiple of 5
         int roundedMax = (int) (5 * (Math.ceil((float) loadedClasses / 5)));
-        int loadedHeight = getHeightPercent(roundedMax, loadedClasses);
+        int loadedHeight = getHeightScaled(roundedMax, loadedClasses);
 
         for (int yPos = MAX_HEIGHT - loadedHeight; yPos < 128; yPos++) {
             canvas.setPixel(nextPosX, yPos, MAX_COLOR);

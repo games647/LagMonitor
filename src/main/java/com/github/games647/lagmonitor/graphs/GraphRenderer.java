@@ -59,7 +59,7 @@ public abstract class GraphRenderer extends MapRenderer {
 
     public abstract int renderGraphTick(MapCanvas canvas, int nextPosX);
 
-    protected int getHeightPercent(int maxValue, int value) {
+    protected int getHeightScaled(int maxValue, int value) {
         return MAX_HEIGHT * value / maxValue;
     }
 

@@ -21,11 +21,11 @@ public class MonitorTask extends TimerTask {
         this.threadId = threadId;
     }
 
-    public MethodMeasurement getRootSample() {
+    public synchronized MethodMeasurement getRootSample() {
         return rootNode;
     }
 
-    public int getSamples() {
+    public synchronized int getSamples() {
         return samples;
     }
 
@@ -35,7 +35,6 @@ public class MonitorTask extends TimerTask {
             samples++;
 
             ThreadInfo threadInfo = ManagementFactory.getThreadMXBean().getThreadInfo(threadId, MAX_DEPTH);
-
             StackTraceElement[] stackTrace = threadInfo.getStackTrace();
             if (stackTrace.length > 0) {
                 StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
@@ -44,7 +43,7 @@ public class MonitorTask extends TimerTask {
                     String rootMethod = rootElement.getMethodName();
 
                     String id = rootClass + '.' + rootMethod;
-                    rootNode = new MethodMeasurement(rootClass, rootMethod, id);
+                    rootNode = new MethodMeasurement(id, rootClass, rootMethod);
                 }
 
                 rootNode.onMeasurement(stackTrace, 0, MonitorCommand.SAMPLE_INTERVALL);

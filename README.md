@@ -29,11 +29,12 @@ server timings and so on.
 * Heap usage
 * Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
 more detailed
-* Pagination for commands bean, monitor and timing
+* Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
 * Caching of the timings or running it async
 * Warning alert if the main thread is WAITING, BLOCKING, SLEEPING -> Example: for SQL-/HTTP-/File-Operations
 which should be run async
 * Average TPS and player ping
+* Hardware output (using Sigar?)
 * Output the last samples of a player ping (ping is refreshed every 40 ticks)
 
 ## Permissions
@@ -49,10 +50,10 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.tps
 * lagmonitor.command.mbean
 * lagmonitor.command.system
+* lagmonitor.command.environment
 * lagmonitor.command.timing
 * lagmonitor.command.monitor
 * lagmonitor.command.graph
-* lagmonitor.command.environment
 
 ## Commands
 
@@ -67,15 +68,13 @@ lagmonitor.commands.* - Access to all commands
 /mbean <beanName> - List all available attributes of this mbean
 /mbean <beanName> <attribute> - Outputs the value of this attribute
 /system - Gives you some general information (minecraft server related)
+/env - Gives you some general information (OS related)
 /timing - Outputs your server timings ingame
 /monitor - Monitors the CPU usage of methods
-/graph [heap/cpu/threads] - Gives you visual graph about your server (currently only the heap usage)
-/env - Gives you some general information (OS related)
+/graph [heap/cpu/thread/classes] - Gives you visual graph about your server (currently only the heap usage)
 ```
 
 ## Images
-
-Live visualizer of heap usage:
 
 ### Timing command
 ![timing command](https://i.imgur.com/wAxnIxt.png)

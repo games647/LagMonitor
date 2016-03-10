@@ -10,7 +10,6 @@ import com.github.games647.lagmonitor.commands.SystemCommand;
 import com.github.games647.lagmonitor.commands.ThreadCommand;
 import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
-import org.bukkit.ChatColor;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,38 +34,6 @@ public class LagMonitor extends JavaPlugin {
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
         getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 20L, 20L);
-    }
-
-    public ChatColor getHighlightColor(int percent) {
-        ChatColor highlightColor;
-        switch (percent) {
-            case 0:
-            case 1:
-                highlightColor = ChatColor.DARK_RED;
-                break;
-            case 2:
-            case 3:
-            case 4:
-                highlightColor = ChatColor.RED;
-                break;
-            case 5:
-            case 6:
-                highlightColor = ChatColor.GOLD;
-                break;
-            case 7:
-                highlightColor = ChatColor.YELLOW;
-                break;
-            case 8:
-            case 9:
-                highlightColor = ChatColor.GREEN;
-                break;
-            case 10:
-            default:
-                highlightColor = ChatColor.DARK_GREEN;
-                break;
-        }
-
-        return highlightColor;
     }
 
     public TpsHistoryTask getTpsHistoryTask() {

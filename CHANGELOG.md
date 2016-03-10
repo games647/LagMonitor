@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5
+
+* Added world info to the system command
+
 ## 0.4
 
 * Added lazy loading for thread monitor to reduce memory usage

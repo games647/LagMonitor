@@ -22,8 +22,8 @@ public class HeapGraph extends GraphRenderer {
         //round to the next 100 e.g. 801 -> 900
         int roundedMax = ((max + 99) / 100) * 100;
 
-        int maxHeight = getHeightPercent(roundedMax, max);
-        int usedHeight = getHeightPercent(roundedMax, used);
+        int maxHeight = getHeightScaled(roundedMax, max);
+        int usedHeight = getHeightScaled(roundedMax, used);
 
         //x=0 y=0 is the left top point so convert it
         int convertedMaxHeight = MAX_HEIGHT - maxHeight;

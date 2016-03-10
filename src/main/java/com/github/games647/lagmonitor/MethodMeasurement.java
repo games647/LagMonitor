@@ -16,11 +16,15 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     private Map<String, MethodMeasurement> childInvokes;
     private long totalTime;
 
-    public MethodMeasurement(String className, String method, String id) {
+    public MethodMeasurement(String id, String className, String method) {
+        this.id = id;
+
         this.className = className;
         this.method = method;
+    }
 
-        this.id = id;
+    public String getId() {
+        return id;
     }
 
     public String getClassName() {
@@ -29,10 +33,6 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
     public String getMethod() {
         return method;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public long getTotalTime() {
@@ -72,7 +72,7 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
         MethodMeasurement child = childInvokes.get(idName);
         if (child == null) {
-            child = new MethodMeasurement(nextClass, nextMethod, idName);
+            child = new MethodMeasurement(idName, nextClass, nextMethod);
             childInvokes.put(idName, child);
         }
 

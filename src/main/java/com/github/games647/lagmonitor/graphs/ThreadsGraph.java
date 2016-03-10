@@ -20,8 +20,8 @@ public class ThreadsGraph extends GraphRenderer {
 
         //round up to the nearest multiple of 5
         int roundedMax = (int) (5 * (Math.ceil((float) threadCount / 5)));
-        int threadHeight = getHeightPercent(roundedMax, threadCount);
-        int daemonHeight = getHeightPercent(roundedMax, daemonCount);
+        int threadHeight = getHeightScaled(roundedMax, threadCount);
+        int daemonHeight = getHeightScaled(roundedMax, daemonCount);
 
         for (int yPos = MAX_HEIGHT - threadHeight; yPos < 128; yPos++) {
             canvas.setPixel(nextPosX, yPos, MAX_COLOR);
