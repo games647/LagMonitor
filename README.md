@@ -36,6 +36,8 @@ which should be run async
 * Average TPS and player ping
 * Hardware output (using Sigar?)
 * Output the last samples of a player ping (ping is refreshed every 40 ticks)
+* Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
+* Graph for network and file transfer
 
 ## Permissions
 
