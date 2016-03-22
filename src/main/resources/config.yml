@@ -1,0 +1,5 @@
+# ${project.name} main config
+
+# By hooking into the network management of Minecraft we can read how many bytes
+# the server is receiving or is sending
+traffic-counter: true

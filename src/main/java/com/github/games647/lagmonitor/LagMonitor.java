@@ -10,15 +10,19 @@ import com.github.games647.lagmonitor.commands.SystemCommand;
 import com.github.games647.lagmonitor.commands.ThreadCommand;
 import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
+import com.github.games647.lagmonitor.traffic.TrafficReader;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class LagMonitor extends JavaPlugin {
 
     private TpsHistoryTask tpsHistoryTask;
+    private TrafficReader trafficReader;
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         //register commands
         getCommand("ping").setExecutor(new PingCommand(this));
         getCommand("stacktrace").setExecutor(new StackTraceCommand(this));
@@ -34,6 +38,22 @@ public class LagMonitor extends JavaPlugin {
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
         getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 20L, 20L);
+
+        if (getConfig().getBoolean("traffic-counter")) {
+            trafficReader = new TrafficReader(this);
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        if (trafficReader != null) {
+            trafficReader.close();
+            trafficReader = null;
+        }
+    }
+
+    public TrafficReader getTrafficReader() {
+        return trafficReader;
     }
 
     public TpsHistoryTask getTpsHistoryTask() {

@@ -25,19 +25,20 @@ server timings and so on.
 
 ## Planning
 
-* Traffic (Bandwith) counter - OS and minecraft (can be done by hooking into Netty) process only
-* Heap usage
-* Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
+- [ ] Traffic (Bandwith) counter of the OS (using Sigar?)
+- [X] Traffic minecraft (can be done by hooking into Netty)
+- [ ] Heap usage
+- [ ] Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
 more detailed
-* Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
-* Caching of the timings or running it async
-* Warning alert if the main thread is WAITING, BLOCKING, SLEEPING -> Example: for SQL-/HTTP-/File-Operations
+- [ ] Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
+- [ ] Caching of the timings or running it async
+- [ ] Warning alert if the main thread is WAITING, BLOCKING, SLEEPING -> Example: for SQL-/HTTP-/File-Operations
 which should be run async
-* Average TPS and player ping
-* Hardware output (using Sigar?)
-* Output the last samples of a player ping (ping is refreshed every 40 ticks)
-* Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
-* Graph for network and file transfer
+- [ ] Average TPS and player ping
+- [ ] Hardware output (using Sigar?)
+- [ ] Output the last samples of a player ping (ping is refreshed every 40 ticks)
+- [ ] Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
+- [ ] Graph for network and file transfer
 
 ## Permissions
 
@@ -94,7 +95,7 @@ lagmonitor.commands.* - Access to all commands
 ![thread sample](https://i.imgur.com/OXOakN6.png)
 
 ### System command
-![system command](https://i.imgur.com/DYrNtGS.png)
+![system command](http://i.imgur.com/hrIV6bW.png)
 
 ### Environment command
 ![environment command](http://i.imgur.com/gQwr126.png)

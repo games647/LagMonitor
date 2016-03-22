@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.traffic.TrafficReader;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -58,6 +59,14 @@ public class SystemCommand implements CommandExecutor {
         //minecraft specific
         sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastSample());
 
+        TrafficReader trafficReader = plugin.getTrafficReader();
+        if (trafficReader != null) {
+            String formattedIncoming = humanReadableByteCount(trafficReader.getIncomingBytes().get(), true);
+            String formattedOutgoing = humanReadableByteCount(trafficReader.getOutgoingBytes().get(), true);
+            sender.sendMessage(PRIMARY_COLOR + "Incoming Traffic: " + SECONDARY_COLOR + formattedIncoming);
+            sender.sendMessage(PRIMARY_COLOR + "Outgoing Traffic: " + SECONDARY_COLOR + formattedOutgoing);
+        }
+
         PluginManager pluginManager = Bukkit.getPluginManager();
         Plugin[] plugins = pluginManager.getPlugins();
         sender.sendMessage(PRIMARY_COLOR + "Plugins: "
@@ -101,5 +110,17 @@ public class SystemCommand implements CommandExecutor {
 
     private long convertBytesToMegaBytes(long bytes) {
         return bytes / 1_024 / 1_024;
+    }
+
+    private String humanReadableByteCount(long bytes, boolean si) {
+        //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }
