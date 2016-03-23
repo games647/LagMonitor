@@ -1,8 +1,10 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.google.common.collect.Lists;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -10,10 +12,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.ChatPaginator;
 
 public class TpsHistoryCommand implements CommandExecutor {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
+    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private static final char EMPTY_CHAR = 'X';
     private static final char GRAPH_CHAR = '+';
@@ -22,7 +26,7 @@ public class TpsHistoryCommand implements CommandExecutor {
     private static final char PLAYER_GRAPH_CHAR = '▇';
 
     private static final int GRAPH_WIDTH = 60 / 2;
-    private static final int GRAPH_LINES = 7;
+    private static final int GRAPH_LINES = ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT - 3;
 
     private final LagMonitor plugin;
 
@@ -37,7 +41,8 @@ public class TpsHistoryCommand implements CommandExecutor {
             graphLines.add(new StringBuilder(GRAPH_WIDTH * 2));
         }
 
-        List<Float> lastSeconds = plugin.getTpsHistoryTask().getLastSeconds();
+        TpsHistoryTask tpsHistoryTask = plugin.getTpsHistoryTask();
+        float[] lastSeconds = tpsHistoryTask.getMinuteSample().getSamples();
 
         boolean console = true;
         if (sender instanceof Player) {
@@ -49,11 +54,24 @@ public class TpsHistoryCommand implements CommandExecutor {
             sender.sendMessage(graphLine.toString());
         }
 
-        sender.sendMessage(PRIMARY_COLOR + "Current TPS: " + plugin.getTpsHistoryTask().getLastSample());
+        printAverageHistory(tpsHistoryTask, sender);
+        sender.sendMessage(PRIMARY_COLOR + "Current TPS: " + tpsHistoryTask.getLastSample());
         return true;
     }
 
-    private void buildGraph(List<Float> lastSeconds, List<StringBuilder> graphLines, boolean console) {
+    private void printAverageHistory(TpsHistoryTask tpsHistoryTask, CommandSender sender) {
+        float minuteAverage = tpsHistoryTask.getMinuteSample().getAverage();
+        float quarterAverage = tpsHistoryTask.getQuarterSample().getAverage();
+        float halfHourAverage = tpsHistoryTask.getHalfHourSample().getAverage();
+
+        DecimalFormat formatter = new DecimalFormat("###.##");
+        sender.sendMessage(PRIMARY_COLOR + "Last Samples (1m, 15m, 30m): " + SECONDARY_COLOR
+                + formatter.format(minuteAverage)
+                + ' ' + formatter.format(quarterAverage)
+                + ' ' + formatter.format(halfHourAverage));
+    }
+
+    private void buildGraph(float[] lastSeconds, List<StringBuilder> graphLines, boolean console) {
         //in x-direction
         int xPos = 1;
         for (float sampleSecond : lastSeconds) {
