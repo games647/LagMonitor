@@ -36,8 +36,8 @@ more detailed
 which should be run async
 - [X] Average TPS and player ping
 - [ ] Hardware output (using Sigar?)
-- [ ] Output the last samples of a player ping (ping is refreshed every 40 ticks)
-- [ ] Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
+- [X] Output the last samples of a player ping (ping is refreshed every 40 ticks)
+- [X] Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
 - [ ] Graph for network and file transfer (Example: http://i.imgur.com/sxTfTjB.png)
 
 ## Permissions

@@ -1,5 +1,11 @@
 # ${project.name} main config
 
 # By hooking into the network management of Minecraft we can read how many bytes
-# the server is receiving or is sending
+# the server is receiving or is sending.
 traffic-counter: true
+
+# If this option is enabled, this plugin will check for events which should run on the main
+# thread. If this not the cause the plugin will throw an exception to inform you. Therefore
+# you can detect thread-safety issues which could end up in ConcurrentModificationExceptions
+# or other issues.
+thread-safety-check: true

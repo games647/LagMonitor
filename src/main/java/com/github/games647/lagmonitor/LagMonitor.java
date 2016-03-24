@@ -12,6 +12,7 @@ import com.github.games647.lagmonitor.commands.ThreadCommand;
 import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
 import com.github.games647.lagmonitor.listeners.PlayerListener;
+import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
@@ -30,8 +31,6 @@ public class LagMonitor extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
         //register commands
         getCommand("ping").setExecutor(new PingCommand(this));
@@ -53,6 +52,12 @@ public class LagMonitor extends JavaPlugin {
 
         if (getConfig().getBoolean("traffic-counter")) {
             trafficReader = new TrafficReader(this);
+        }
+
+        //register listeners
+        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        if (getConfig().getBoolean("thread-safety-check")) {
+            getServer().getPluginManager().registerEvents(new ThreadSafetyListener(this), this);
         }
     }
 

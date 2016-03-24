@@ -1,11 +1,20 @@
 # Changelog
 
+## 0.6
+
+* Added thread-safety check
+
 ## 0.5
 
-* Added world info to the system command
+* Added Ping History -> displays average ping now
+* Added traffic counter
+* Added config
+* Reduce memory usage by getting the stacktrace of only one thread
+* Fixed thread safety
 
 ## 0.4
 
+* Added world info to the system command
 * Added lazy loading for thread monitor to reduce memory usage
 * Added worlds, players and plugins count to the system command
 * Added samples count for thread monitor
