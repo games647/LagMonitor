@@ -48,6 +48,7 @@ public class SystemCommand implements CommandExecutor {
 
         //runtime specific
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
+        sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
 
         sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + maxMemoryFormatted + " MB");
         sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + freeMemoryFormatted + " MB");

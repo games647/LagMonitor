@@ -12,15 +12,14 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**
- * This is modified version of TinyProtocol from the ProtocolLib authors (dmulloy2 and aadnk). The not relevant
- * things are removed like player channel injection and the serverChannelHandler is modified so we can read
- * the raw input of the incoming and outgoing packets
+ * This is modified version of TinyProtocol from the ProtocolLib authors (dmulloy2 and aadnk). The not relevant things
+ * are removed like player channel injection and the serverChannelHandler is modified so we can read the raw input of
+ * the incoming and outgoing packets
  *
  * Original can be found here:
  * https://github.com/dmulloy2/ProtocolLib/blob/master/modules/TinyProtocol/src/main/java/com/comphenix/tinyprotocol/TinyProtocol.java
@@ -141,17 +140,7 @@ public abstract class TinyProtocol {
             final ChannelPipeline pipeline = serverChannel.pipeline();
 
             // Remove channel handler
-            serverChannel.eventLoop().execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        pipeline.remove(serverChannelHandler);
-                    } catch (NoSuchElementException e) {
-                        // That's fine
-                    }
-                }
-            });
+            serverChannel.eventLoop().execute(new CleanUpTask(pipeline, serverChannelHandler));
         }
     }
 

@@ -2,7 +2,12 @@
 
 ## 0.6
 
+* Added startup parameters to the system command
 * Added thread-safety check
+* Added blocking, waiting, sleeping check
+* Fixed NPE on plugin load at runtime
+* Fixes ClassNotFoundException on reload if traffic reader is activated
+* Fixed rounding issues for the average ping
 
 ## 0.5
 

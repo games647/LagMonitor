@@ -32,7 +32,7 @@ server timings and so on.
 more detailed
 - [ ] Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
 - [ ] Caching of the timings or running it async
-- [ ] Warning alert if the main thread is WAITING, BLOCKING, SLEEPING -> Example: for SQL-/HTTP-/File-Operations
+- [X] Warning alert if the main thread is blocked by I/O operations -> Example: for SQL-/HTTP-/File-Operations
 which should be run async
 - [X] Average TPS and player ping
 - [ ] Hardware output (using Sigar?)

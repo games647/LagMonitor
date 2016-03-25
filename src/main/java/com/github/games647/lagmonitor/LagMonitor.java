@@ -13,8 +13,11 @@ import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
 import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
+import com.github.games647.lagmonitor.tasks.BlockingIODetectorTask;
 import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+
+import java.util.Timer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,10 +28,12 @@ public class LagMonitor extends JavaPlugin {
     //the server is pinging the client every 40 Ticks - so check it then
     //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
     private static final int PING_INTERVAL = 40;
+    private static final int DETECTION_THRESHOLD = 10;
 
     private TpsHistoryTask tpsHistoryTask;
     private PingHistoryTask pingHistoryTask;
     private TrafficReader trafficReader;
+    private Timer timer;
 
     @Override
     public void onEnable() {
@@ -66,6 +71,12 @@ public class LagMonitor extends JavaPlugin {
         if (getConfig().getBoolean("thread-safety-check")) {
             getServer().getPluginManager().registerEvents(new ThreadSafetyListener(this), this);
         }
+
+        if (getConfig().getBoolean("thread-block-detection")) {
+            timer = new Timer(getName() + "-Thread-Blocking-Detection");
+            BlockingIODetectorTask blockingIODetectorTask = new BlockingIODetectorTask(this, Thread.currentThread());
+            timer.scheduleAtFixedRate(blockingIODetectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
+        }
     }
 
     @Override
@@ -73,6 +84,12 @@ public class LagMonitor extends JavaPlugin {
         if (trafficReader != null) {
             trafficReader.close();
             trafficReader = null;
+        }
+
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
         }
     }
 

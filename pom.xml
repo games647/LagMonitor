@@ -81,7 +81,12 @@
         <!--Bukkit-Server-API -->
         <repository>
             <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <url>http://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>paper-repo</id>
+            <url>http://repo.destroystokyo.com/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -94,6 +99,15 @@
             <scope>provided</scope>
         </dependency>
 
+<!--        <dependency>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.9-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>-->
+
+        <!--Netty work library of Minecraft
+        This is added to read the amount of bytes which are sent or received-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>

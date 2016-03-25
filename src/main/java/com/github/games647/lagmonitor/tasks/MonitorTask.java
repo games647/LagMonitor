@@ -6,6 +6,7 @@ import com.github.games647.lagmonitor.commands.MonitorCommand;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.TimerTask;
 
 /**
@@ -15,6 +16,7 @@ public class MonitorTask extends TimerTask {
 
     private static final int MAX_DEPTH = 25;
 
+    private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
     private final LagMonitor plugin;
     private final long threadId;
 
@@ -39,7 +41,7 @@ public class MonitorTask extends TimerTask {
         synchronized (this) {
             samples++;
 
-            ThreadInfo threadInfo = ManagementFactory.getThreadMXBean().getThreadInfo(threadId, MAX_DEPTH);
+            ThreadInfo threadInfo = threadMXBean.getThreadInfo(threadId, MAX_DEPTH);
             StackTraceElement[] stackTrace = threadInfo.getStackTrace();
             if (stackTrace.length > 0) {
                 StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
