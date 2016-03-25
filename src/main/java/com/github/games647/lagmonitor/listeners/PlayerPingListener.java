@@ -9,11 +9,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerListener implements Listener {
+public class PlayerPingListener implements Listener {
 
     private final LagMonitor plugin;
 
-    public PlayerListener(LagMonitor plugin) {
+    public PlayerPingListener(LagMonitor plugin) {
         this.plugin = plugin;
     }
 

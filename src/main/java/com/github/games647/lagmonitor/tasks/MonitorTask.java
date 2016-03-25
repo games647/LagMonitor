@@ -1,11 +1,16 @@
-package com.github.games647.lagmonitor;
+package com.github.games647.lagmonitor.tasks;
 
+import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.MethodMeasurement;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.TimerTask;
 
+/**
+ * Based on the project https://github.com/sk89q/WarmRoast by sk89q
+ */
 public class MonitorTask extends TimerTask {
 
     private static final int MAX_DEPTH = 25;

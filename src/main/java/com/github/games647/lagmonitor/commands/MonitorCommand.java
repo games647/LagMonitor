@@ -2,7 +2,7 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
-import com.github.games647.lagmonitor.MonitorTask;
+import com.github.games647.lagmonitor.tasks.MonitorTask;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;

@@ -11,11 +11,13 @@ import com.github.games647.lagmonitor.commands.SystemCommand;
 import com.github.games647.lagmonitor.commands.ThreadCommand;
 import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
-import com.github.games647.lagmonitor.listeners.PlayerListener;
+import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class LagMonitor extends JavaPlugin {
@@ -55,7 +57,12 @@ public class LagMonitor extends JavaPlugin {
         }
 
         //register listeners
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerPingListener(this), this);
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            //add the player to the list in the case the plugin is loaded at runtime
+            pingHistoryTask.addPlayer(onlinePlayer);
+        }
+
         if (getConfig().getBoolean("thread-safety-check")) {
             getServer().getPluginManager().registerEvents(new ThreadSafetyListener(this), this);
         }

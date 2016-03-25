@@ -9,6 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,7 +25,13 @@ public class PingHistoryTask implements Runnable {
 
     @Override
     public void run() {
-
+        for (Entry<Player, RollingOverHistory> entry : playerHistory.entrySet()) {
+            Player player = entry.getKey();
+            int ping = getReflectionPing(player);
+            
+            RollingOverHistory history = entry.getValue();
+            history.add(ping);
+        }
     }
 
     public RollingOverHistory getHistory(Player player) {

@@ -3,7 +3,7 @@ package com.github.games647.lagmonitor;
 public class RollingOverHistory {
 
     private final float[] samples;
-    private long total;
+    private float total;
 
     private int currentPosition = 1;
     private int currentSize = 1;
@@ -47,7 +47,7 @@ public class RollingOverHistory {
     public float getLastSample() {
         int lastPos = currentPosition - 1;
         if (lastPos < 0) {
-            lastPos = samples.length;
+            lastPos = samples.length - 1;
         }
 
         return samples[lastPos];
