@@ -33,7 +33,8 @@ public class LagMonitor extends JavaPlugin {
     private TpsHistoryTask tpsHistoryTask;
     private PingHistoryTask pingHistoryTask;
     private TrafficReader trafficReader;
-    private Timer timer;
+    private Timer blockDetectionTimer;
+    private Timer monitorTimer;
 
     @Override
     public void onEnable() {
@@ -73,9 +74,9 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("thread-block-detection")) {
-            timer = new Timer(getName() + "-Thread-Blocking-Detection");
+            blockDetectionTimer = new Timer(getName() + "-Thread-Blocking-Detection");
             BlockingIODetectorTask blockingIODetectorTask = new BlockingIODetectorTask(this, Thread.currentThread());
-            timer.scheduleAtFixedRate(blockingIODetectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
+            blockDetectionTimer.scheduleAtFixedRate(blockingIODetectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
         }
     }
 
@@ -86,11 +87,25 @@ public class LagMonitor extends JavaPlugin {
             trafficReader = null;
         }
 
-        if (timer != null) {
-            timer.cancel();
-            timer.purge();
-            timer = null;
+        if (blockDetectionTimer != null) {
+            blockDetectionTimer.cancel();
+            blockDetectionTimer.purge();
+            blockDetectionTimer = null;
         }
+
+        if (monitorTimer != null) {
+            monitorTimer.cancel();
+            monitorTimer.purge();
+            monitorTimer = null;
+        }
+    }
+
+    public Timer getMonitorTimer() {
+        return monitorTimer;
+    }
+
+    public void setMonitorTimer(Timer monitorTimer) {
+        this.monitorTimer = monitorTimer;
     }
 
     public TrafficReader getTrafficReader() {

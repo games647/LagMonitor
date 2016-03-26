@@ -22,7 +22,6 @@ public class MonitorCommand implements CommandExecutor {
 
     private final LagMonitor plugin;
 
-    private Timer timer;
     private MonitorTask monitorTask;
 
     public MonitorCommand(LagMonitor plugin) {
@@ -53,7 +52,7 @@ public class MonitorCommand implements CommandExecutor {
         return true;
     }
 
-    public void printTrace(CommandSender sender, long parentTime, MethodMeasurement current, int depth) {
+    private void printTrace(CommandSender sender, long parentTime, MethodMeasurement current, int depth) {
         StringBuilder depthSpace = new StringBuilder();
         for (int i = 0; i < depth; i++) {
             depthSpace.append(' ');
@@ -76,8 +75,11 @@ public class MonitorCommand implements CommandExecutor {
     }
 
     private void startMonitor(CommandSender sender) {
+        Timer timer = plugin.getMonitorTimer();
         if (monitorTask == null && timer == null) {
             timer = new Timer(plugin.getName() + "-Monitor");
+            plugin.setMonitorTimer(timer);
+
             monitorTask = new MonitorTask(plugin, Thread.currentThread().getId());
             timer.scheduleAtFixedRate(monitorTask, SAMPLE_DELAY, SAMPLE_INTERVALL);
 
@@ -88,13 +90,15 @@ public class MonitorCommand implements CommandExecutor {
     }
 
     private void stopMonitor(CommandSender sender) {
+        Timer timer = plugin.getMonitorTimer();
         if (monitorTask == null && timer == null) {
             sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
         } else {
             timer.cancel();
             timer.purge();
             monitorTask = null;
-            timer = null;
+            plugin.setMonitorTimer(null);
+
             sender.sendMessage(ChatColor.DARK_GREEN + "Monitor stopped");
         }
     }

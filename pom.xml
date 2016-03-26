@@ -84,10 +84,10 @@
             <url>http://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
-        <repository>
+        <!--<repository>
             <id>paper-repo</id>
             <url>http://repo.destroystokyo.com/content/repositories/snapshots/</url>
-        </repository>
+        </repository>-->
     </repositories>
 
     <dependencies>
@@ -99,7 +99,7 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        <dependency>
+        <!--<dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.9-R0.1-SNAPSHOT</version>

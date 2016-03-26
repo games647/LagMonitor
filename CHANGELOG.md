@@ -8,6 +8,7 @@
 * Fixed NPE on plugin load at runtime
 * Fixes ClassNotFoundException on reload if traffic reader is activated
 * Fixed rounding issues for the average ping
+* Fixed cleanup of monitor task on plugin disable
 
 ## 0.5
 
