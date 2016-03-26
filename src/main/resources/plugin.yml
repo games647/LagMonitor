@@ -51,6 +51,9 @@ commands:
         description: 'Gives you some general information (OS related)'
         permission: ${project.artifactId}.command.environment
         aliases: [env]
+    native:
+        description: 'Gives you information about your Hardware'
+        permission: ${project.artifactId}.command.native
 
 permissions:
     ${project.artifactId}.*:
@@ -71,6 +74,7 @@ permissions:
             ${project.artifactId}.command.timing: true
             ${project.artifactId}.command.monitor: true
             ${project.artifactId}.command.graph: true
+            ${project.artifactId}.command.native: true
 
     ${project.artifactId}.command.ping.other:
         description: 'Get the ping from other players'

@@ -2,9 +2,14 @@
 
 ## 0.6
 
+* Added /native command to query native data like OS uptime, Network adapter speed, CPU MHZ, ...
 * Added startup parameters to the system command
 * Added thread-safety check
 * Added blocking, waiting, sleeping check
+* Added Thread id to the threads command
+* Improved readability for tpshistory command in console
+* Fixed very low tps value displayed as full tps
+* Fixed scrolling tpsHistory
 * Fixed NPE on plugin load at runtime
 * Fixes ClassNotFoundException on reload if traffic reader is activated
 * Fixed rounding issues for the average ping

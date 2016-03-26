@@ -19,7 +19,7 @@ public class TpsHistoryCommand implements CommandExecutor {
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
-    private static final char EMPTY_CHAR = 'X';
+    private static final char EMPTY_CHAR = ' ';
     private static final char GRAPH_CHAR = '+';
 
     private static final char PLAYER_EMPTY_CHAR = '▂';
@@ -42,14 +42,15 @@ public class TpsHistoryCommand implements CommandExecutor {
         }
 
         TpsHistoryTask tpsHistoryTask = plugin.getTpsHistoryTask();
-        float[] lastSeconds = tpsHistoryTask.getMinuteSample().getSamples();
 
         boolean console = true;
         if (sender instanceof Player) {
             console = false;
         }
 
-        buildGraph(lastSeconds, graphLines, console);
+        float[] lastSeconds = tpsHistoryTask.getMinuteSample().getSamples();
+        int position = tpsHistoryTask.getMinuteSample().getCurrentPosition();
+        buildGraph(lastSeconds, position, graphLines, console);
         for (StringBuilder graphLine : graphLines) {
             sender.sendMessage(graphLine.toString());
         }
@@ -71,22 +72,23 @@ public class TpsHistoryCommand implements CommandExecutor {
                 + ' ' + formatter.format(halfHourAverage));
     }
 
-    private void buildGraph(float[] lastSeconds, List<StringBuilder> graphLines, boolean console) {
+    private void buildGraph(float[] lastSeconds, int lastPos, List<StringBuilder> graphLines, boolean console) {
+        int index = lastPos;
         //in x-direction
-        int xPos = 1;
-        for (float sampleSecond : lastSeconds) {
-            xPos++;
-            if (xPos >= GRAPH_WIDTH) {
-                break;
+        for (int xPos = 1; xPos < GRAPH_WIDTH; xPos++) {
+            index++;
+            if (index == lastSeconds.length) {
+                index = 0;
             }
 
+            float sampleSecond = lastSeconds[index];
             buildLine(sampleSecond, graphLines, console);
         }
     }
 
     private void buildLine(float sampleSecond, List<StringBuilder> graphLines, boolean console) {
         ChatColor color = ChatColor.DARK_RED;
-        int lines = 6;
+        int lines = 0;
         if (sampleSecond > 19.5F) {
             lines = GRAPH_LINES;
             color = ChatColor.DARK_GREEN;
@@ -107,7 +109,7 @@ public class TpsHistoryCommand implements CommandExecutor {
         //in y-direction in reverse order
         for (int line = GRAPH_LINES - 1; line >= 0; line--) {
             if (lines == 0) {
-                graphLines.get(line).append(color).append(console ? EMPTY_CHAR : PLAYER_EMPTY_CHAR);
+                graphLines.get(line).append(ChatColor.WHITE).append(console ? EMPTY_CHAR : PLAYER_EMPTY_CHAR);
                 continue;
             }
 

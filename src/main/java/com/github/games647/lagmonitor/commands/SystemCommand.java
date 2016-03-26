@@ -44,14 +44,16 @@ public class SystemCommand implements CommandExecutor {
 
         Runtime runtime = Runtime.getRuntime();
         double maxMemoryFormatted = convertBytesToMegaBytes(runtime.maxMemory());
-        double freeMemoryFormatted = convertBytesToMegaBytes(runtime.maxMemory() - runtime.totalMemory());
+        double freeMemoryFormatted = convertBytesToMegaBytes(runtime.freeMemory());
+        double totalMemoryFormatted = convertBytesToMegaBytes(runtime.totalMemory());
 
         //runtime specific
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
         sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
 
-        sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + maxMemoryFormatted + " MB");
         sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + freeMemoryFormatted + " MB");
+        sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + maxMemoryFormatted + " MB");
+        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + totalMemoryFormatted + " MB");
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
     }

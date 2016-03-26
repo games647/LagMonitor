@@ -25,7 +25,7 @@ server timings and so on.
 
 ## Planning
 
-- [ ] Traffic (Bandwith) counter of the OS (using Sigar?)
+- [X] Traffic (Bandwith) counter of the OS (using Sigar?)
 - [X] Traffic minecraft (can be done by hooking into Netty)
 - [ ] Heap usage (object size, instances)
 - [ ] Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
@@ -35,10 +35,11 @@ more detailed
 - [X] Warning alert if the main thread is blocked by I/O operations -> Example: for SQL-/HTTP-/File-Operations
 which should be run async
 - [X] Average TPS and player ping
-- [ ] Hardware output (using Sigar?)
+- [X] Hardware output (using Sigar?)
 - [X] Output the last samples of a player ping (ping is refreshed every 40 ticks)
 - [X] Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
 - [ ] Graph for network and file transfer (Example: http://i.imgur.com/sxTfTjB.png)
+- [ ] PaperSpigot Timings parser
 
 ## Permissions
 
@@ -57,6 +58,7 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.timing
 * lagmonitor.command.monitor
 * lagmonitor.command.graph
+* lagmonitor.command.native
 
 ## Commands
 
@@ -75,6 +77,7 @@ lagmonitor.commands.* - Access to all commands
 /timing - Outputs your server timings ingame
 /monitor - Monitors the CPU usage of methods
 /graph [heap/cpu/thread/classes] - Gives you visual graph about your server (currently only the heap usage)
+/native - Gives you some native os information
 ```
 
 ## Images
