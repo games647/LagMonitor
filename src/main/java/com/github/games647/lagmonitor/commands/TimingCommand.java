@@ -1,5 +1,6 @@
 package com.github.games647.lagmonitor.commands;
 
+import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Timing;
 import com.google.common.base.Charsets;
@@ -37,6 +38,14 @@ public class TimingCommand implements CommandExecutor {
         if (!Bukkit.getServer().getPluginManager().useTimings()) {
             sender.sendMessage(ChatColor.DARK_RED + "The server deactivated timing reports");
             sender.sendMessage(ChatColor.DARK_RED + "Go to bukkit.yml and activate plugin-profiling");
+            return true;
+        }
+
+        if (!ClassUtil.isPresent("org.bukkit.command.defaults.TimingsCommand")) {
+            sender.sendMessage(ChatColor.DARK_RED + "You're using a new Timings version on your server system");
+            sender.sendMessage(ChatColor.DARK_RED + "This is currently unsupported");
+            sender.sendMessage(ChatColor.DARK_RED + "For more details: Visit: ");
+            sender.sendMessage(ChatColor.DARK_RED + "https://github.com/games647/LagMonitor/issues/5");
             return true;
         }
 
