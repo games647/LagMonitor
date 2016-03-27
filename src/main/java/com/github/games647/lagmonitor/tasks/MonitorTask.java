@@ -38,13 +38,13 @@ public class MonitorTask extends TimerTask {
 
     @Override
     public void run() {
-        synchronized (this) {
-            samples++;
+        ThreadInfo threadInfo = threadMXBean.getThreadInfo(threadId, MAX_DEPTH);
+        StackTraceElement[] stackTrace = threadInfo.getStackTrace();
+        if (stackTrace.length > 0) {
+            StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
+            synchronized (this) {
+                samples++;
 
-            ThreadInfo threadInfo = threadMXBean.getThreadInfo(threadId, MAX_DEPTH);
-            StackTraceElement[] stackTrace = threadInfo.getStackTrace();
-            if (stackTrace.length > 0) {
-                StackTraceElement rootElement = stackTrace[stackTrace.length - 1];
                 if (rootNode == null) {
                     String rootClass = rootElement.getClassName();
                     String rootMethod = rootElement.getMethodName();

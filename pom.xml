@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>LagMonitor</name>
-    <version>0.6</version>
+    <version>0.7</version>
     <inceptionYear>2016</inceptionYear>
     <url>http://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
@@ -109,10 +109,10 @@
             <url>http://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
-<!--        <repository>
+        <repository>
             <id>paper-repo</id>
-            <url>http://repo.destroystokyo.com/content/repositories/snapshots/</url>
-        </repository>-->
+            <url>https://repo.destroystokyo.com/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -124,12 +124,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.9-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
 
         <!--Netty work library of Minecraft
         This is added to read the amount of bytes which are sent or received-->

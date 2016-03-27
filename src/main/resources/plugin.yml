@@ -43,9 +43,11 @@ commands:
     monitor:
         description: 'Monitors the CPU usage of methods'
         permission: ${project.artifactId}.command.monitor
+        usage: '/<command> [start/stop]'
+        aliases: [profile, profiler, prof]
     graph:
         description: 'Gives you visual graph about your server'
-        usage: '/<command> [heap/cpu/threads]'
+        usage: '/<command> [heap/cpu/threads/classes]'
         permission: ${project.artifactId}.command.graph
     environment:
         description: 'Gives you some general information (OS related)'
@@ -54,6 +56,9 @@ commands:
     native:
         description: 'Gives you information about your Hardware'
         permission: ${project.artifactId}.command.native
+    paper:
+        description: 'Debug command for paper timings parser'
+        permission: ${project.artifactId}.command.paper
 
 permissions:
     ${project.artifactId}.*:
@@ -75,6 +80,7 @@ permissions:
             ${project.artifactId}.command.monitor: true
             ${project.artifactId}.command.graph: true
             ${project.artifactId}.command.native: true
+            ${project.artifactId}.command.paper: true
 
     ${project.artifactId}.command.ping.other:
         description: 'Get the ping from other players'

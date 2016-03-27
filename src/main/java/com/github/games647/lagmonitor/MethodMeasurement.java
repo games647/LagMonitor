@@ -60,16 +60,16 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
             return;
         }
 
-        StackTraceElement nextChildElement = stackTrace[stackTrace.length - skipElements - 1];
-        String nextClass = nextChildElement.getClassName();
-        String nextMethod = nextChildElement.getMethodName();
-
-        String idName = nextChildElement.getClassName() + '.' + nextChildElement.getMethodName();
         if (childInvokes == null) {
             //lazy loading
             childInvokes = Maps.newHashMap();
         }
 
+        StackTraceElement nextChildElement = stackTrace[stackTrace.length - skipElements - 1];
+        String nextClass = nextChildElement.getClassName();
+        String nextMethod = nextChildElement.getMethodName();
+
+        String idName = nextChildElement.getClassName() + '.' + nextChildElement.getMethodName();
         MethodMeasurement child = childInvokes.get(idName);
         if (child == null) {
             child = new MethodMeasurement(idName, nextClass, nextMethod);
