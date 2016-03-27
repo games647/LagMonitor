@@ -3,7 +3,6 @@ package com.github.games647.lagmonitor.commands;
 import com.github.games647.lagmonitor.LagMonitor;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
@@ -63,9 +62,8 @@ public class NativeCommand implements CommandExecutor {
 
         Sigar sigar = new Sigar();
         try {
-            double uptime = sigar.getUptime().getUptime() - 60 * 60 * 1000;
-            String uptimeFormat = new SimpleDateFormat("HH 'hour' mm 'minutes' ss 'seconds'").format(uptime);
-            sender.sendMessage(PRIMARY_COLOR + "OS Updtime: " + SECONDARY_COLOR + uptimeFormat);
+            int uptime = (int) sigar.getUptime().getUptime();
+            sender.sendMessage(PRIMARY_COLOR + "OS Updtime: " + SECONDARY_COLOR + formatUptime(uptime));
 
             CpuInfo[] cpuInfoList = sigar.getCpuInfoList();
             int mhz = cpuInfoList[0].getMhz();
@@ -97,7 +95,8 @@ public class NativeCommand implements CommandExecutor {
             }
 
             if (usedNetInterfaceStat != null) {
-                sender.sendMessage(PRIMARY_COLOR + "Net speed: " + SECONDARY_COLOR + usedNetInterfaceStat.getSpeed());
+                long speed = usedNetInterfaceStat.getSpeed();
+                sender.sendMessage(PRIMARY_COLOR + "Net speed: " + SECONDARY_COLOR + Sigar.formatSize(speed));
 
                 long receivedBytes = usedNetInterfaceStat.getRxBytes();
                 long sentBytes = usedNetInterfaceStat.getTxBytes();
@@ -127,5 +126,15 @@ public class NativeCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private String formatUptime(int uptime) {
+        int days = uptime / (60 * 60 * 24);
+
+        int minutes = uptime / 60;
+        int hours = minutes / 60;
+        hours %= 24;
+        minutes %= 60;
+        return days + " days " + hours + " hours " + minutes + " Minutes";
     }
 }

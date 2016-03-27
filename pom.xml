@@ -71,6 +71,7 @@
                         </includes>
                     </artifactSet>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <!--Remove the unneeded for running sigar as a standalone-->
                     <minimizeJar>true</minimizeJar>
                 </configuration>
                 <executions>
@@ -108,7 +109,7 @@
             <url>http://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
-        <!--<repository>
+<!--        <repository>
             <id>paper-repo</id>
             <url>http://repo.destroystokyo.com/content/repositories/snapshots/</url>
         </repository>-->
