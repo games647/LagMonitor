@@ -9,9 +9,11 @@ import com.github.games647.lagmonitor.commands.MonitorCommand;
 import com.github.games647.lagmonitor.commands.PingCommand;
 import com.github.games647.lagmonitor.commands.StackTraceCommand;
 import com.github.games647.lagmonitor.commands.SystemCommand;
+import com.github.games647.lagmonitor.commands.TasksCommand;
 import com.github.games647.lagmonitor.commands.ThreadCommand;
 import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
+import com.github.games647.lagmonitor.commands.VmCommand;
 import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.tasks.BlockingIODetectorTask;
@@ -53,6 +55,8 @@ public class LagMonitor extends JavaPlugin {
         getCommand("timing").setExecutor(new TimingCommand(this));
         getCommand("graph").setExecutor(new GraphCommand(this));
         getCommand("native").setExecutor(new NativeCommand(this));
+        getCommand("vm").setExecutor(new VmCommand(this));
+        getCommand("tasks").setExecutor(new TasksCommand(this));
 //        getCommand("paper").setExecutor(new PaperTimingsCommand(this));
 
         //register schedule tasks

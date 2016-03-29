@@ -60,6 +60,10 @@ commands:
         description: 'Gives you information about your Hardware'
         aliases: [virtualmachine, machine, virtual]
         permission: ${project.artifactId}.command.vm
+    tasks:
+        description: 'Information about running and pending tasks'
+        aliases: [task]
+        permission: ${project.artifactId}.command.tasks
     paper:
         description: 'Debug command for paper timings parser'
         permission: ${project.artifactId}.command.paper
@@ -85,6 +89,7 @@ permissions:
             ${project.artifactId}.command.graph: true
             ${project.artifactId}.command.native: true
             ${project.artifactId}.command.vm: true
+            ${project.artifactId}.command.tasks: true
             ${project.artifactId}.command.paper: true
 
     ${project.artifactId}.command.ping.other:

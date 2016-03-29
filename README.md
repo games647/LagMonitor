@@ -60,6 +60,7 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.graph
 * lagmonitor.command.native
 * lagmonitor.command.vm
+* lagmonitor.command.tasks
 * lagmonitor.command.paper
 
 ## Commands
@@ -81,6 +82,7 @@ lagmonitor.commands.* - Access to all commands
 /graph [heap/cpu/thread/classes] - Gives you visual graph about your server (currently only the heap usage)
 /native - Gives you some native os information
 /vm - Outputs vm specific information like garbage collector, class loading or vm specification
+/tasks - Information about running and pending tasks
 /paper - Outputs paper spigot timings
 ```
 
