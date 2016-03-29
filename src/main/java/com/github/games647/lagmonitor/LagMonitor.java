@@ -6,7 +6,6 @@ import com.github.games647.lagmonitor.commands.GraphCommand;
 import com.github.games647.lagmonitor.commands.NativeCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
-import com.github.games647.lagmonitor.commands.PaperTimingsCommand;
 import com.github.games647.lagmonitor.commands.PingCommand;
 import com.github.games647.lagmonitor.commands.StackTraceCommand;
 import com.github.games647.lagmonitor.commands.SystemCommand;
@@ -54,7 +53,7 @@ public class LagMonitor extends JavaPlugin {
         getCommand("timing").setExecutor(new TimingCommand(this));
         getCommand("graph").setExecutor(new GraphCommand(this));
         getCommand("native").setExecutor(new NativeCommand(this));
-        getCommand("paper").setExecutor(new PaperTimingsCommand(this));
+//        getCommand("paper").setExecutor(new PaperTimingsCommand(this));
 
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
