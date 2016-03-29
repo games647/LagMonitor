@@ -5,7 +5,6 @@ import com.github.games647.lagmonitor.LagMonitor;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.text.DecimalFormat;
 
 import org.bukkit.ChatColor;
@@ -27,18 +26,11 @@ public class EnvironmentCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-        RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 
         //os general info
         sender.sendMessage(PRIMARY_COLOR + "OS Name: " + SECONDARY_COLOR + osBean.getName());
         sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
         sender.sendMessage(PRIMARY_COLOR + "OS Arch: " + SECONDARY_COLOR + osBean.getArch());
-
-        //java info
-        sender.sendMessage(PRIMARY_COLOR + "Java VM: " + SECONDARY_COLOR + runtimeBean.getVmName());
-        sender.sendMessage(PRIMARY_COLOR + "Java Version: " + SECONDARY_COLOR + System.getProperty("java.version"));
-        sender.sendMessage(PRIMARY_COLOR + "Java Vendor: " + SECONDARY_COLOR
-                + runtimeBean.getVmVendor() + ' ' + runtimeBean.getVmVersion());
 
         //CPU
         sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
@@ -56,8 +48,8 @@ public class EnvironmentCommand implements CommandExecutor {
             String systemLoadFormat = decimalFormat.format(systemCpuLoad);
             String processLoadFormat = decimalFormat.format(processCpuLoad);
 
-            sender.sendMessage(PRIMARY_COLOR + "System usage: " + SECONDARY_COLOR + systemLoadFormat);
-            sender.sendMessage(PRIMARY_COLOR + "Process usage: " + SECONDARY_COLOR + processLoadFormat);
+            sender.sendMessage(PRIMARY_COLOR + "System Usage: " + SECONDARY_COLOR + systemLoadFormat);
+            sender.sendMessage(PRIMARY_COLOR + "Process Usage: " + SECONDARY_COLOR + processLoadFormat);
 
             //RAM
             //include swap memory?
@@ -83,8 +75,8 @@ public class EnvironmentCommand implements CommandExecutor {
         }
 
         //Disk info
-        sender.sendMessage(PRIMARY_COLOR + "Disk size: " + SECONDARY_COLOR + humanReadableByteCount(totalSpace, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free space: " + SECONDARY_COLOR + humanReadableByteCount(freeSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + humanReadableByteCount(totalSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + humanReadableByteCount(freeSpace, true));
     }
 
     private int convertBytesToMega(long bytes) {

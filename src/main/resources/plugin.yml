@@ -56,6 +56,10 @@ commands:
     native:
         description: 'Gives you information about your Hardware'
         permission: ${project.artifactId}.command.native
+    vm:
+        description: 'Gives you information about your Hardware'
+        aliases: [virtualmachine, machine, virtual]
+        permission: ${project.artifactId}.command.vm
     paper:
         description: 'Debug command for paper timings parser'
         permission: ${project.artifactId}.command.paper
@@ -80,6 +84,7 @@ permissions:
             ${project.artifactId}.command.monitor: true
             ${project.artifactId}.command.graph: true
             ${project.artifactId}.command.native: true
+            ${project.artifactId}.command.vm: true
             ${project.artifactId}.command.paper: true
 
     ${project.artifactId}.command.ping.other:

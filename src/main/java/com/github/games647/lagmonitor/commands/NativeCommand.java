@@ -97,7 +97,7 @@ public class NativeCommand implements CommandExecutor {
 
             if (usedNetInterfaceStat != null) {
                 long speed = usedNetInterfaceStat.getSpeed();
-                sender.sendMessage(PRIMARY_COLOR + "Net speed: " + SECONDARY_COLOR + Sigar.formatSize(speed));
+                sender.sendMessage(PRIMARY_COLOR + "Net Speed: " + SECONDARY_COLOR + Sigar.formatSize(speed));
 
                 long receivedBytes = usedNetInterfaceStat.getRxBytes();
                 long sentBytes = usedNetInterfaceStat.getTxBytes();
