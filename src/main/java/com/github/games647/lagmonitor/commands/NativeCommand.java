@@ -30,6 +30,7 @@ public class NativeCommand implements CommandExecutor {
         this.plugin = plugin;
 
         //setting the location where sigar can find the library
+        //otherwise it would lookup the library path of Java
         System.setProperty("org.hyperic.sigar.path", plugin.getDataFolder().getPath());
     }
 
@@ -104,12 +105,12 @@ public class NativeCommand implements CommandExecutor {
                 sender.sendMessage(PRIMARY_COLOR + "Net Sent: " + SECONDARY_COLOR + Sigar.formatSize(sentBytes));
             }
 
-            //*should* already included in environment - because its querable with mbeans too
+            //*should* already included in environment - because its queryable with mbeans too
 //            Swap swap = sigar.getSwap();
 //            long swapTotal = swap.getTotal();
 //            long swapUsed = swap.getUsed();
 
-            //load - only available in linux/Unix
+            //load - only available in linux/Unix already included in environment
 //            System.out.println(Arrays.toString(sigar.getLoadAverage()));
 
             //disk read write

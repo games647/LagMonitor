@@ -43,6 +43,7 @@ public class EnvironmentCommand implements CommandExecutor {
         //CPU
         sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
         sender.sendMessage(PRIMARY_COLOR + "CPU: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
+        sender.sendMessage(PRIMARY_COLOR + "Load: " + SECONDARY_COLOR + osBean.getSystemLoadAverage());
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean sunOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
 
@@ -55,8 +56,8 @@ public class EnvironmentCommand implements CommandExecutor {
             String systemLoadFormat = decimalFormat.format(systemCpuLoad);
             String processLoadFormat = decimalFormat.format(processCpuLoad);
 
-            sender.sendMessage(PRIMARY_COLOR + "System load: " + SECONDARY_COLOR + systemLoadFormat);
-            sender.sendMessage(PRIMARY_COLOR + "Process load: " + SECONDARY_COLOR + processLoadFormat);
+            sender.sendMessage(PRIMARY_COLOR + "System usage: " + SECONDARY_COLOR + systemLoadFormat);
+            sender.sendMessage(PRIMARY_COLOR + "Process usage: " + SECONDARY_COLOR + processLoadFormat);
 
             //RAM
             //include swap memory?
