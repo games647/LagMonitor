@@ -43,9 +43,7 @@ public class TimingCommand implements CommandExecutor {
 
         if (!ClassUtil.isPresent("org.bukkit.command.defaults.TimingsCommand")) {
             sender.sendMessage(ChatColor.DARK_RED + "You're using a new Timings version on your server system");
-            sender.sendMessage(ChatColor.DARK_RED + "This is currently unsupported");
-            sender.sendMessage(ChatColor.DARK_RED + "For more details: Visit: ");
-            sender.sendMessage(ChatColor.DARK_RED + "https://github.com/games647/LagMonitor/issues/5");
+            sender.sendMessage(ChatColor.DARK_RED + "Please use the experimental command /paper");
             return true;
         }
 
@@ -259,7 +257,7 @@ public class TimingCommand implements CommandExecutor {
     }
 
     private long getPropertyValue(String line, String propertyName) {
-        String unparsedProperty = getProperty(line, propertyName);
-        return Long.parseLong(unparsedProperty);
+        String parsedProperty = getProperty(line, propertyName);
+        return Long.parseLong(parsedProperty);
     }
 }

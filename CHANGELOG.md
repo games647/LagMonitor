@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7
+
+* Added /lag alias for the /tpshistory command
+* Added swap to the environment command
+* Added tasks command
+* Added /vm command for class loading, garbage collectors, vm specifications
+* Added basic PaperSpigot timings parser
+* Added load average to the environment command
+* Moved Java version to the vm command
+* Optimized thread locking in monitor/profiler for better performance
+
 ## 0.6
 
 * Added /native command to query native data like OS uptime, Network adapter speed, CPU MHZ, ...

@@ -61,6 +61,11 @@ public class NativeCommand implements CommandExecutor {
             return true;
         }
 
+        printNativeInfo(sender);
+        return true;
+    }
+
+    private void printNativeInfo(CommandSender sender) {
         Sigar sigar = new Sigar();
         try {
             int uptime = (int) sigar.getUptime().getUptime();
@@ -73,7 +78,6 @@ public class NativeCommand implements CommandExecutor {
             CpuPerc cpuPerc = sigar.getCpuPerc();
             //IO wait
             double wait = cpuPerc.getWait();
-//            double combined = cpuPerc.getCombined();
             sender.sendMessage(PRIMARY_COLOR + "CPU Wait (I/O): " + SECONDARY_COLOR + wait + '%');
 
             Mem mem = sigar.getMem();
@@ -106,12 +110,12 @@ public class NativeCommand implements CommandExecutor {
             }
 
             //*should* already included in environment - because its queryable with mbeans too
-//            Swap swap = sigar.getSwap();
-//            long swapTotal = swap.getTotal();
-//            long swapUsed = swap.getUsed();
+            //            Swap swap = sigar.getSwap();
+            //            long swapTotal = swap.getTotal();
+            //            long swapUsed = swap.getUsed();
 
             //load - only available in linux/Unix already included in environment
-//            System.out.println(Arrays.toString(sigar.getLoadAverage()));
+            //            System.out.println(Arrays.toString(sigar.getLoadAverage()));
 
             //disk read write
             String rootFileSystem = File.listRoots()[0].getAbsolutePath();
@@ -125,8 +129,6 @@ public class NativeCommand implements CommandExecutor {
         } finally {
             sigar.close();
         }
-
-        return true;
     }
 
     private String formatUptime(int uptime) {

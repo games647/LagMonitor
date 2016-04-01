@@ -35,34 +35,41 @@ public class EnvironmentCommand implements CommandExecutor {
         //CPU
         sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
         sender.sendMessage(PRIMARY_COLOR + "CPU: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
-        sender.sendMessage(PRIMARY_COLOR + "Load: " + SECONDARY_COLOR + osBean.getSystemLoadAverage());
+        sender.sendMessage(PRIMARY_COLOR + "Load Average: " + SECONDARY_COLOR + osBean.getSystemLoadAverage());
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
-            com.sun.management.OperatingSystemMXBean sunOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
-
-            //these numbers are in percent (0.01 -> 1%)
-            //we want to to have four places in a human readable percent value to multiple it wiht 100
-            DecimalFormat decimalFormat = new DecimalFormat("###.#### %");
-            decimalFormat.setMultiplier(100);
-            double systemCpuLoad = sunOsBean.getSystemCpuLoad();
-            double processCpuLoad = sunOsBean.getProcessCpuLoad();
-            String systemLoadFormat = decimalFormat.format(systemCpuLoad);
-            String processLoadFormat = decimalFormat.format(processCpuLoad);
-
-            sender.sendMessage(PRIMARY_COLOR + "System Usage: " + SECONDARY_COLOR + systemLoadFormat);
-            sender.sendMessage(PRIMARY_COLOR + "Process Usage: " + SECONDARY_COLOR + processLoadFormat);
-
-            //RAM
-            //include swap memory?
-            long totalMemorySize = sunOsBean.getTotalPhysicalMemorySize();
-            long freeMemorySize = sunOsBean.getFreePhysicalMemorySize();
-            int totalRamFormatted = convertBytesToMega(totalMemorySize);
-            sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + totalRamFormatted + "MB");
-            int freeRamFormatted = convertBytesToMega(freeMemorySize);
-            sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + freeRamFormatted + "MB");
+            printExtendOsInfo((com.sun.management.OperatingSystemMXBean) osBean, sender);
         }
 
         displayDiskSpace(sender);
         return true;
+    }
+
+    private void printExtendOsInfo(com.sun.management.OperatingSystemMXBean sunOsBean, CommandSender sender) {
+        //cpu
+        double systemCpuLoad = sunOsBean.getSystemCpuLoad();
+        double processCpuLoad = sunOsBean.getProcessCpuLoad();
+
+        //these numbers are in percent (0.01 -> 1%)
+        //we want to to have four places in a human readable percent value to multiple it wiht 100
+        DecimalFormat decimalFormat = new DecimalFormat("###.#### %");
+        decimalFormat.setMultiplier(100);
+        String systemLoadFormat = decimalFormat.format(systemCpuLoad);
+        String processLoadFormat = decimalFormat.format(processCpuLoad);
+
+        sender.sendMessage(PRIMARY_COLOR + "System Usage: " + SECONDARY_COLOR + systemLoadFormat);
+        sender.sendMessage(PRIMARY_COLOR + "Process Usage: " + SECONDARY_COLOR + processLoadFormat);
+
+        //swap
+        long freeSwap = sunOsBean.getFreeSwapSpaceSize();
+        long totalSwap = sunOsBean.getTotalSwapSpaceSize();
+        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + reabableByteCount(freeSwap, true));
+        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + reabableByteCount(totalSwap, true));
+
+        //RAM
+        long totalMemory = sunOsBean.getTotalPhysicalMemorySize();
+        long freeMemory = sunOsBean.getFreePhysicalMemorySize();
+        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + reabableByteCount(totalMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + reabableByteCount(freeMemory, true));
     }
 
     private void displayDiskSpace(CommandSender sender) {
@@ -75,15 +82,11 @@ public class EnvironmentCommand implements CommandExecutor {
         }
 
         //Disk info
-        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + humanReadableByteCount(totalSpace, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + humanReadableByteCount(freeSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + reabableByteCount(totalSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + reabableByteCount(freeSpace, true));
     }
 
-    private int convertBytesToMega(long bytes) {
-        return (int) (bytes / 1_024 / 1_024);
-    }
-
-    private String humanReadableByteCount(long bytes, boolean si) {
+    private String reabableByteCount(long bytes, boolean si) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
         int unit = si ? 1000 : 1024;
         if (bytes < unit) {

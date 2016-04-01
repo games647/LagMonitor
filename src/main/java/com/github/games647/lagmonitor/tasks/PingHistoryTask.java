@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.RollingOverHistory;
+import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.Field;
@@ -20,15 +21,27 @@ public class PingHistoryTask implements Runnable {
 
     private final Map<Player, RollingOverHistory> playerHistory = Maps.newHashMap();
 
+    private final boolean pingMethodAvailable;
     private Method getHandleMethod;
     private Field pingField;
+
+    public PingHistoryTask() {
+        boolean methodFound;
+        try {
+            methodFound = Reflection.getMethod(Player.Spigot.class, "getPing") != null;
+        } catch (Exception ex) {
+            methodFound = false;
+        }
+
+        pingMethodAvailable = methodFound;
+    }
 
     @Override
     public void run() {
         for (Entry<Player, RollingOverHistory> entry : playerHistory.entrySet()) {
             Player player = entry.getKey();
-            int ping = getReflectionPing(player);
-            
+            int ping = getPing(player);
+
             RollingOverHistory history = entry.getValue();
             history.add(ping);
         }
@@ -39,12 +52,21 @@ public class PingHistoryTask implements Runnable {
     }
 
     public void addPlayer(Player player) {
-        int reflectionPing = getReflectionPing(player);
+        int reflectionPing = getPing(player);
         playerHistory.put(player, new RollingOverHistory(SAMPLE_SIZE, reflectionPing));
     }
 
     public void removePlayer(Player player) {
         playerHistory.remove(player);
+    }
+
+    private int getPing(Player player) {
+        //PaperSpigot method - commented out because the compiler conflicts with the paper and spigot api
+//        if (pingMethodAvailable) {
+//            return player.spigot().getPing();
+//        }
+
+        return getReflectionPing(player);
     }
 
     private int getReflectionPing(Player player) {

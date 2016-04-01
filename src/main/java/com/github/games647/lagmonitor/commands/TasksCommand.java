@@ -1,10 +1,9 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import java.lang.reflect.Field;
 
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,7 +12,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scheduler.BukkitWorker;
 
 public class TasksCommand implements CommandExecutor {
 
@@ -28,7 +26,6 @@ public class TasksCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        List<BukkitWorker> activeWorkers = Bukkit.getScheduler().getActiveWorkers();
         List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
         for (BukkitTask pendingTask : pendingTasks) {
             Plugin owner = pendingTask.getOwner();
@@ -43,7 +40,10 @@ public class TasksCommand implements CommandExecutor {
             }
 
             sender.sendMessage(PRIMARY_COLOR + owner.getName() + SECONDARY_COLOR + '-' + id);
-            sender.sendMessage(PRIMARY_COLOR + "Task: " + SECONDARY_COLOR + getRunnableClass(pendingTask));
+            Class<?> runnableClass = getRunnableClass(pendingTask);
+            if (runnableClass != null) {
+                sender.sendMessage(PRIMARY_COLOR + "    Task: " + SECONDARY_COLOR + runnableClass.getSimpleName());
+            }
         }
 
         return true;
@@ -56,7 +56,7 @@ public class TasksCommand implements CommandExecutor {
             Object runnable = runnableField.get(task);
             return runnable.getClass();
         } catch (NoSuchFieldException | IllegalAccessException ex) {
-            plugin.getLogger().log(Level.SEVERE, null, ex);
+//            plugin.getLogger().log(Level.SEVERE, null, ex);
         }
 
         return null;

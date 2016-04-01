@@ -27,7 +27,7 @@ commands:
         permission: ${project.artifactId}.command.thread
     tpshistory:
         description: 'Outputs the current tps'
-        aliases: [tps]
+        aliases: [tps, lag]
         permission: ${project.artifactId}.command.tps
     mbean:
         description: 'Outputs mbeans attributes (java environment information)'
@@ -66,6 +66,7 @@ commands:
         permission: ${project.artifactId}.command.tasks
     paper:
         description: 'Debug command for paper timings parser'
+        aliases: [papertiming, papertimings]
         permission: ${project.artifactId}.command.paper
 
 permissions:

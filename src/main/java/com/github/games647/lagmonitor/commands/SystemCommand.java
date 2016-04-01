@@ -43,17 +43,17 @@ public class SystemCommand implements CommandExecutor {
         int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
 
         Runtime runtime = Runtime.getRuntime();
-        double maxMemoryFormatted = convertBytesToMegaBytes(runtime.maxMemory());
-        double freeMemoryFormatted = convertBytesToMegaBytes(runtime.freeMemory());
-        double totalMemoryFormatted = convertBytesToMegaBytes(runtime.totalMemory());
+        long maxMemory = runtime.maxMemory();
+        long freeMemory = runtime.freeMemory();
+        long totalMemory = runtime.totalMemory();
 
         //runtime specific
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
         sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
 
-        sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + freeMemoryFormatted + " MB");
-        sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + maxMemoryFormatted + " MB");
-        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + totalMemoryFormatted + " MB");
+        sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + readableByteCount(maxMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory, true));
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
     }
@@ -64,8 +64,8 @@ public class SystemCommand implements CommandExecutor {
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
-            String formattedIncoming = humanReadableByteCount(trafficReader.getIncomingBytes().get(), true);
-            String formattedOutgoing = humanReadableByteCount(trafficReader.getOutgoingBytes().get(), true);
+            String formattedIncoming = readableByteCount(trafficReader.getIncomingBytes().get(), true);
+            String formattedOutgoing = readableByteCount(trafficReader.getOutgoingBytes().get(), true);
             sender.sendMessage(PRIMARY_COLOR + "Incoming Traffic: " + SECONDARY_COLOR + formattedIncoming);
             sender.sendMessage(PRIMARY_COLOR + "Outgoing Traffic: " + SECONDARY_COLOR + formattedOutgoing);
         }
@@ -111,11 +111,7 @@ public class SystemCommand implements CommandExecutor {
         return enabled;
     }
 
-    private long convertBytesToMegaBytes(long bytes) {
-        return bytes / 1_024 / 1_024;
-    }
-
-    private String humanReadableByteCount(long bytes, boolean si) {
+    private String readableByteCount(long bytes, boolean si) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
         int unit = si ? 1000 : 1024;
         if (bytes < unit) {

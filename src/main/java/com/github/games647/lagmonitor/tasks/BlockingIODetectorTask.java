@@ -46,7 +46,8 @@ public class BlockingIODetectorTask extends TimerTask {
         }
 
         //Based on https://github.com/vemacs/GlobalUUIDCache
-        //we could for new connections in order to have a event like system instead of checking every specific interval
+        //we could use this for new connections in order to have a event like system instead of checking every
+        //specific interval
         //cons:
         //* we would overwrite a existing factory
         //* we have to access native classes to fallback to the default state

@@ -49,8 +49,8 @@ public class VmCommand implements CommandExecutor {
         List<GarbageCollectorMXBean> gcBean = ManagementFactory.getGarbageCollectorMXBeans();
         for (GarbageCollectorMXBean collector : gcBean) {
             sender.sendMessage(PRIMARY_COLOR + "Garbage Collector: " + SECONDARY_COLOR + collector.getName());
-            sender.sendMessage(PRIMARY_COLOR + "Collection Time: " + SECONDARY_COLOR + collector.getCollectionTime());
-            sender.sendMessage(PRIMARY_COLOR + "Collection Count: " + SECONDARY_COLOR + collector.getCollectionCount());
+            sender.sendMessage(PRIMARY_COLOR + "    Time: " + SECONDARY_COLOR + collector.getCollectionTime());
+            sender.sendMessage(PRIMARY_COLOR + "    Count: " + SECONDARY_COLOR + collector.getCollectionCount());
         }
 
         return true;

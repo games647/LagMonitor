@@ -39,7 +39,8 @@ which should be run async
 - [X] Output the last samples of a player ping (ping is refreshed every 40 ticks)
 - [X] Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
 - [ ] Graph for network and file transfer (Example: http://i.imgur.com/sxTfTjB.png)
-- [ ] PaperSpigot Timings parser
+- [X] PaperSpigot Timings parser
+- [ ] Textual graphs for consoles
 
 ## Permissions
 
@@ -66,24 +67,24 @@ lagmonitor.commands.* - Access to all commands
 ## Commands
 
 ```
-/ping - Gets your server ping
-/ping <player> - Gets the ping of the selected player
-/stacktrace - Gets the execution stacktrace of the current thread
-/stacktrace <threadName> - Gets the execution stacktrace of selected thread
-/thread - Outputs all running threads with their current state
-/tps - Outputs the current tps
-/mbean - List all available mbeans (java environment information, JMX)
-/mbean <beanName> - List all available attributes of this mbean
-/mbean <beanName> <attribute> - Outputs the value of this attribute
-/system - Gives you some general information (minecraft server related)
-/env - Gives you some general information (OS related)
-/timing - Outputs your server timings ingame
-/monitor - Monitors the CPU usage of methods
-/graph [heap/cpu/thread/classes] - Gives you visual graph about your server (currently only the heap usage)
-/native - Gives you some native os information
-/vm - Outputs vm specific information like garbage collector, class loading or vm specification
-/tasks - Information about running and pending tasks
-/paper - Outputs paper spigot timings
+    /ping - Gets your server ping
+    /ping <player> - Gets the ping of the selected player
+    /stacktrace - Gets the execution stacktrace of the current thread
+    /stacktrace <threadName> - Gets the execution stacktrace of selected thread
+    /thread - Outputs all running threads with their current state
+    /tps - Outputs the current tps
+    /mbean - List all available mbeans (java environment information, JMX)
+    /mbean <beanName> - List all available attributes of this mbean
+    /mbean <beanName> <attribute> - Outputs the value of this attribute
+    /system - Gives you some general information (minecraft server related)
+    /env - Gives you some general information (OS related)
+    /timing - Outputs your server timings ingame
+    /monitor - Monitors the CPU usage of methods
+    /graph [heap/cpu/thread/classes] - Gives you visual graph about your server (currently only the heap usage)
+    /native - Gives you some native os information
+    /vm - Outputs vm specific information like garbage collector, class loading or vm specification
+    /tasks - Information about running and pending tasks
+    /paper - Outputs paper spigot timings
 ```
 
 ## Images
