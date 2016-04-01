@@ -3,6 +3,7 @@ package com.github.games647.lagmonitor.commands;
 import co.aikar.timings.TimingHistory;
 import co.aikar.timings.TimingsManager;
 
+import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
@@ -60,21 +61,32 @@ public class PaperTimingsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!ClassUtil.isPresent(EXPORT_CLASS)) {
+            sender.sendMessage(ChatColor.DARK_RED + "You aren't using PaperSpigot.");
+            sender.sendMessage(ChatColor.DARK_RED + "This command is for the new timings (v2) system only");
+            sender.sendMessage(ChatColor.DARK_RED + "Please use '/timing' for the old system");
+            return true;
+        }
+
         //modify timings settings dynamically?
 //        Timings.setHistoryInterval(0);
 //        Timings.setHistoryLength(0);
 //        Timings.setVerboseTimingsEnabled(true);
 
-        //System
-        printTimings(sender);
-        return true;
-    }
-
-    public void printTimings(CommandSender sender) {
         EvictingQueue<TimingHistory> history = Reflection.getField(TimingsManager.class, "HISTORY", EvictingQueue.class)
                 .get(null);
 
         TimingHistory lastHistory = history.peek();
+        if (lastHistory == null) {
+            sender.sendMessage(ChatColor.DARK_RED + "Not enough data yet");
+        }
+
+        //System
+        printTimings(sender, lastHistory);
+        return true;
+    }
+
+    public void printTimings(CommandSender sender, TimingHistory lastHistory) {
 
         long startTime = Reflection.getField(TimingHistory.class, "startTime", Long.TYPE).get(lastHistory);
         long endTime = Reflection.getField(TimingHistory.class, "endTime", Long.TYPE).get(lastHistory);
@@ -146,22 +158,5 @@ public class PaperTimingsCommand implements CommandExecutor {
         long childTime = Reflection.getField(DATA_CLASS, "totalTime", Long.TYPE).get(childData);
 
         sender.sendMessage(PRIMARY_COLOR + "    " + childName + " Count: " + childCount + " Time: " + childTime);
-    }
-
-    private float round(float number) {
-        return (float) (Math.round(number * 100.0) / 100.0);
-    }
-
-    private String highlightPct(float percent, int low, int med, int high) {
-        ChatColor prefix = ChatColor.GRAY;
-        if (percent > high) {
-            prefix = ChatColor.DARK_RED;
-        } else if (percent > med) {
-            prefix = ChatColor.GOLD;
-        } else if (percent > low) {
-            prefix = ChatColor.YELLOW;
-        }
-
-        return prefix + "" + percent + '%' + ChatColor.GRAY;
     }
 }

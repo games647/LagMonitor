@@ -41,6 +41,7 @@ which should be run async
 - [ ] Graph for network and file transfer (Example: http://i.imgur.com/sxTfTjB.png)
 - [X] PaperSpigot Timings parser
 - [ ] Textual graphs for consoles
+- [ ] Extend paper spigot timings parser
 
 ## Permissions
 

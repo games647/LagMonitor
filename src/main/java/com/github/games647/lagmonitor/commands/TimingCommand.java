@@ -3,10 +3,12 @@ package com.github.games647.lagmonitor.commands;
 import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Timing;
+import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class TimingCommand implements CommandExecutor {
 
         //place sampleTime here to be very accurat
         long sampleTime = System.nanoTime() - TimingsCommand.timingStart;
-        CustomTimingsHandler.printTimings(printStream);
+        Reflection.getMethod(CustomTimingsHandler.class, "printTimings", OutputStream.class).invoke(null, printStream);
 
         String output = null;
         try {

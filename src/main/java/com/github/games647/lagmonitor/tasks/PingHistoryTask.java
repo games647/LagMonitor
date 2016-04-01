@@ -61,10 +61,10 @@ public class PingHistoryTask implements Runnable {
     }
 
     private int getPing(Player player) {
-        //PaperSpigot method - commented out because the compiler conflicts with the paper and spigot api
-//        if (pingMethodAvailable) {
-//            return player.spigot().getPing();
-//        }
+        //PaperSpigot method
+        if (pingMethodAvailable) {
+            return player.spigot().getPing();
+        }
 
         return getReflectionPing(player);
     }
