@@ -10,17 +10,22 @@ traffic-counter: true
 # or other issues.
 thread-safety-check: false
 
-# Check if a server (especially a plugin) is doing block I/O operations on the main Thread.
+# Check peridically if a server (especially a plugin) is doing block I/O operations on the main Thread.
 # Operations like SQL-, HTTP-Request or Scoket-Connections should be performed in a seperate Thread.
 # If this is not the case, the server will wait for the response and therefore causes lags.
 thread-block-detection: false
+
+# This is a more efficient system as the method above (thread-block detection)
+# By setting a new security manager we can receive the operations above as events and don't have
+# to check it peridically.
+# Warning: this may override the existing security manager which could be set by your hoster
+securityMangerBlockingCheck: false
 
 # With this options it's possible to access more native features of the OS like:
 # * CPU MHZ
 # * File reads/writes (per second or since startup)
 # * Network download/upload (per second or since startup)
 # * OS uptime
-# * Linux/Unix load
 # * Network adapter speed
 # * RAM cache
 # * CPU i/o wait percentage

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8
+
+* Added security manager for more efficient blocking checks
+
 ## 0.7
 
 * Added /lag alias for the /tpshistory command

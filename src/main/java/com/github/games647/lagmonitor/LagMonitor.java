@@ -43,22 +43,13 @@ public class LagMonitor extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        registerCommands();
 
-        //register commands
-        getCommand("ping").setExecutor(new PingCommand(this));
-        getCommand("stacktrace").setExecutor(new StackTraceCommand(this));
-        getCommand("thread").setExecutor(new ThreadCommand(this));
-        getCommand("tpshistory").setExecutor(new TpsHistoryCommand(this));
-        getCommand("mbean").setExecutor(new MbeanCommand(this));
-        getCommand("system").setExecutor(new SystemCommand(this));
-        getCommand("env").setExecutor(new EnvironmentCommand(this));
-        getCommand("monitor").setExecutor(new MonitorCommand(this));
-        getCommand("timing").setExecutor(new TimingCommand(this));
-        getCommand("graph").setExecutor(new GraphCommand(this));
-        getCommand("native").setExecutor(new NativeCommand(this));
-        getCommand("vm").setExecutor(new VmCommand(this));
-        getCommand("tasks").setExecutor(new TasksCommand(this));
-        getCommand("paper").setExecutor(new PaperTimingsCommand(this));
+        if (getConfig().getBoolean("securityMangerBlockingCheck")) {
+            SecurityManager oldSecurityManager = System.getSecurityManager();
+            Thread mainThread = Thread.currentThread();
+            System.setSecurityManager(new BlockingSecurityManager(this, mainThread, oldSecurityManager));
+        }
 
         //register schedule tasks
         tpsHistoryTask = new TpsHistoryTask();
@@ -106,6 +97,13 @@ public class LagMonitor extends JavaPlugin {
             monitorTimer.purge();
             monitorTimer = null;
         }
+
+        //restore the security manager
+        SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager instanceof BlockingSecurityManager) {
+            SecurityManager oldSecurityManager = ((BlockingSecurityManager) securityManager).getOldSecurityManager();
+            System.setSecurityManager(oldSecurityManager);
+        }
     }
 
     public Timer getMonitorTimer() {
@@ -126,5 +124,22 @@ public class LagMonitor extends JavaPlugin {
 
     public PingHistoryTask getPingHistoryTask() {
         return pingHistoryTask;
+    }
+
+    private void registerCommands() {
+        getCommand("ping").setExecutor(new PingCommand(this));
+        getCommand("stacktrace").setExecutor(new StackTraceCommand(this));
+        getCommand("thread").setExecutor(new ThreadCommand(this));
+        getCommand("tpshistory").setExecutor(new TpsHistoryCommand(this));
+        getCommand("mbean").setExecutor(new MbeanCommand(this));
+        getCommand("system").setExecutor(new SystemCommand(this));
+        getCommand("env").setExecutor(new EnvironmentCommand(this));
+        getCommand("monitor").setExecutor(new MonitorCommand(this));
+        getCommand("timing").setExecutor(new TimingCommand(this));
+        getCommand("graph").setExecutor(new GraphCommand(this));
+        getCommand("native").setExecutor(new NativeCommand(this));
+        getCommand("vm").setExecutor(new VmCommand(this));
+        getCommand("tasks").setExecutor(new TasksCommand(this));
+        getCommand("paper").setExecutor(new PaperTimingsCommand(this));
     }
 }
