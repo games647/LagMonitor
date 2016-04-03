@@ -18,27 +18,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 /**
- * PaperSpigot and Sponge uses a new timings system (v2).
- * Missing data:
- * * TicksRecord
- * -> player ticks
- * -> timedTicks
- * -> entityTicks
- * -> activatedEntityTicks
- * -> tileEntityTicks
- * * MinuteReport
- * -> time
- * -> tps
- * -> avgPing
- * -> fullServerTick
- * -> ticks
- * * World data
- * -> worldName
- * -> tileEntities
- * -> entities
+ * PaperSpigot and Sponge uses a new timings system (v2). Missing data: * TicksRecord -> player ticks -> timedTicks ->
+ * entityTicks -> activatedEntityTicks -> tileEntityTicks * MinuteReport -> time -> tps -> avgPing -> fullServerTick ->
+ * ticks * World data -> worldName -> tileEntities -> entities
  *
- * => This concludes to the fact that the big benefits from Timings v2 isn't available. For example you cannot
- * scroll through your history
+ * => This concludes to the fact that the big benefits from Timings v2 isn't available. For example you cannot scroll
+ * through your history
  */
 public class PaperTimingsCommand implements CommandExecutor {
 
@@ -72,13 +57,13 @@ public class PaperTimingsCommand implements CommandExecutor {
 //        Timings.setHistoryInterval(0);
 //        Timings.setHistoryLength(0);
 //        Timings.setVerboseTimingsEnabled(true);
-
         EvictingQueue<TimingHistory> history = Reflection.getField(TimingsManager.class, "HISTORY", EvictingQueue.class)
                 .get(null);
 
         TimingHistory lastHistory = history.peek();
         if (lastHistory == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Not enough data yet");
+            sender.sendMessage(ChatColor.DARK_RED + "Not enough data collected yet");
+            return true;
         }
 
         //System
@@ -87,7 +72,6 @@ public class PaperTimingsCommand implements CommandExecutor {
     }
 
     public void printTimings(CommandSender sender, TimingHistory lastHistory) {
-
         long startTime = Reflection.getField(TimingHistory.class, "startTime", Long.TYPE).get(lastHistory);
         long endTime = Reflection.getField(TimingHistory.class, "endTime", Long.TYPE).get(lastHistory);
 
@@ -133,7 +117,6 @@ public class PaperTimingsCommand implements CommandExecutor {
 
 //            long parentLagCount = Reflection.getField(DATA_CLASS, "lagCount", Integer.TYPE).get(parentData);
 //            long parentLagTime = Reflection.getField(DATA_CLASS, "lagTime", Long.TYPE).get(parentData);
-
             sender.sendMessage(HEADER_COLOR + parentName + " Count: " + parentCount + " Time: " + parentTime);
 
             Object[] children = Reflection.getField(HISTORY_ENTRY_CLASS, "children", Object[].class).get(entry);

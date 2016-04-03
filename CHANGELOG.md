@@ -3,6 +3,7 @@
 ## 0.8
 
 * Added security manager for more efficient blocking checks
+* Added combined graphs example: /graph cpu heap threads
 
 ## 0.7
 
@@ -44,9 +45,7 @@
 * Added lazy loading for thread monitor to reduce memory usage
 * Added worlds, players and plugins count to the system command
 * Added samples count for thread monitor
-
 * Improved tons of command styling
-
 * Fixed thread safety
 * Fixed free memory value
 * Fixed memory leak for thread monitor

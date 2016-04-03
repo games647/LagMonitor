@@ -42,6 +42,7 @@ which should be run async
 - [X] PaperSpigot Timings parser
 - [ ] Textual graphs for consoles
 - [ ] Extend paper spigot timings parser
+- [ ] World size in bytes
 
 ## Permissions
 

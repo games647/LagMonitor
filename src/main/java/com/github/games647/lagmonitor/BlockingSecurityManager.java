@@ -54,7 +54,9 @@ public class BlockingSecurityManager extends SecurityManager {
     private boolean isBlockingAction(Permission permission) {
         String actions = permission.getActions();
         if (permission instanceof FilePermission) {
-            return actions.contains("read") || actions.contains("write");
+            //commented out, because also operations like .createNewFile() is also a write permission
+            //which could executed by the main thread, doesn't it`?
+//            return actions.contains("read") || actions.contains("write");
             //read write
         } else if (permission instanceof SocketPermission) {
             return actions.contains("connect");

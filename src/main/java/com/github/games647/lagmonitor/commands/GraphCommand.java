@@ -2,14 +2,17 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.graphs.ClassesGraph;
+import com.github.games647.lagmonitor.graphs.CombinedGraph;
 import com.github.games647.lagmonitor.graphs.CpuGraph;
 import com.github.games647.lagmonitor.graphs.GraphRenderer;
 import com.github.games647.lagmonitor.graphs.HeapGraph;
 import com.github.games647.lagmonitor.graphs.ThreadsGraph;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,9 +29,16 @@ import org.bukkit.map.MapView;
 public class GraphCommand implements TabExecutor {
 
     private final LagMonitor plugin;
+    private final Map<String, GraphRenderer> graphTypes = Maps.newHashMap();
+    private int MAX_COMBINED;
 
     public GraphCommand(LagMonitor plugin) {
         this.plugin = plugin;
+
+        graphTypes.put("classes", new ClassesGraph());
+        graphTypes.put("cpu", new CpuGraph());
+        graphTypes.put("heap", new HeapGraph());
+        graphTypes.put("threads", new ThreadsGraph());
     }
 
     @Override
@@ -36,26 +46,26 @@ public class GraphCommand implements TabExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            //default is heap usage
-            GraphRenderer graphRenderer = new HeapGraph();
             if (args.length > 0) {
-                String graph = args[0];
-
-                if ("cpu".equalsIgnoreCase(graph)) {
-                    graphRenderer = new CpuGraph();
-                } else if ("heap".equalsIgnoreCase(graph)) {
-                    graphRenderer = new HeapGraph();
-                } else if ("threads".equalsIgnoreCase(graph)) {
-                    graphRenderer = new ThreadsGraph();
-                } else if ("classes".equalsIgnoreCase(graph)) {
-                    graphRenderer = new ClassesGraph();
+                if (args.length > 2) {
+                    buildCombinedGraph(player, args);
                 } else {
-                    sender.sendMessage(ChatColor.DARK_RED + "Unknown graph type");
-                    return true;
+                    String graph = args[0];
+                    GraphRenderer renderer = graphTypes.get(graph);
+                    if (renderer == null) {
+                        sender.sendMessage(ChatColor.DARK_RED + "Unknown graph type");
+                    } else {
+                        installRenderer(player, renderer);
+                    }
                 }
+
+                return true;
             }
 
             PlayerInventory inventory = player.getInventory();
+
+            //default is heap usage
+            GraphRenderer graphRenderer = graphTypes.get("heap");
 
             MapView mapView = installRenderer(player, graphRenderer);
             //amount=0 makes the item disappear if the user drop or try to use it
@@ -71,16 +81,6 @@ public class GraphCommand implements TabExecutor {
         return true;
     }
 
-    private MapView installRenderer(Player player, GraphRenderer graphType) {
-        MapView mapView = Bukkit.createMap(player.getWorld());
-        for (MapRenderer mapRenderer : mapView.getRenderers()) {
-            mapView.removeRenderer(mapRenderer);
-        }
-
-        mapView.addRenderer(graphType);
-        return mapView;
-    }
-
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> result = Lists.newArrayListWithExpectedSize(4);
@@ -90,23 +90,42 @@ public class GraphCommand implements TabExecutor {
         }
 
         String lastArg = args[args.length - 1];
-        if ("cpu".startsWith(lastArg)) {
-            result.add("cpu");
-        }
-
-        if ("heap".startsWith(lastArg)) {
-            result.add("heap");
-        }
-
-        if ("threads".startsWith(lastArg)) {
-            result.add("threads");
-        }
-
-        if ("classes".startsWith(lastArg)) {
-            result.add("classes");
+        for (String type : graphTypes.keySet()) {
+            if (type.startsWith(lastArg)) {
+                result.add(type);
+            }
         }
 
         Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
         return result;
+    }
+
+    private void buildCombinedGraph(Player player, String[] args) {
+        List<GraphRenderer> renderers = Lists.newArrayList();
+        for (String arg : args) {
+            GraphRenderer renderer = graphTypes.get(arg);
+            if (renderer == null) {
+                player.sendMessage(ChatColor.DARK_RED + "Unknown graph type " + arg);
+                return;
+            }
+
+            renderers.add(renderer);
+        }
+
+        if (renderers.size() > MAX_COMBINED) {
+            player.sendMessage(ChatColor.DARK_RED + "Too many graphs");
+        } else {
+            installRenderer(player, new CombinedGraph(renderers.toArray(new GraphRenderer[renderers.size()])));
+        }
+    }
+
+    private MapView installRenderer(Player player, GraphRenderer graphType) {
+        MapView mapView = Bukkit.createMap(player.getWorld());
+        for (MapRenderer mapRenderer : mapView.getRenderers()) {
+            mapView.removeRenderer(mapRenderer);
+        }
+
+        mapView.addRenderer(graphType);
+        return mapView;
     }
 }

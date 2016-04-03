@@ -51,9 +51,9 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
         sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
 
-        sender.sendMessage(PRIMARY_COLOR + "Free RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory, true));
-        sender.sendMessage(PRIMARY_COLOR + "Max RAM: " + SECONDARY_COLOR + readableByteCount(maxMemory, true));
         sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Max Heap RAM: " + SECONDARY_COLOR + readableByteCount(maxMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free Heap RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory, true));
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
     }
@@ -72,7 +72,7 @@ public class SystemCommand implements CommandExecutor {
 
         PluginManager pluginManager = Bukkit.getPluginManager();
         Plugin[] plugins = pluginManager.getPlugins();
-        sender.sendMessage(PRIMARY_COLOR + "Plugins: "
+        sender.sendMessage(PRIMARY_COLOR + "Loaded Plugins: "
                 + SECONDARY_COLOR + getEnabledPlugins(plugins) + '/' + plugins.length);
 
         int onlinePlayers = Bukkit.getOnlinePlayers().size();
