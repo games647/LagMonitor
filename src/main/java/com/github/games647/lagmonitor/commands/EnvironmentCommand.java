@@ -60,10 +60,10 @@ public class EnvironmentCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Process Usage: " + SECONDARY_COLOR + processLoadFormat);
 
         //swap
-        long freeSwap = sunOsBean.getFreeSwapSpaceSize();
         long totalSwap = sunOsBean.getTotalSwapSpaceSize();
-        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + reabableByteCount(freeSwap, true));
+        long freeSwap = sunOsBean.getFreeSwapSpaceSize();
         sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + reabableByteCount(totalSwap, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + reabableByteCount(freeSwap, true));
 
         //RAM
         long totalMemory = sunOsBean.getTotalPhysicalMemorySize();

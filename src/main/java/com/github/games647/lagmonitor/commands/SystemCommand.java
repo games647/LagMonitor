@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import java.io.File;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -89,15 +90,39 @@ public class SystemCommand implements CommandExecutor {
         int chunks = 0;
         int livingEntities = 0;
 
+        long usedWorldSize = 0;
+
         for (World world : worlds) {
             livingEntities += world.getLivingEntities().size();
             entities += world.getEntities().size();
             chunks += world.getLoadedChunks().length;
+
+            File worldFolder = Bukkit.getWorld(world.getUID()).getWorldFolder();
+            usedWorldSize += getFolderSize(worldFolder);
         }
 
         sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
         sender.sendMessage(PRIMARY_COLOR + "Loaded chunks: " + SECONDARY_COLOR + chunks);
         sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
+        sender.sendMessage(PRIMARY_COLOR + "World size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize, true));
+    }
+
+    private long getFolderSize(File folder) {
+        long size = 0;
+
+        for (File file : folder.listFiles()) {
+            if (file == null) {
+                continue;
+            }
+
+            if (file.isFile()) {
+                size += file.length();
+            } else {
+                size += getFolderSize(file);
+            }
+        }
+
+        return size;
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {
