@@ -6,6 +6,7 @@
 * Added world size to the system command
 * Added security manager for more efficient blocking checks
 * Added combined graphs example: /graph cpu heap threads
+* Optimize Spigot timings parser
 
 ## 0.7
 

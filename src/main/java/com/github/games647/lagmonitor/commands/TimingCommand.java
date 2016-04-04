@@ -4,14 +4,11 @@ import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Timing;
 import com.github.games647.lagmonitor.traffic.Reflection;
-import com.google.common.base.Charsets;
+import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
 import com.google.common.collect.Maps;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.Queue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,38 +40,30 @@ public class TimingCommand implements CommandExecutor {
             return true;
         }
 
+        //paperspigot moved to class to package co.aikar.timings
         if (!ClassUtil.isPresent("org.bukkit.command.defaults.TimingsCommand")) {
             sender.sendMessage(ChatColor.DARK_RED + "You're using a new Timings version on your server system");
             sender.sendMessage(ChatColor.DARK_RED + "Please use the experimental command /paper");
             return true;
         }
 
-        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayStream);
-
         //place sampleTime here to be very accurat
         long sampleTime = System.nanoTime() - TimingsCommand.timingStart;
-        Reflection.getMethod(CustomTimingsHandler.class, "printTimings", OutputStream.class).invoke(null, printStream);
+        Queue<CustomTimingsHandler> handlers = Reflection.getField(CustomTimingsHandler.class, "HANDLERS", Queue.class)
+                .get(null);
 
-        String output = null;
-        try {
-            output = byteArrayStream.toString(Charsets.UTF_8.name());
-        } catch (UnsupportedEncodingException ex) {
-            //ignore utf-8 is always available
-        }
-
-        sendParsedOutput(output, sender, sampleTime);
+        sendParsedOutput(handlers, sender, sampleTime);
         return true;
     }
 
-    private void sendParsedOutput(String output, CommandSender sender, long sampleTime) {
+    private void sendParsedOutput(Queue<CustomTimingsHandler> handlers, CommandSender sender, long sampleTime) {
         Map<String, Timing> timings = Maps.newHashMap();
         Timing breakdownTiming = new Timing("Breakdown", -1, -1);
         Timing minecraftTiming = new Timing("Minecraft");
         timings.put("Minecraft", minecraftTiming);
         timings.put("Breakdown", breakdownTiming);
 
-        parseTimings(output, timings, minecraftTiming, breakdownTiming);
+        parseTimings(handlers, timings, minecraftTiming, breakdownTiming);
 
         long playerTicks = 0;
         long activatedEntityTicks = 0;
@@ -103,7 +92,6 @@ public class TimingCommand implements CommandExecutor {
         for (Map.Entry<String, Timing> entry : timings.entrySet()) {
             String category = entry.getKey();
             Timing value = entry.getValue();
-//            float pct = (float) value.getTotalTime() / sampleTime;
             float pct = (float) value.getTotalTime() / sampleTime * 100;
 
             String highlightedPercent;
@@ -175,54 +163,56 @@ public class TimingCommand implements CommandExecutor {
         sender.sendMessage(String.format(format, "Sample Time (sec):", round((float) sampleTime / 1000 / 1000 / 1000)));
     }
 
-    private void parseTimings(String output, Map<String, Timing> timings
+    private void parseTimings(Queue<CustomTimingsHandler> handlers, Map<String, Timing> timings
             , Timing minecraftTiming, Timing breakdownTiming) {
-        String[] lines = output.split(System.lineSeparator());
-        for (String line : lines) {
-            if (line.startsWith("    ")) {
-                String category = line.substring("    ".length(), line.lastIndexOf("Time: ") - 1);
+        FieldAccessor<String> getName = Reflection.getField(CustomTimingsHandler.class, "name", String.class);
 
-                Timing active = minecraftTiming;
-                String subCategory = category;
-                if (category.contains("Event: ")) {
-                    String pluginName = getProperty(category, "Plugin");
-                    String listener = getProperty(category, "Event");
+        FieldAccessor<Long> getTotalTime = Reflection.getField(CustomTimingsHandler.class, "totalTime", Long.TYPE);
+        FieldAccessor<Long> getCount = Reflection.getField(CustomTimingsHandler.class, "count", Long.TYPE);
+//        FieldAccessor<Long> getViolations = Reflection.getField(CustomTimingsHandler.class, "violations", Long.TYPE);
+        for (CustomTimingsHandler handler : handlers) {
+            String category = getName.get(handler);
+            long totalTime = getTotalTime.get(handler);
+            long count = getCount.get(handler);
 
-                    Timing pluginReport = timings.get(pluginName);
-                    if (pluginReport == null) {
-                        pluginReport = new Timing(pluginName);
-                        timings.put(pluginName, pluginReport);
-                    }
+            Timing active = minecraftTiming;
+            String subCategory = category;
+            if (category.contains("Event: ")) {
+                String pluginName = getProperty(category, "Plugin");
+                String listener = getProperty(category, "Event");
 
-                    active = pluginReport;
-                    subCategory = listener;
-                } else if (category.contains("Task: ")) {
-                    String pluginName = getProperty(category, "Task");
-                    String runnable = getProperty(category, "Runnable");
-
-                    Timing pluginReport = timings.get(pluginName);
-                    if (pluginReport == null) {
-                        pluginReport = new Timing(pluginName);
-                        timings.put(pluginName, pluginReport);
-                    }
-
-                    active = pluginReport;
-                    subCategory = runnable;
+                Timing pluginReport = timings.get(pluginName);
+                if (pluginReport == null) {
+                    pluginReport = new Timing(pluginName);
+                    timings.put(pluginName, pluginReport);
                 }
 
-                long totalTime = getPropertyValue(line, "Time");
-                long count = getPropertyValue(line, "Count");
-                if (subCategory.startsWith(EXCLUDE_INDENTIFIER)) {
-                    breakdownTiming.addSubcategory(subCategory, totalTime, count);
-                } else {
-                    active.addSubcategory(subCategory, totalTime, count);
-                    if (subCategory.startsWith("Task:")) {
-                        breakdownTiming.addSubcategory(EXCLUDE_INDENTIFIER + "Tasks", totalTime, count);
-                    }
+                active = pluginReport;
+                subCategory = listener;
+            } else if (category.contains("Task: ")) {
+                String pluginName = getProperty(category, "Task");
+                String runnable = getProperty(category, "Runnable");
 
-                    if (active.getTotalTime() >= 0) {
-                        active.addTotal(totalTime);
-                    }
+                Timing pluginReport = timings.get(pluginName);
+                if (pluginReport == null) {
+                    pluginReport = new Timing(pluginName);
+                    timings.put(pluginName, pluginReport);
+                }
+
+                active = pluginReport;
+                subCategory = runnable;
+            }
+
+            if (subCategory.startsWith(EXCLUDE_INDENTIFIER)) {
+                breakdownTiming.addSubcategory(subCategory, totalTime, count);
+            } else {
+                active.addSubcategory(subCategory, totalTime, count);
+                if (subCategory.startsWith("Task:")) {
+                    breakdownTiming.addSubcategory(EXCLUDE_INDENTIFIER + "Tasks", totalTime, count);
+                }
+
+                if (active.getTotalTime() >= 0) {
+                    active.addTotal(totalTime);
                 }
             }
         }
@@ -256,10 +246,5 @@ public class TimingCommand implements CommandExecutor {
         }
 
         return line.substring(startIndex, endIndex);
-    }
-
-    private long getPropertyValue(String line, String propertyName) {
-        String parsedProperty = getProperty(line, propertyName);
-        return Long.parseLong(parsedProperty);
     }
 }
