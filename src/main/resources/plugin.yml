@@ -64,6 +64,10 @@ commands:
         description: 'Information about running and pending tasks'
         aliases: [task]
         permission: ${project.artifactId}.command.tasks
+    heap:
+        description: 'Heap dump about your current memory'
+        aliases: [ram]
+        permission: ${project.artifactId}.command.heap
     paper:
         description: 'Debug command for paper timings parser'
         aliases: [papertiming, papertimings]

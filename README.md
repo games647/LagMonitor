@@ -27,7 +27,7 @@ server timings and so on.
 
 - [X] Traffic (Bandwith) counter of the OS (using Sigar?)
 - [X] Traffic minecraft (can be done by hooking into Netty)
-- [ ] Heap usage (object size, instances)
+- [X] Heap usage (object size, instances)
 - [ ] Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
 more detailed
 - [ ] Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
@@ -65,6 +65,7 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.vm
 * lagmonitor.command.tasks
 * lagmonitor.command.paper
+* lagmonitor.command.heap
 
 ## Commands
 
@@ -87,6 +88,7 @@ lagmonitor.commands.* - Access to all commands
     /vm - Outputs vm specific information like garbage collector, class loading or vm specification
     /tasks - Information about running and pending tasks
     /paper - Outputs paper spigot timings
+    /heap - Heap dump about your current memory
 ```
 
 ## Images

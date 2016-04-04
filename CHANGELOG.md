@@ -2,6 +2,7 @@
 
 ## 0.8
 
+* Added /heap command for heap dumps (Warning: Experimental spam the log very massive)
 * Added world size to the system command
 * Added security manager for more efficient blocking checks
 * Added combined graphs example: /graph cpu heap threads

@@ -3,6 +3,7 @@ package com.github.games647.lagmonitor;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.commands.EnvironmentCommand;
 import com.github.games647.lagmonitor.commands.GraphCommand;
+import com.github.games647.lagmonitor.commands.HeapCommand;
 import com.github.games647.lagmonitor.commands.NativeCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
@@ -141,5 +142,6 @@ public class LagMonitor extends JavaPlugin {
         getCommand("vm").setExecutor(new VmCommand(this));
         getCommand("tasks").setExecutor(new TasksCommand(this));
         getCommand("paper").setExecutor(new PaperTimingsCommand(this));
+        getCommand("heap").setExecutor(new HeapCommand(this));
     }
 }
