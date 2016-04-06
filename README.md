@@ -15,11 +15,17 @@ server timings and so on.
 * Sample CPU usage
 * Analyze RAM usage
 * Access to Stacktraces of running threads
-* Shows your ticks per second
+* Shows your ticks per second with history
 * Shows system performance usage
-* Visual graph ingame
+* Visual graphs ingame
 * Ingame timings viewer
 * Access to Java environment variables (mbeans)
+* Plugin specific profiles
+* Thread safety checks
+* Blocking operations on the main thread check
+* Information about native OS
+* Compatible 1.8+ servers
+* Test with Spigot, PaperSpigot and TacoSpigot
 * Free
 * Open Source
 
@@ -28,10 +34,10 @@ server timings and so on.
 - [X] Traffic (Bandwith) counter of the OS (using Sigar?)
 - [X] Traffic minecraft (can be done by hooking into Netty)
 - [X] Heap usage (object size, instances)
-- [ ] Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
+- [X] Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
 more detailed
-- [ ] Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
-- [ ] Caching of the timings or running it async
+- [X] Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
+- [X] Caching of the timings or running it async
 - [X] Warning alert if the main thread is blocked by I/O operations -> Example: for SQL-/HTTP-/File-Operations
 which should be run async
 - [X] Average TPS and player ping
@@ -69,13 +75,13 @@ lagmonitor.commands.* - Access to all commands
 
 ## Commands
 
-```
+
     /ping - Gets your server ping
     /ping <player> - Gets the ping of the selected player
     /stacktrace - Gets the execution stacktrace of the current thread
     /stacktrace <threadName> - Gets the execution stacktrace of selected thread
     /thread - Outputs all running threads with their current state
-    /tps - Outputs the current tps
+    /tpshistory - Outputs the current tps
     /mbean - List all available mbeans (java environment information, JMX)
     /mbean <beanName> - List all available attributes of this mbean
     /mbean <beanName> <attribute> - Outputs the value of this attribute
@@ -89,9 +95,13 @@ lagmonitor.commands.* - Access to all commands
     /tasks - Information about running and pending tasks
     /paper - Outputs paper spigot timings
     /heap - Heap dump about your current memory
-```
+    /lagpage <next/prev/pageNumber> Pagination command for the current pagination session
+
 
 ## Images
+
+### Heap command
+![heap command](https://i.imgur.com/AzDwYxq.png)
 
 ### Timing command
 ![timing command](https://i.imgur.com/wAxnIxt.png)
@@ -100,19 +110,19 @@ lagmonitor.commands.* - Access to all commands
 ![cpu graph](https://i.imgur.com/DajnZmP.png)
 
 ### Stacktrace and Threads command
-![stacktrace and threads](http://i.imgur.com/XY7r9wz.png)
+![stacktrace and threads](https://i.imgur.com/XY7r9wz.png)
 
 ### Ping Command
-![ping command](http://i.imgur.com/LITJKWw.png)
+![ping command](https://i.imgur.com/LITJKWw.png)
 
 ### Thread Sampler (Monitor command)
 ![thread sample](https://i.imgur.com/OXOakN6.png)
 
 ### System command
-![system command](http://i.imgur.com/hrIV6bW.png)
+![system command](https://i.imgur.com/hrIV6bW.png)
 
 ### Environment command
-![environment command](http://i.imgur.com/gQwr126.png)
+![environment command](https://i.imgur.com/gQwr126.png)
 
 ### Heap usage graph (yellow=allocated, blue=used)
-![heap usage map](http://i.imgur.com/Yiz9h6G.png)
+![heap usage map](https://i.imgur.com/Yiz9h6G.png)

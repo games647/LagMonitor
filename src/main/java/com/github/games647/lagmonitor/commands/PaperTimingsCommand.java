@@ -6,6 +6,7 @@ import co.aikar.timings.TimingsManager;
 
 import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Lists;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -92,14 +94,17 @@ public class PaperTimingsCommand implements CommandExecutor {
             return true;
         }
 
-        //System
-        printTimings(sender, lastHistory);
+        List<BaseComponent[]> lines = Lists.newArrayList();
+        printTimings(lines, lastHistory);
+
+        Pagination pagination = new Pagination("Paper Timings", lines);
+        pagination.send(sender);
+
+        this.plugin.getPaginations().put(sender, pagination);
         return true;
     }
 
-    public void printTimings(CommandSender sender, TimingHistory lastHistory) {
-        List<BaseComponent[]> lines = Lists.newArrayList();
-
+    public void printTimings(List<BaseComponent[]> lines, TimingHistory lastHistory) {
         long startTime = Reflection.getField(TimingHistory.class, "startTime", Long.TYPE).get(lastHistory);
         long endTime = Reflection.getField(TimingHistory.class, "endTime", Long.TYPE).get(lastHistory);
 
@@ -110,16 +115,17 @@ public class PaperTimingsCommand implements CommandExecutor {
 //        long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
 
         long cost = (long) Reflection.getMethod(EXPORT_CLASS, "getCost").invoke(null);
-        sender.sendMessage(PRIMARY_COLOR + "Cost: " + SECONDARY_COLOR + cost);
-        sender.sendMessage(PRIMARY_COLOR + "Sample (sec): " + SECONDARY_COLOR + sampleTime);
+        lines.add(new ComponentBuilder("Cost: ").color(PRIMARY_COLOR)
+                .append(Long.toString(cost)).color(SECONDARY_COLOR).create());
+        lines.add(new ComponentBuilder("Sample (sec): ").color(PRIMARY_COLOR)
+                .append(Long.toString(sampleTime)).color(SECONDARY_COLOR).create());
 
 //        long playerTicks = TimingHistory.playerTicks;
 //        long tileEntityTicks = TimingHistory.tileEntityTicks;
 //        long activatedEntityTicks = TimingHistory.activatedEntityTicks;
 //        long entityTicks = TimingHistory.entityTicks;
 
-        Collection<?> HANDLERS = Reflection.getField(TimingsManager.class, "HANDLERS", Collection.class)
-                .get(null);
+        Collection<?> HANDLERS = Reflection.getField(TimingsManager.class, "HANDLERS", Collection.class).get(null);
         Map<Integer, Object> idHandler = Maps.newHashMap();
         for (Object timingHandler : HANDLERS) {
             int id = Reflection.getField(HANDLER_CLASS, "id", Integer.TYPE).get(timingHandler);
@@ -145,16 +151,17 @@ public class PaperTimingsCommand implements CommandExecutor {
 
 //            long parentLagCount = Reflection.getField(DATA_CLASS, "lagCount", Integer.TYPE).get(parentData);
 //            long parentLagTime = Reflection.getField(DATA_CLASS, "lagTime", Long.TYPE).get(parentData);
-            sender.sendMessage(HEADER_COLOR + parentName + " Count: " + parentCount + " Time: " + parentTime);
+            lines.add(new ComponentBuilder(parentName).color(HEADER_COLOR)
+                    .append(" Count: " + parentCount + " Time: " + parentTime).create());
 
             Object[] children = Reflection.getField(HISTORY_ENTRY_CLASS, "children", Object[].class).get(entry);
             for (Object childData : children) {
-                printChilds(parentData, childData, idHandler, sender);
+                printChilds(parentData, childData, idHandler, lines);
             }
         }
     }
 
-    private void printChilds(Object parent, Object childData, Map<Integer, Object> idMap, CommandSender sender) {
+    private void printChilds(Object parent, Object childData, Map<Integer, Object> idMap, List<BaseComponent[]> lines) {
         int childId = Reflection.getField(DATA_CLASS, "id", Integer.TYPE).get(childData);
 
         Object handler = idMap.get(childId);
@@ -168,6 +175,7 @@ public class PaperTimingsCommand implements CommandExecutor {
         int childCount = Reflection.getField(DATA_CLASS, "count", Integer.TYPE).get(childData);
         long childTime = Reflection.getField(DATA_CLASS, "totalTime", Long.TYPE).get(childData);
 
-        sender.sendMessage(PRIMARY_COLOR + "    " + childName + " Count: " + childCount + " Time: " + childTime);
+        lines.add(new ComponentBuilder("    " + childName + " Count: " + childCount + " Time: " + childTime)
+                .color(PRIMARY_COLOR).create());
     }
 }

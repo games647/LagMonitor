@@ -2,16 +2,23 @@ package com.github.games647.lagmonitor.commands;
 
 import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.Timing;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -53,11 +60,17 @@ public class TimingCommand implements CommandExecutor {
         Queue<CustomTimingsHandler> handlers = Reflection.getField(CustomTimingsHandler.class, "HANDLERS", Queue.class)
                 .get(null);
 
-        sendParsedOutput(handlers, sender, sampleTime);
+        List<BaseComponent[]> lines = Lists.newArrayList();
+        sendParsedOutput(handlers, lines, sampleTime);
+
+        Pagination pagination = new Pagination("Paper Timings", lines);
+        pagination.send(sender);
+
+        this.plugin.getPaginations().put(sender, pagination);
         return true;
     }
 
-    private void sendParsedOutput(Queue<CustomTimingsHandler> handlers, CommandSender sender, long sampleTime) {
+    private void sendParsedOutput(Queue<CustomTimingsHandler> handlers, List<BaseComponent[]> lines, long sampleTime) {
         Map<String, Timing> timings = Maps.newHashMap();
         Timing breakdownTiming = new Timing("Breakdown", -1, -1);
         Timing minecraftTiming = new Timing("Minecraft");
@@ -98,8 +111,9 @@ public class TimingCommand implements CommandExecutor {
 
             //nanoseconds -> seconds
             float totalSeconds = (float) timing.getTotalTime() / 1000 / 1000 / 1000;
-            sender.sendMessage(ChatColor.YELLOW + "=== " + category + " Total: " + round(totalSeconds)
-                    + "sec: " + highlightedPercent + "% " + ChatColor.YELLOW + "===");
+            lines.add(TextComponent.fromLegacyText(ChatColor.YELLOW + "=== " + category
+                    + " Total: " + round(totalSeconds) + "sec: "
+                    + highlightedPercent + "% " + ChatColor.YELLOW + "==="));
             if (timing.getSubCategories() != null) {
                 for (Map.Entry<String, Timing> subEntry : timing.getSubCategories().entrySet()) {
                     String event = subEntry.getKey().replace("** ", "").replace("-", "");
@@ -125,13 +139,14 @@ public class TimingCommand implements CommandExecutor {
                         serverLoad = pctTick;
                     }
 
-                    sender.sendMessage(ChatColor.DARK_AQUA + event + ' ' + highlightPct(round(pctTotal), 10, 20, 50)
-                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40) + " AVG: " + round(avg) + "ms");
+                    lines.add(TextComponent.fromLegacyText(ChatColor.DARK_AQUA + event + ' '
+                            + highlightPct(round(pctTotal), 10, 20, 50)
+                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40) + " AVG: " + round(avg) + "ms"));
                 }
             }
         }
 
-        sender.sendMessage(ChatColor.YELLOW + "==========================================");
+        lines.add(new ComponentBuilder("==========================================").color(ChatColor.GOLD).create());
 
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;
         float totalAvgEntities = (float) entityTicks / numTicks;
@@ -144,16 +159,18 @@ public class TimingCommand implements CommandExecutor {
         String format = ChatColor.DARK_AQUA + "%s" + " " + ChatColor.GRAY + "%s";
 
         //head data
-        sender.sendMessage(String.format(format, "Avg ticks:", round(averageTicks)));
-        sender.sendMessage(String.format(format, "Server Load:", round(serverLoad)));
-        sender.sendMessage(String.format(format, "AVG Players:", round(averagePlayers)));
-        sender.sendMessage(String.format(format, "Activated Entities:", round(activatedAvgEntities))
-                + " / " + round(totalAvgEntities));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Ticks:", round(numTicks))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Ticks:", round(numTicks))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Avg ticks:", round(averageTicks))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Server Load:", round(serverLoad))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "AVG Players:", round(averagePlayers))));
 
-        sender.sendMessage(String.format(format, "Ticks:", round(numTicks)));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Activated Entities:", round(activatedAvgEntities))
+                + " / " + round(totalAvgEntities)));
 
         //convert from nanoseconds to seconds
-        sender.sendMessage(String.format(format, "Sample Time (sec):", round((float) sampleTime / 1000 / 1000 / 1000)));
+        String formatted = String.format(format, "Sample Time (sec):", round((float) sampleTime / 1000 / 1000 / 1000));
+        lines.add(TextComponent.fromLegacyText(formatted));
     }
 
     private void parseTimings(Queue<CustomTimingsHandler> handlers, Map<String, Timing> timings

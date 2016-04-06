@@ -10,9 +10,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
-import org.apache.commons.lang.StringUtils;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -44,32 +47,43 @@ public class MonitorCommand implements CommandExecutor {
         } else if (monitorTask == null) {
             sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
         } else {
+            List<BaseComponent[]> lines = Lists.newArrayList();
             synchronized (monitorTask) {
                 MethodMeasurement rootSample = monitorTask.getRootSample();
-
-                printTrace(sender, 0, rootSample, 0);
+                printTrace(lines, 0, rootSample, 0);
             }
+
+            Pagination pagination = new Pagination("Monitor", lines);
+            pagination.send(sender);
+            this.plugin.getPaginations().put(sender, pagination);
         }
 
         return true;
     }
 
-    private void printTrace(CommandSender sender, long parentTime, MethodMeasurement current, int depth) {
+    private void printTrace(List<BaseComponent[]> lines, long parentTime, MethodMeasurement current, int depth) {
         String space = StringUtils.repeat(" ", depth);
 
         long currentTime = current.getTotalTime();
         float timePercent = current.getTimePercent(parentTime);
 
-        String clazz = ChatColor.DARK_AQUA + Pagination.filterPackageNames(current.getClassName());
-        String method = ChatColor.DARK_GREEN + current.getMethod();
-        sender.sendMessage(space + "[-] " + clazz + '.' + method + ' ' + ChatColor.GRAY + timePercent + '%');
+        String clazz = Pagination.filterPackageNames(current.getClassName());
+        String method = current.getMethod();
+        lines.add(new ComponentBuilder(space + "[-] ")
+                .append(clazz + '.')
+                .color(ChatColor.DARK_AQUA)
+                .append(method)
+                .color(ChatColor.DARK_GREEN)
+                .append(' ' + timePercent + "%")
+                .color(ChatColor.GRAY)
+                .create());
 
         Collection<MethodMeasurement> childInvokes = current.getChildInvokes().values();
         List<MethodMeasurement> sortedList = Lists.newArrayList(childInvokes);
         Collections.sort(sortedList);
 
         for (MethodMeasurement child : sortedList) {
-            printTrace(sender, currentTime, child, depth + 1);
+            printTrace(lines, currentTime, child, depth + 1);
         }
     }
 

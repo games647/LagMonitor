@@ -82,7 +82,10 @@ public class Pagination {
             endIndex = page * CONSOLE_HEIGHT;
         }
 
-        if (endIndex >= lines.size()) {
+        if (startIndex > lines.size()) {
+            endIndex = lines.size() - 1;
+            startIndex = endIndex;
+        } else if (endIndex >= lines.size()) {
             endIndex = lines.size() - 1;
         }
 
@@ -107,8 +110,14 @@ public class Pagination {
                 .create();
     }
 
-    public String buildFooter(int page) {
-        int endIndex = page * PLAYER_HEIGHT;
+    public String buildFooter(int page, boolean isPlayer) {
+        int endIndex = 0;
+        if (isPlayer) {
+            endIndex = page * PLAYER_HEIGHT;
+        } else {
+            endIndex = page * CONSOLE_HEIGHT;
+        }
+
         if (endIndex < lines.size()) {
             //Index starts by 0
             int remaining = lines.size() - endIndex - 1;
@@ -131,6 +140,11 @@ public class Pagination {
             for (BaseComponent[] line : getPage(page, true)) {
                 player.spigot().sendMessage(line);
             }
+
+            String footer = buildFooter(page, true);
+            if (!footer.isEmpty()) {
+                sender.sendMessage(ChatColor.GOLD + footer);
+            }
         } else {
             BaseComponent[] header = buildHeader(page, getTotalPages(false));
             StringBuilder headerBuilder = new StringBuilder();
@@ -147,11 +161,11 @@ public class Pagination {
 
                 sender.sendMessage(lineBuilder.toString());
             }
-        }
 
-        String footer = buildFooter(page);
-        if (!footer.isEmpty()) {
-            sender.sendMessage(ChatColor.GOLD + footer);
+            String footer = buildFooter(page, false);
+            if (!footer.isEmpty()) {
+                sender.sendMessage(ChatColor.GOLD + footer);
+            }
         }
     }
 }
