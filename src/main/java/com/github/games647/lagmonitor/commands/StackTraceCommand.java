@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.Pagination;
 import com.google.common.collect.Lists;
 
 import java.lang.management.ManagementFactory;
@@ -9,7 +10,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -48,12 +52,14 @@ public class StackTraceCommand implements TabExecutor {
     }
 
     private void printStackTrace(CommandSender sender, StackTraceElement[] stackTrace) {
+        List<BaseComponent[]> lines = Lists.newArrayList();
+
         //begin from the top
         for (int i = stackTrace.length - 1; i >= 0; i--) {
             StackTraceElement traceElement = stackTrace[i];
 
-            String className = traceElement.getClassName();
-            String methodName = ChatColor.DARK_GREEN + traceElement.getMethodName();
+            String className = Pagination.filterPackageNames(traceElement.getClassName());
+            String methodName = traceElement.getMethodName();
 
             boolean nativeMethod = traceElement.isNativeMethod();
             int lineNumber = traceElement.getLineNumber();
@@ -63,8 +69,18 @@ public class StackTraceCommand implements TabExecutor {
                 line = "Native";
             }
 
-            sender.sendMessage(PRIMARY_COLOR + className + '.' + methodName + ':' + ChatColor.DARK_PURPLE + line);
+            lines.add(new ComponentBuilder(className + '.')
+                    .color(PRIMARY_COLOR)
+                    .append(methodName + ':')
+                    .color(ChatColor.DARK_GREEN)
+                    .append(line)
+                    .color(ChatColor.DARK_PURPLE)
+                    .create());
         }
+
+        Pagination pagination = new Pagination("Stacktrace", lines);
+        pagination.send(sender);
+        plugin.getPaginations().put(sender, pagination);
     }
 
     @Override

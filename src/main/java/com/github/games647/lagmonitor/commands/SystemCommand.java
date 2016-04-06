@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -89,10 +90,15 @@ public class SystemCommand implements CommandExecutor {
         int entities = 0;
         int chunks = 0;
         int livingEntities = 0;
+        int tileEntities = 0;
 
         long usedWorldSize = 0;
 
         for (World world : worlds) {
+            for (Chunk loadedChunk : world.getLoadedChunks()) {
+                tileEntities += loadedChunk.getTileEntities().length;
+            }
+
             livingEntities += world.getLivingEntities().size();
             entities += world.getEntities().size();
             chunks += world.getLoadedChunks().length;
@@ -102,9 +108,10 @@ public class SystemCommand implements CommandExecutor {
         }
 
         sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
-        sender.sendMessage(PRIMARY_COLOR + "Loaded chunks: " + SECONDARY_COLOR + chunks);
+        sender.sendMessage(PRIMARY_COLOR + "Tile Entities: " + SECONDARY_COLOR + tileEntities);
+        sender.sendMessage(PRIMARY_COLOR + "Loaded Chunks: " + SECONDARY_COLOR + chunks);
         sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
-        sender.sendMessage(PRIMARY_COLOR + "World size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize, true));
+        sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize, true));
     }
 
     private long getFolderSize(File folder) {

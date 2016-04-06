@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
+import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.tasks.MonitorTask;
 import com.google.common.collect.Lists;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
+import org.apache.commons.lang.StringUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -53,17 +55,14 @@ public class MonitorCommand implements CommandExecutor {
     }
 
     private void printTrace(CommandSender sender, long parentTime, MethodMeasurement current, int depth) {
-        StringBuilder depthSpace = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            depthSpace.append(' ');
-        }
+        String space = StringUtils.repeat(" ", depth);
 
         long currentTime = current.getTotalTime();
         float timePercent = current.getTimePercent(parentTime);
 
-        String clazz = ChatColor.DARK_AQUA + current.getClassName();
+        String clazz = ChatColor.DARK_AQUA + Pagination.filterPackageNames(current.getClassName());
         String method = ChatColor.DARK_GREEN + current.getMethod();
-        sender.sendMessage(depthSpace.toString() + clazz + '.' + method + ' ' + ChatColor.GRAY + timePercent + '%');
+        sender.sendMessage(space + "[-] " + clazz + '.' + method + ' ' + ChatColor.GRAY + timePercent + '%');
 
         Collection<MethodMeasurement> childInvokes = current.getChildInvokes().values();
         List<MethodMeasurement> sortedList = Lists.newArrayList(childInvokes);

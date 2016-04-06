@@ -72,6 +72,10 @@ commands:
         description: 'Debug command for paper timings parser'
         aliases: [papertiming, papertimings]
         permission: ${project.artifactId}.command.paper
+    lagpage:
+        description: 'Pagination command for the current pagination session'
+        usage: '/<command> <next/prev/number>'
+        permission: ${project.artifactId}.command.paper
 
 permissions:
     ${project.artifactId}.*:

@@ -1,12 +1,17 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.Pagination;
+import com.google.common.collect.Lists;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,6 +31,8 @@ public class TasksCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        List<BaseComponent[]> lines = Lists.newArrayList();
+
         List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
         for (BukkitTask pendingTask : pendingTasks) {
             Plugin owner = pendingTask.getOwner();
@@ -39,13 +46,24 @@ public class TasksCommand implements CommandExecutor {
                 id += "-Running";
             }
 
-            sender.sendMessage(PRIMARY_COLOR + owner.getName() + SECONDARY_COLOR + '-' + id);
+            lines.add(new ComponentBuilder(owner.getName())
+                    .color(PRIMARY_COLOR)
+                    .append('-' + id)
+                    .color(SECONDARY_COLOR)
+                    .create());
             Class<?> runnableClass = getRunnableClass(pendingTask);
             if (runnableClass != null) {
-                sender.sendMessage(PRIMARY_COLOR + "    Task: " + SECONDARY_COLOR + runnableClass.getSimpleName());
+                lines.add(new ComponentBuilder("    Task: ")
+                        .color(PRIMARY_COLOR)
+                        .append(runnableClass.getSimpleName())
+                        .color(SECONDARY_COLOR)
+                        .create());
             }
         }
 
+        Pagination pagination = new Pagination("Stacktrace", lines);
+        pagination.send(sender);
+        plugin.getPaginations().put(sender, pagination);
         return true;
     }
 

@@ -19,11 +19,12 @@ import org.bukkit.command.defaults.TimingsCommand;
 import org.spigotmc.CustomTimingsHandler;
 
 /**
- * Parsed from the PHP by aikar
+ * Parsed from the PHP project by aikar
  * https://github.com/aikar/timings
  */
 public class TimingCommand implements CommandExecutor {
 
+    //these timings will be in the breakdown report
     private static final String EXCLUDE_INDENTIFIER = "** ";
 
     private final LagMonitor plugin;
@@ -69,44 +70,38 @@ public class TimingCommand implements CommandExecutor {
         long activatedEntityTicks = 0;
         long entityTicks = 0;
         long numTicks = 0;
-
-        if (breakdownTiming.getSubCategories() != null) {
-            for (Map.Entry<String, Timing> entry : breakdownTiming.getSubCategories().entrySet()) {
-                String key = entry.getKey();
-                Timing value = entry.getValue();
-                if ("** tickEntity - EntityPlayer".equalsIgnoreCase(key)) {
-                    playerTicks = value.getTotalCount();
-                } else if ("** activatedTickEntity".equalsIgnoreCase(key)) {
-                    activatedEntityTicks = value.getTotalCount();
-                } else if ("** tickEntity".equalsIgnoreCase(key)) {
-                    entityTicks = value.getTotalCount();
-                } else if (key.contains(" - entityTick")) {
-                    numTicks = Math.max(numTicks, value.getTotalCount());
-                }
+        for (Map.Entry<String, Timing> entry : breakdownTiming.getSubCategories().entrySet()) {
+            String key = entry.getKey();
+            Timing value = entry.getValue();
+            if ("** tickEntity - EntityPlayer".equalsIgnoreCase(key)) {
+                playerTicks = value.getTotalCount();
+            } else if ("** activatedTickEntity".equalsIgnoreCase(key)) {
+                activatedEntityTicks = value.getTotalCount();
+            } else if ("** tickEntity".equalsIgnoreCase(key)) {
+                entityTicks = value.getTotalCount();
+            } else if (key.contains(" - entityTick")) {
+                numTicks = Math.max(numTicks, value.getTotalCount());
             }
         }
 
-        numTicks = Math.max(1, numTicks);
         float serverLoad = 0;
 
         for (Map.Entry<String, Timing> entry : timings.entrySet()) {
             String category = entry.getKey();
-            Timing value = entry.getValue();
-            float pct = (float) value.getTotalTime() / sampleTime * 100;
+            Timing timing = entry.getValue();
+            float pct = (float) timing.getTotalTime() / sampleTime * 100;
 
-            String highlightedPercent;
-            if ("Minecraft".equals(category)) {
+            String highlightedPercent = highlightPct(round(pct), 1, 3, 6);
+            if (timing == minecraftTiming) {
                 highlightedPercent = highlightPct(round(pct), 20, 40, 70);
-            } else {
-                highlightedPercent = highlightPct(round(pct), 1, 3, 6);
             }
 
             //nanoseconds -> seconds
-            float totalSeconds = (float) value.getTotalTime() / 1000 / 1000 / 1000;
+            float totalSeconds = (float) timing.getTotalTime() / 1000 / 1000 / 1000;
             sender.sendMessage(ChatColor.YELLOW + "=== " + category + " Total: " + round(totalSeconds)
                     + "sec: " + highlightedPercent + "% " + ChatColor.YELLOW + "===");
-            if (value.getSubCategories() != null) {
-                for (Map.Entry<String, Timing> subEntry : value.getSubCategories().entrySet()) {
+            if (timing.getSubCategories() != null) {
+                for (Map.Entry<String, Timing> subEntry : timing.getSubCategories().entrySet()) {
                     String event = subEntry.getKey().replace("** ", "").replace("-", "");
                     int lastPackage = event.lastIndexOf('.');
                     if (lastPackage != -1) {
@@ -131,8 +126,7 @@ public class TimingCommand implements CommandExecutor {
                     }
 
                     sender.sendMessage(ChatColor.DARK_AQUA + event + ' ' + highlightPct(round(pctTotal), 10, 20, 50)
-                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40)
-                            + " AVG: " + round(avg) + "ms");
+                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40) + " AVG: " + round(avg) + "ms");
                 }
             }
         }
@@ -141,7 +135,6 @@ public class TimingCommand implements CommandExecutor {
 
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;
         float totalAvgEntities = (float) entityTicks / numTicks;
-//        float activatedPercent = activatedAvgEntities / totalAvgEntities;
 
         float averagePlayers = (float) playerTicks / numTicks;
 
@@ -165,21 +158,22 @@ public class TimingCommand implements CommandExecutor {
 
     private void parseTimings(Queue<CustomTimingsHandler> handlers, Map<String, Timing> timings
             , Timing minecraftTiming, Timing breakdownTiming) {
+//        FieldAccessor<CustomTimingsHandler> getParent = Reflection
+//                .getField(CustomTimingsHandler.class, "parent", CustomTimingsHandler.class);
         FieldAccessor<String> getName = Reflection.getField(CustomTimingsHandler.class, "name", String.class);
 
         FieldAccessor<Long> getTotalTime = Reflection.getField(CustomTimingsHandler.class, "totalTime", Long.TYPE);
         FieldAccessor<Long> getCount = Reflection.getField(CustomTimingsHandler.class, "count", Long.TYPE);
 //        FieldAccessor<Long> getViolations = Reflection.getField(CustomTimingsHandler.class, "violations", Long.TYPE);
         for (CustomTimingsHandler handler : handlers) {
-            String category = getName.get(handler);
+            String subCategory = getName.get(handler);
             long totalTime = getTotalTime.get(handler);
             long count = getCount.get(handler);
 
             Timing active = minecraftTiming;
-            String subCategory = category;
-            if (category.contains("Event: ")) {
-                String pluginName = getProperty(category, "Plugin");
-                String listener = getProperty(category, "Event");
+            if (subCategory.contains("Event: ")) {
+                String pluginName = getProperty(subCategory, "Plugin");
+                subCategory = getProperty(subCategory, "Event");
 
                 Timing pluginReport = timings.get(pluginName);
                 if (pluginReport == null) {
@@ -188,10 +182,9 @@ public class TimingCommand implements CommandExecutor {
                 }
 
                 active = pluginReport;
-                subCategory = listener;
-            } else if (category.contains("Task: ")) {
-                String pluginName = getProperty(category, "Task");
-                String runnable = getProperty(category, "Runnable");
+            } else if (subCategory.contains("Task: ")) {
+                String pluginName = getProperty(subCategory, "Task");
+                subCategory = getProperty(subCategory, "Runnable");
 
                 Timing pluginReport = timings.get(pluginName);
                 if (pluginReport == null) {
@@ -200,7 +193,6 @@ public class TimingCommand implements CommandExecutor {
                 }
 
                 active = pluginReport;
-                subCategory = runnable;
             }
 
             if (subCategory.startsWith(EXCLUDE_INDENTIFIER)) {

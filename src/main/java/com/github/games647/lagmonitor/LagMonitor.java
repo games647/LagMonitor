@@ -1,12 +1,12 @@
 package com.github.games647.lagmonitor;
 
-import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.commands.EnvironmentCommand;
 import com.github.games647.lagmonitor.commands.GraphCommand;
 import com.github.games647.lagmonitor.commands.HeapCommand;
-import com.github.games647.lagmonitor.commands.NativeCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
+import com.github.games647.lagmonitor.commands.NativeCommand;
+import com.github.games647.lagmonitor.commands.PaginationCommand;
 import com.github.games647.lagmonitor.commands.PaperTimingsCommand;
 import com.github.games647.lagmonitor.commands.PingCommand;
 import com.github.games647.lagmonitor.commands.StackTraceCommand;
@@ -16,16 +16,24 @@ import com.github.games647.lagmonitor.commands.ThreadCommand;
 import com.github.games647.lagmonitor.commands.TimingCommand;
 import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
 import com.github.games647.lagmonitor.commands.VmCommand;
+import com.github.games647.lagmonitor.inject.CommandInjector;
+import com.github.games647.lagmonitor.inject.ListenerInjector;
+import com.github.games647.lagmonitor.inject.TaskInjector;
 import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.tasks.BlockingIODetectorTask;
 import com.github.games647.lagmonitor.tasks.PingHistoryTask;
+import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import com.google.common.collect.Maps;
 
+import java.util.Map;
 import java.util.Timer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class LagMonitor extends JavaPlugin {
@@ -34,6 +42,8 @@ public class LagMonitor extends JavaPlugin {
     //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
     private static final int PING_INTERVAL = 40;
     private static final int DETECTION_THRESHOLD = 10;
+
+    private final Map<CommandSender, Pagination> paginations = Maps.newHashMap();
 
     private TpsHistoryTask tpsHistoryTask;
     private PingHistoryTask pingHistoryTask;
@@ -105,6 +115,16 @@ public class LagMonitor extends JavaPlugin {
             SecurityManager oldSecurityManager = ((BlockingSecurityManager) securityManager).getOldSecurityManager();
             System.setSecurityManager(oldSecurityManager);
         }
+
+        for (Plugin plugin : getServer().getPluginManager().getPlugins()) {
+            ListenerInjector.uninject(plugin);
+            CommandInjector.uninject(plugin);
+            TaskInjector.uninject(plugin);
+        }
+    }
+
+    public Map<CommandSender, Pagination> getPaginations() {
+        return paginations;
     }
 
     public Timer getMonitorTimer() {
@@ -143,5 +163,6 @@ public class LagMonitor extends JavaPlugin {
         getCommand("tasks").setExecutor(new TasksCommand(this));
         getCommand("paper").setExecutor(new PaperTimingsCommand(this));
         getCommand("heap").setExecutor(new HeapCommand(this));
+        getCommand("lagpage").setExecutor(new PaginationCommand(this));
     }
 }

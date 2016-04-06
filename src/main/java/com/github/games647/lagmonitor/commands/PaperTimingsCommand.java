@@ -1,29 +1,49 @@
 package com.github.games647.lagmonitor.commands;
 
 import co.aikar.timings.TimingHistory;
+import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
 
 import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 /**
- * PaperSpigot and Sponge uses a new timings system (v2). Missing data: * TicksRecord -> player ticks -> timedTicks ->
- * entityTicks -> activatedEntityTicks -> tileEntityTicks * MinuteReport -> time -> tps -> avgPing -> fullServerTick ->
- * ticks * World data -> worldName -> tileEntities -> entities
+ * PaperSpigot and Sponge uses a new timings system (v2).
+ * Missing data:
+ * * TicksRecord
+ * -> player ticks
+ * -> timedTicks
+ * -> entityTicks
+ * -> activatedEntityTicks
+ * -> tileEntityTicks
+ * * MinuteReport
+ * -> time
+ * -> tps
+ * -> avgPing
+ * -> fullServerTick
+ * -> ticks
+ * * World data
+ * -> worldName
+ * -> tileEntities
+ * -> entities
  *
- * => This concludes to the fact that the big benefits from Timings v2 isn't available. For example you cannot scroll
- * through your history
+ * => This concludes to the fact that the big benefits from Timings v2 isn't available. For example you cannot
+ * scroll through your history
  */
 public class PaperTimingsCommand implements CommandExecutor {
 
@@ -53,6 +73,12 @@ public class PaperTimingsCommand implements CommandExecutor {
             return true;
         }
 
+        if (!Timings.isTimingsEnabled()) {
+            sender.sendMessage(ChatColor.DARK_RED + "The server deactivated timing reports");
+            sender.sendMessage(ChatColor.DARK_RED + "Go to paper.yml and activate timings");
+            return true;
+        }
+
         //modify timings settings dynamically?
 //        Timings.setHistoryInterval(0);
 //        Timings.setHistoryLength(0);
@@ -72,23 +98,25 @@ public class PaperTimingsCommand implements CommandExecutor {
     }
 
     public void printTimings(CommandSender sender, TimingHistory lastHistory) {
+        List<BaseComponent[]> lines = Lists.newArrayList();
+
         long startTime = Reflection.getField(TimingHistory.class, "startTime", Long.TYPE).get(lastHistory);
         long endTime = Reflection.getField(TimingHistory.class, "endTime", Long.TYPE).get(lastHistory);
 
         long sampleTime = (endTime - startTime) / 1000;
 
         // Represents all time spent running the server this history
-        long totalTime = Reflection.getField(TimingHistory.class, "totalTime", Long.TYPE).get(lastHistory);
-        long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
+//        long totalTime = Reflection.getField(TimingHistory.class, "totalTime", Long.TYPE).get(lastHistory);
+//        long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
 
         long cost = (long) Reflection.getMethod(EXPORT_CLASS, "getCost").invoke(null);
         sender.sendMessage(PRIMARY_COLOR + "Cost: " + SECONDARY_COLOR + cost);
         sender.sendMessage(PRIMARY_COLOR + "Sample (sec): " + SECONDARY_COLOR + sampleTime);
 
-        long playerTicks = TimingHistory.playerTicks;
-        long tileEntityTicks = TimingHistory.tileEntityTicks;
-        long activatedEntityTicks = TimingHistory.activatedEntityTicks;
-        long entityTicks = TimingHistory.entityTicks;
+//        long playerTicks = TimingHistory.playerTicks;
+//        long tileEntityTicks = TimingHistory.tileEntityTicks;
+//        long activatedEntityTicks = TimingHistory.activatedEntityTicks;
+//        long entityTicks = TimingHistory.entityTicks;
 
         Collection<?> HANDLERS = Reflection.getField(TimingsManager.class, "HANDLERS", Collection.class)
                 .get(null);
