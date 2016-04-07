@@ -22,7 +22,7 @@ commands:
         permission: ${project.artifactId}.command.stacktrace
     thread:
         description: 'Outputs all running threads with their current state'
-        usage: '/<command> [threadName]'
+        usage: '/<command> [dump]'
         aliases: [threads]
         permission: ${project.artifactId}.command.thread
     tpshistory:
@@ -67,6 +67,7 @@ commands:
     heap:
         description: 'Heap dump about your current memory'
         aliases: [ram]
+        usage: /<command> [dump]
         permission: ${project.artifactId}.command.heap
     paper:
         description: 'Debug command for paper timings parser'

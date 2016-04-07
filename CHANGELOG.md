@@ -2,6 +2,8 @@
 
 ##1.1
 
+* Added thread dump to file option /thread dump
+* Added heap dump to file option /heap dump
 * Fix pagination error if the user is requesting a too high page number
 
 ## 1.0
