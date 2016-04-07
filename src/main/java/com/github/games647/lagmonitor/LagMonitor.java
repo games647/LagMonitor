@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor;
 
 import com.github.games647.lagmonitor.commands.EnvironmentCommand;
+import com.github.games647.lagmonitor.commands.FlightRecorderCommand;
 import com.github.games647.lagmonitor.commands.GraphCommand;
 import com.github.games647.lagmonitor.commands.HeapCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
@@ -54,6 +55,7 @@ public class LagMonitor extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        saveResource("default.jfc", false);
         registerCommands();
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
@@ -164,5 +166,6 @@ public class LagMonitor extends JavaPlugin {
         getCommand("paper").setExecutor(new PaperTimingsCommand(this));
         getCommand("heap").setExecutor(new HeapCommand(this));
         getCommand("lagpage").setExecutor(new PaginationCommand(this));
+        getCommand("jfr").setExecutor(new FlightRecorderCommand(this));
     }
 }

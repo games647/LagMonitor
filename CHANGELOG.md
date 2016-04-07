@@ -1,5 +1,11 @@
 # Changelog
 
+##1.2
+
+* Added support for Java Flight Recorder dump
+* Added default configuration file for flight recorder
+* Fixed permission of lagpage command has the paper command permission
+
 ##1.1
 
 * Added thread dump to file option /thread dump

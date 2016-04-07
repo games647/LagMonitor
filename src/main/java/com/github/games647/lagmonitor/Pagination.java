@@ -121,7 +121,7 @@ public class Pagination {
         if (endIndex < lines.size()) {
             //Index starts by 0
             int remaining = lines.size() - endIndex - 1;
-            return "... " + remaining + " more entries. Click the arrows above or type /lagpage " + (page + 1);
+            return "... " + remaining + " more entries. Click the arrows above or type /lagpage next";
         }
 
         return "";

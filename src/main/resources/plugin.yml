@@ -76,7 +76,13 @@ commands:
     lagpage:
         description: 'Pagination command for the current pagination session'
         usage: '/<command> <next/prev/number>'
-        permission: ${project.artifactId}.command.paper
+    jfr:
+        description: |
+            'Manages the Java Flight Recordings of the native Java VM. It gives you much more detailed information
+            including network communications, file read/write times, detailed heap and thread data, ...'
+        aliases: [flightrecoder]
+        usage: '/<command> <start/stop/dump>'
+        permission: ${project.artifactId}.command.jfr
 
 permissions:
     ${project.artifactId}.*:
@@ -101,6 +107,7 @@ permissions:
             ${project.artifactId}.command.vm: true
             ${project.artifactId}.command.tasks: true
             ${project.artifactId}.command.paper: true
+            ${project.artifactId}.command.jfr: true
 
     ${project.artifactId}.command.ping.other:
         description: 'Get the ping from other players'
