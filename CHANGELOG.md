@@ -1,5 +1,9 @@
 # Changelog
 
+##1.1
+
+* Fix pagination error if the user is requesting a too high page number
+
 ## 1.0
 
 * Added plugin injection (commands, listener and tasks)

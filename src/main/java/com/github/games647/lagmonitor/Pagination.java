@@ -82,7 +82,7 @@ public class Pagination {
             endIndex = page * CONSOLE_HEIGHT;
         }
 
-        if (startIndex > lines.size()) {
+        if (startIndex >= lines.size()) {
             endIndex = lines.size() - 1;
             startIndex = endIndex;
         } else if (endIndex >= lines.size()) {
