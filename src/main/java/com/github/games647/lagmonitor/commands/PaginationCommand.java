@@ -62,7 +62,7 @@ public class PaginationCommand implements CommandExecutor {
 
     private void onNextPage(Pagination pagination, CommandSender sender) {
         int lastPage = pagination.getLastSentPage();
-        if (lastPage > pagination.getTotalPages(sender instanceof Player)) {
+        if (lastPage >= pagination.getTotalPages(sender instanceof Player)) {
             sender.sendMessage(ChatColor.DARK_RED + "You are already on the last page");
             return;
         }
