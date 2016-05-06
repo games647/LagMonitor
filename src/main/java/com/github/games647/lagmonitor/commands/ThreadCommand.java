@@ -41,7 +41,7 @@ public class ThreadCommand implements CommandExecutor {
     private static final String DUMP_FILE_ENDING = ".tdump";
 
     private final LagMonitor plugin;
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
     public ThreadCommand(LagMonitor plugin) {
         this.plugin = plugin;

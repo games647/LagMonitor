@@ -49,7 +49,7 @@ which should be run async
 - [ ] Graph for network and file transfer (Example: http://i.imgur.com/sxTfTjB.png)
 - [X] PaperSpigot Timings parser
 - [ ] Textual graphs for consoles
-- [ ] Extend paper spigot timings parser
+- [X] Extend paper spigot timings parser
 - [X] World size in bytes
 
 ## Permissions
@@ -78,7 +78,6 @@ lagmonitor.commands.* - Access to all commands
 
 ## Commands
 
-
     /ping - Gets your server ping
     /ping <player> - Gets the ping of the selected player
     /stacktrace - Gets the execution stacktrace of the current thread
@@ -101,7 +100,6 @@ lagmonitor.commands.* - Access to all commands
     /lagpage <next/prev/pageNumber> - Pagination command for the current pagination session
     /jfr <start/stop/dump> - Manages the Java Flight Recordings of the native Java VM. It gives you much more detailed
         information including network communications, file read/write times, detailed heap and thread data, ...
-
 
 ## Images
 

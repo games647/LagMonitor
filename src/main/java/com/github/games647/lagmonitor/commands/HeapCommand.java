@@ -39,7 +39,7 @@ public class HeapCommand implements CommandExecutor {
     private static final boolean DUMP_DEAD_OBJECTS = false;
 
     private final LagMonitor plugin;
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
     public HeapCommand(LagMonitor plugin) {
         this.plugin = plugin;

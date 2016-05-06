@@ -148,6 +148,14 @@ public class TimingCommand implements CommandExecutor {
 
         lines.add(new ComponentBuilder("==========================================").color(ChatColor.GOLD).create());
 
+        long total = minecraftTiming.getTotalTime();
+        printHeadData(total, activatedEntityTicks, numTicks, entityTicks, playerTicks, sampleTime, lines, serverLoad);
+    }
+
+    private void printHeadData(long total, long activatedEntityTicks, long numTicks, long entityTicks, long playerTicks
+            , long sampleTime, List<BaseComponent[]> lines, float serverLoad) {
+        float totalSeconds = (float) total / 1000 / 1000 / 1000;
+
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;
         float totalAvgEntities = (float) entityTicks / numTicks;
 
@@ -159,7 +167,7 @@ public class TimingCommand implements CommandExecutor {
         String format = ChatColor.DARK_AQUA + "%s" + " " + ChatColor.GRAY + "%s";
 
         //head data
-        lines.add(TextComponent.fromLegacyText(String.format(format, "Ticks:", round(numTicks))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Total (sec):", round(totalSeconds))));
         lines.add(TextComponent.fromLegacyText(String.format(format, "Ticks:", round(numTicks))));
         lines.add(TextComponent.fromLegacyText(String.format(format, "Avg ticks:", round(averageTicks))));
         lines.add(TextComponent.fromLegacyText(String.format(format, "Server Load:", round(serverLoad))));

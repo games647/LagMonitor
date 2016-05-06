@@ -1,5 +1,14 @@
 # Changelog
 
+##1.3
+
+* Added PaperTimings head data
+* Added percent values to the paper spigot timings
+* Fixed combined plugin name
+* Fixed unkown entries in paper spigot timings parser
+* Fixed missing total second head data in spigot timings parser
+* Fixed pagination error from the last page
+
 ##1.2
 
 * Added support for Java Flight Recorder dump

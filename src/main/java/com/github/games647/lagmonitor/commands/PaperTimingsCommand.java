@@ -11,18 +11,20 @@ import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.ArrayDeque;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * PaperSpigot and Sponge uses a new timings system (v2).
@@ -61,6 +63,8 @@ public class PaperTimingsCommand implements CommandExecutor {
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private final LagMonitor plugin;
+    private int historyIntervall = Reflection.getField("com.destroystokyo.paper.PaperConfig", "config"
+            , YamlConfiguration.class).get(null).getInt("timings.history-interval");
 
     public PaperTimingsCommand(LagMonitor plugin) {
         this.plugin = plugin;
@@ -81,10 +85,6 @@ public class PaperTimingsCommand implements CommandExecutor {
             return true;
         }
 
-        //modify timings settings dynamically?
-//        Timings.setHistoryInterval(0);
-//        Timings.setHistoryLength(0);
-//        Timings.setVerboseTimingsEnabled(true);
         EvictingQueue<TimingHistory> history = Reflection.getField(TimingsManager.class, "HISTORY", EvictingQueue.class)
                 .get(null);
 
@@ -105,31 +105,23 @@ public class PaperTimingsCommand implements CommandExecutor {
     }
 
     public void printTimings(List<BaseComponent[]> lines, TimingHistory lastHistory) {
-        long startTime = Reflection.getField(TimingHistory.class, "startTime", Long.TYPE).get(lastHistory);
-        long endTime = Reflection.getField(TimingHistory.class, "endTime", Long.TYPE).get(lastHistory);
+        printHeadData(lastHistory, lines);
 
-        long sampleTime = (endTime - startTime) / 1000;
+        Map<Integer, String> idHandler = Maps.newHashMap();
 
-        // Represents all time spent running the server this history
-//        long totalTime = Reflection.getField(TimingHistory.class, "totalTime", Long.TYPE).get(lastHistory);
-//        long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
-
-        long cost = (long) Reflection.getMethod(EXPORT_CLASS, "getCost").invoke(null);
-        lines.add(new ComponentBuilder("Cost: ").color(PRIMARY_COLOR)
-                .append(Long.toString(cost)).color(SECONDARY_COLOR).create());
-        lines.add(new ComponentBuilder("Sample (sec): ").color(PRIMARY_COLOR)
-                .append(Long.toString(sampleTime)).color(SECONDARY_COLOR).create());
-
-//        long playerTicks = TimingHistory.playerTicks;
-//        long tileEntityTicks = TimingHistory.tileEntityTicks;
-//        long activatedEntityTicks = TimingHistory.activatedEntityTicks;
-//        long entityTicks = TimingHistory.entityTicks;
-
-        Collection<?> HANDLERS = Reflection.getField(TimingsManager.class, "HANDLERS", Collection.class).get(null);
-        Map<Integer, Object> idHandler = Maps.newHashMap();
-        for (Object timingHandler : HANDLERS) {
-            int id = Reflection.getField(HANDLER_CLASS, "id", Integer.TYPE).get(timingHandler);
-            idHandler.put(id, timingHandler);
+        Map<?, ?> groups = Reflection.getField(TIMINGS_PACKAGE + ".TimingIdentifier", "GROUP_MAP", Map.class).get(null);
+        for (Object group : groups.values()) {
+            String groupName = Reflection.getField(group.getClass(), "name", String.class).get(group);
+            ArrayDeque<?> handlers = Reflection.getField(group.getClass(), "handlers", ArrayDeque.class).get(group);
+            for (Object handler : handlers) {
+                int id = Reflection.getField(HANDLER_CLASS, "id", Integer.TYPE).get(handler);
+                String name = Reflection.getField(HANDLER_CLASS, "name", String.class).get(handler);
+                if (name.contains("Combined")) {
+                    idHandler.put(id, "Combined " + groupName);
+                } else {
+                    idHandler.put(id, name);
+                }
+            }
         }
 
         //TimingHistoryEntry
@@ -138,12 +130,12 @@ public class PaperTimingsCommand implements CommandExecutor {
             Object parentData = Reflection.getField(HISTORY_ENTRY_CLASS, "data", Object.class).get(entry);
             int childId = Reflection.getField(DATA_CLASS, "id", Integer.TYPE).get(parentData);
 
-            Object handler = idHandler.get(childId);
+            String handlerName = idHandler.get(childId);
             String parentName;
-            if (handler == null) {
+            if (handlerName == null) {
                 parentName = "Unknown-" + childId;
             } else {
-                parentName = Reflection.getField(HANDLER_CLASS, "name", String.class).get(handler);
+                parentName = handlerName;
             }
 
             int parentCount = Reflection.getField(DATA_CLASS, "count", Integer.TYPE).get(parentData);
@@ -161,21 +153,67 @@ public class PaperTimingsCommand implements CommandExecutor {
         }
     }
 
-    private void printChilds(Object parent, Object childData, Map<Integer, Object> idMap, List<BaseComponent[]> lines) {
+    private void printChilds(Object parent, Object childData, Map<Integer, String> idMap, List<BaseComponent[]> lines) {
         int childId = Reflection.getField(DATA_CLASS, "id", Integer.TYPE).get(childData);
 
-        Object handler = idMap.get(childId);
+        String handlerName = idMap.get(childId);
         String childName;
-        if (handler == null) {
+        if (handlerName == null) {
             childName = "Unknown-" + childId;
         } else {
-            childName = Reflection.getField(HANDLER_CLASS, "name", String.class).get(handler);
+            childName = handlerName;
         }
 
         int childCount = Reflection.getField(DATA_CLASS, "count", Integer.TYPE).get(childData);
         long childTime = Reflection.getField(DATA_CLASS, "totalTime", Long.TYPE).get(childData);
 
-        lines.add(new ComponentBuilder("    " + childName + " Count: " + childCount + " Time: " + childTime)
+        long parentTime = Reflection.getField(DATA_CLASS, "totalTime", Long.TYPE).get(parent);
+        float percent = (float) childTime / parentTime;
+
+        lines.add(new ComponentBuilder("    " + childName + " Count: " + childCount + " Time: " + childTime
+                + ' ' + round(percent) + '%')
                 .color(PRIMARY_COLOR).create());
+    }
+
+    private void printHeadData(TimingHistory lastHistory, List<BaseComponent[]> lines) {
+        // Represents all time spent running the server this history
+
+        long totalTime = Reflection.getField(TimingHistory.class, "totalTime", Long.TYPE).get(lastHistory);
+        long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
+
+        long cost = (long) Reflection.getMethod(EXPORT_CLASS, "getCost").invoke(null);
+        lines.add(new ComponentBuilder("Cost: ").color(PRIMARY_COLOR)
+                .append(Long.toString(cost)).color(SECONDARY_COLOR).create());
+
+        float totalSeconds = (float) totalTime / 1000 / 1000;
+
+        long playerTicks = TimingHistory.playerTicks;
+        long tileEntityTicks = TimingHistory.tileEntityTicks;
+        long activatedEntityTicks = TimingHistory.activatedEntityTicks;
+        long entityTicks = TimingHistory.entityTicks;
+
+        float activatedAvgEntities = (float) activatedEntityTicks / totalTicks;
+        float totalAvgEntities = (float) entityTicks / totalTicks;
+
+        float averagePlayers = (float) playerTicks / totalTicks;
+
+        float desiredTicks = 20 * historyIntervall;
+        float averageTicks = totalTicks / desiredTicks * 20;
+
+        String format = ChatColor.DARK_AQUA + "%s" + " " + ChatColor.GRAY + "%s";
+
+        //head data
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Total (sec):", round(totalSeconds))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Ticks:", round(totalTicks))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Avg ticks:", round(averageTicks))));
+//        lines.add(TextComponent.fromLegacyText(String.format(format, "Server Load:", round(serverLoad))));
+        lines.add(TextComponent.fromLegacyText(String.format(format, "AVG Players:", round(averagePlayers))));
+
+        lines.add(TextComponent.fromLegacyText(String.format(format, "Activated Entities:", round(activatedAvgEntities))
+                + " / " + round(totalAvgEntities)));
+    }
+
+    private float round(float number) {
+        return (float) (Math.round(number * 100.0) / 100.0);
     }
 }
