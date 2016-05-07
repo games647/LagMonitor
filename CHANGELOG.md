@@ -1,11 +1,15 @@
 # Changelog
 
+##1.3.1
+
+* Fix class not found in paper spigot timings parser if user is using normal spigot
+
 ##1.3
 
 * Added PaperTimings head data
 * Added percent values to the paper spigot timings
 * Fixed combined plugin name
-* Fixed unkown entries in paper spigot timings parser
+* Fixed unknown entries in paper spigot timings parser
 * Fixed missing total second head data in spigot timings parser
 * Fixed pagination error from the last page
 

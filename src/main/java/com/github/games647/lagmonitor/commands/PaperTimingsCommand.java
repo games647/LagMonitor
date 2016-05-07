@@ -63,11 +63,18 @@ public class PaperTimingsCommand implements CommandExecutor {
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private final LagMonitor plugin;
-    private int historyIntervall = Reflection.getField("com.destroystokyo.paper.PaperConfig", "config"
-            , YamlConfiguration.class).get(null).getInt("timings.history-interval");
+    private int historyIntervall;
 
     public PaperTimingsCommand(LagMonitor plugin) {
         this.plugin = plugin;
+
+        try {
+            historyIntervall = Reflection.getField("com.destroystokyo.paper.PaperConfig", "config"
+            , YamlConfiguration.class).get(null).getInt("timings.history-interval");
+        } catch (IllegalArgumentException illegalArgumentException) {
+            //cannot find paper spigot
+            historyIntervall = -1;
+        }
     }
 
     @Override
