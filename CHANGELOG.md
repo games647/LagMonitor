@@ -1,5 +1,9 @@
 # Changelog
 
+##1.3.2
+
+* Fix command permission for /ping player
+
 ##1.3.1
 
 * Fix class not found in paper spigot timings parser if user is using normal spigot

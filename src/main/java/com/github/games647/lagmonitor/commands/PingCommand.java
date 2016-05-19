@@ -40,7 +40,7 @@ public class PingCommand implements CommandExecutor {
     }
 
     private void displayPingOther(CommandSender sender, Command command, String[] args) {
-        if (sender.hasPermission(plugin.getName().toLowerCase() + command.getPermission() + ".other")) {
+        if (sender.hasPermission(command.getPermission() + ".other")) {
             String playerName = args[0];
             Player targetPlayer = Bukkit.getPlayer(playerName);
             if (targetPlayer != null) {
