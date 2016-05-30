@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
+import javax.management.InstanceNotFoundException;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -73,6 +74,10 @@ public class HeapCommand implements CommandExecutor {
             Pagination pagination = new Pagination("Heap", paginatedLines);
             pagination.send(sender);
             plugin.getPaginations().put(sender, pagination);
+        } catch (InstanceNotFoundException instanceNotFoundException) {
+            plugin.getLogger().log(Level.SEVERE, "You are not using Oracle JVM. OpenJDK hasn't implemented it yet"
+                    , instanceNotFoundException);
+            sender.sendMessage(ChatColor.DARK_RED + "You are not using Oracle JVM. OpenJDK hasn't implemented it yet");
         } catch (Exception ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
             sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");

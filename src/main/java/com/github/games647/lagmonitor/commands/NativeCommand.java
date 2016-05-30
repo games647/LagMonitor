@@ -69,7 +69,7 @@ public class NativeCommand implements CommandExecutor {
         Sigar sigar = new Sigar();
         try {
             int uptime = (int) sigar.getUptime().getUptime();
-            sender.sendMessage(PRIMARY_COLOR + "OS Updtime: " + SECONDARY_COLOR + formatUptime(uptime));
+            sender.sendMessage(PRIMARY_COLOR + "OS Uptime: " + SECONDARY_COLOR + formatUptime(uptime));
 
             CpuInfo[] cpuInfoList = sigar.getCpuInfoList();
             int mhz = cpuInfoList[0].getMhz();

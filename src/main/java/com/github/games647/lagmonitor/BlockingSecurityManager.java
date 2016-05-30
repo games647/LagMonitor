@@ -57,6 +57,7 @@ public class BlockingSecurityManager extends SecurityManager {
             //commented out, because also operations like .createNewFile() is also a write permission
             //which could executed by the main thread, doesn't it`?
 //            return actions.contains("read") || actions.contains("write");
+            return actions.contains("read");
             //read write
         } else if (permission instanceof SocketPermission) {
             return actions.contains("connect");
