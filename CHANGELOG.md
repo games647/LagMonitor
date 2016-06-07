@@ -3,6 +3,7 @@
 ##1.4
 
 * Added monitoring to a MySQL database
+* Added a unsupported java vendor hint to heap and thread dumps
 * Speed up the native command by loading the native driver only on plugin load
 
 ##1.3.2

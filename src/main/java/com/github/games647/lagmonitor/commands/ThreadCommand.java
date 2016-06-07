@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.management.InstanceNotFoundException;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -104,6 +105,10 @@ public class ThreadCommand implements CommandExecutor {
 
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getCanonicalPath());
             sender.sendMessage(ChatColor.GRAY + "You can analyse it using VisualVM");
+        } catch (InstanceNotFoundException instanceNotFoundException) {
+            plugin.getLogger().log(Level.SEVERE, "You are not using Oracle JVM. OpenJDK hasn't implemented it yet"
+                    , instanceNotFoundException);
+            sender.sendMessage(ChatColor.DARK_RED + "You are not using Oracle JVM. OpenJDK hasn't implemented it yet");
         } catch (Exception ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
             sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
