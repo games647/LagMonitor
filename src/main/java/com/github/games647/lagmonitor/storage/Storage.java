@@ -49,55 +49,54 @@ public class Storage {
             con = getConnection();
 
             createTpsStmt = con.createStatement();
-            createTpsStmt.executeQuery("CREATE TABLE IF NOT EXISTS " + TPS_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + TPS_TABLE + " ("
                     + "tps_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "tps UNSIGNED FLOAT NOT NULL, "
+                    + "tps FLOAT UNSIGNED NOT NULL, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
                     + ")");
 
-            createTpsStmt.executeQuery("CREATE TABLE IF NOT EXISTS " + MONITOR_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + MONITOR_TABLE + " ("
                     + "monitor_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "process_usage UNSIGNED FLOAT NOT NULL, "
-                    + "os_usage UNSIGNED FLOAT NOT NULL, "
-                    + "free_ram UNSIGNED SMALLINT NOT NULL, "
-                    + "free_ram_pct UNSIGNED FLOAT NOT NULL, "
-                    + "os_free_ram UNSIGNED SMALLINT NOT NULL, "
-                    + "os_free_ram_pct UNSIGNED FLOAT NOT NULL, "
-                    + "load_avg UNSIGNED FLOAT NOT NULL, "
+                    + "process_usage FLOAT UNSIGNED NOT NULL, "
+                    + "os_usage FLOAT UNSIGNED NOT NULL, "
+                    + "free_ram SMALLINT UNSIGNED NOT NULL, "
+                    + "free_ram_pct FLOAT UNSIGNED NOT NULL, "
+                    + "os_free_ram SMALLINT UNSIGNED NOT NULL, "
+                    + "os_free_ram_pct FLOAT UNSIGNED NOT NULL, "
+                    + "load_avg FLOAT UNSIGNED NOT NULL, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
                     + ")");
 
-            createTpsStmt.executeQuery("CREATE TABLE IF NOT EXISTS " + WORLDS_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + WORLDS_TABLE + " ("
                     + "world_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "monitor_id INTEGER UNSIGNED, "
-                    + "world_name UNSIGNED VARCHAR NOT NULL, "
-                    + "chunks_loaded UNSIGNED SMALLINT NOT NULL, "
-                    + "tile_entities UNSIGNED SMALLINT NOT NULL, "
-                    + "world_size UNSIGNED SMALLINT NOT NULL, "
-                    + "entities UNSIGNED INT NOT NULL, "
+                    + "monitor_id INTEGER UNSIGNED NOT NULL, "
+                    + "world_name VARCHAR(255) NOT NULL, "
+                    + "chunks_loaded SMALLINT UNSIGNED NOT NULL, "
+                    + "tile_entities SMALLINT UNSIGNED NOT NULL, "
+                    + "world_size SMALLINT UNSIGNED NOT NULL, "
+                    + "entities INT UNSIGNED NOT NULL, "
                     + "FOREIGN KEY (monitor_id) REFERENCES " + MONITOR_TABLE + "(monitor_id) "
                     + ")");
 
-            createTpsStmt.executeQuery("CREATE TABLE IF NOT EXISTS " + PLAYERS_TABLE + " ("
-                    + "monitor_id INTEGER UNSIGNED, "
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + PLAYERS_TABLE + " ("
                     + "world_id INTEGER UNSIGNED, "
-                    + "uuid UNSIGNED CHAR(40) NOT NULL, "
-                    + "name UNSIGNED VARCHAR(16) NOT NULL, "
-                    + "ping UNSIGNED SMALLINT NOT NULL, "
-                    + "PRIMARY KEY (monitor_id, uuid), "
-                    + "FOREIGN KEY (monitor_id) REFERENCES " + MONITOR_TABLE + "(monitor_id) "
+                    + "uuid CHAR(40) NOT NULL, "
+                    + "name VARCHAR(16) NOT NULL, "
+                    + "ping SMALLINT UNSIGNED NOT NULL, "
+                    + "PRIMARY KEY (world_id, uuid), "
+                    + "FOREIGN KEY (world_id) REFERENCES " + WORLDS_TABLE + "(world_id) "
                     + ")");
             
-            createTpsStmt.executeQuery("CREATE TABLE IF NOT EXISTS " + NATIVE_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + NATIVE_TABLE + " ("
                     + "native_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "mc_read UNSIGNED SMALLINT, "
-                    + "mc_write UNSIGNED SMALLINT, "
-                    + "free_space UNSIGNED INT, "
-                    + "free_space_pct UNSIGNED FLOAT, "
-                    + "disk_read UNSIGNED SMALLINT, "
-                    + "disk_write UNSIGNED SMALLINT, "
-                    + "net_read UNSIGNED SMALLINT, "
-                    + "net_write UNSIGNED SMALLINT, "
+                    + "mc_read SMALLINT UNSIGNED , "
+                    + "mc_write SMALLINT UNSIGNED, "
+                    + "free_space INT UNSIGNED, "
+                    + "free_space_pct FLOAT UNSIGNED, "
+                    + "disk_read SMALLINT UNSIGNED, "
+                    + "disk_write SMALLINT UNSIGNED, "
+                    + "net_read SMALLINT UNSIGNED, "
+                    + "net_write SMALLINT UNSIGNED, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
                     + ")");
         } finally {
@@ -116,7 +115,7 @@ public class Storage {
 
             saveMonitorStmt = con.prepareStatement("INSERT INTO " + MONITOR_TABLE
                     + " (process_usage, os_usage, free_ram, free_ram_pct, os_free_ram, os_free_ram_pct, load_avg)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             saveMonitorStmt.setFloat(1, procUsage);
             saveMonitorStmt.setFloat(2, osUsage);
             saveMonitorStmt.setInt(3, freeRam);
@@ -131,7 +130,7 @@ public class Storage {
                 return generatedKeys.getInt(1);
             }
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving tps to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Error saving monitor data to database", sqlEx);
         } finally {
             closeQuietly(generatedKeys);
             closeQuietly(saveMonitorStmt);
@@ -176,7 +175,7 @@ public class Storage {
 
             return true;
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving tps to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Error saving worlds data to database", sqlEx);
         } finally {
             closeQuietly(generatedKeys);
             closeQuietly(saveMonitorStmt);
@@ -197,21 +196,21 @@ public class Storage {
         try {
             con = getConnection();
 
-            saveMonitorStmt = con.prepareStatement("INSERT INTO " + MONITOR_TABLE
-                    + " (world_id, uuid, name, ping) VALUES (?, ?, ?, ?)");
+            saveMonitorStmt = con.prepareStatement("INSERT INTO " + PLAYERS_TABLE + " (world_id, uuid, name, ping) "
+                    + "VALUES (?, ?, ?, ?)");
 
             for (PlayerData data : playerData) {
                 saveMonitorStmt.setInt(1, data.getWorldId());
                 saveMonitorStmt.setString(2, data.getUuid().toString());
                 saveMonitorStmt.setString(3, data.getPlayerName());
-                saveMonitorStmt.setInt(3, data.getPing());
+                saveMonitorStmt.setInt(4, data.getPing());
                 saveMonitorStmt.addBatch();
             }
 
             saveMonitorStmt.executeBatch();
             return true;
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving tps to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Error saving player data to database", sqlEx);
         } finally {
             closeQuietly(generatedKeys);
             closeQuietly(saveMonitorStmt);
@@ -230,7 +229,7 @@ public class Storage {
 
             saveNativeStmt = con.prepareStatement("INSERT INTO " + NATIVE_TABLE 
                     + " (mc_read, mc_write, free_space, free_space_pct, disk_read, disk_write, net_read, net_write)"
-                    + " VALUES (?, ?, ?, , ?, ?, ?, ?, ?)");
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             saveNativeStmt.setInt(1, mcRead);
             saveNativeStmt.setInt(2, mcWrite);
 

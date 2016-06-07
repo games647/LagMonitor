@@ -70,6 +70,7 @@ public class NativeCommand implements CommandExecutor {
         } catch (SigarException sigarException) {
             plugin.getLogger().log(Level.SEVERE, null, sigarException);
         }
+        
         return true;
     }
 

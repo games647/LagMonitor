@@ -7,6 +7,8 @@ import com.google.common.collect.Maps;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -126,8 +128,10 @@ public class MonitorSaveTask implements Runnable {
     private int onMonitorSave(Storage storage) {
         Runtime runtime = Runtime.getRuntime();
         int maxMemory = byteToMega(runtime.maxMemory());
-        int freeRam = byteToMega(runtime.freeMemory());
-        float freeRamPct = round(freeRam / maxMemory);
+        //we need the free ram not the free heap
+        int freeRam = byteToMega(runtime.totalMemory() - maxMemory);
+
+        float freeRamPct = round((freeRam * 100) / maxMemory, 4);
 
         float systemUsage = 0;
         float procUsage = 0;
@@ -136,17 +140,22 @@ public class MonitorSaveTask implements Runnable {
         int freeOsRam = 0;
 
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-        float loadAvg = round(osBean.getSystemLoadAverage());
+        float loadAvg = round(osBean.getSystemLoadAverage(), 4);
+        if (loadAvg == -1) {
+            //windows doesn't support this
+            loadAvg = 0;
+        }
+
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean sunOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
-            systemUsage = round(sunOsBean.getSystemCpuLoad());
-            procUsage = round(sunOsBean.getProcessCpuLoad());
+            systemUsage = round(sunOsBean.getSystemCpuLoad() * 100, 4);
+            procUsage = round(sunOsBean.getProcessCpuLoad() * 100, 4);
 
             totalOsMemory = byteToMega(sunOsBean.getTotalPhysicalMemorySize());
             freeOsRam = byteToMega(sunOsBean.getFreePhysicalMemorySize());
         }
 
-        float freeOsRamPct = round(freeOsRam / totalOsMemory);
+        float freeOsRamPct = round((freeOsRam * 100) / totalOsMemory, 4);
         return storage.saveMonitor(procUsage, systemUsage, freeRam, freeRamPct, freeOsRam, freeOsRamPct, loadAvg);
     }
 
@@ -172,8 +181,9 @@ public class MonitorSaveTask implements Runnable {
         return (int) (bytes / (1024 * 1024));
     }
 
-    private float round(double value) {
-        //round to 4 decimals -> example: 0.2456
-        return Math.round(value * 10000) / 10000;
+    private float round(double value, int places) {
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.floatValue();
     }
 }

@@ -108,7 +108,7 @@ public class LagMonitor extends JavaPlugin {
             blockDetectionTimer.scheduleAtFixedRate(blockingIODetectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
         }
 
-        if (sigar != null) {
+        if (getConfig().getBoolean("native-library")) {
             sigar = new Sigar();
         }
 

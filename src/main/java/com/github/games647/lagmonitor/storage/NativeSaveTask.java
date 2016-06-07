@@ -4,6 +4,8 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.logging.Level;
 
 import org.hyperic.sigar.FileSystemUsage;
@@ -15,6 +17,13 @@ public class NativeSaveTask implements Runnable {
 
     private final LagMonitor plugin;
 
+    private int lastMcRead = 0;
+    private int lastMcWrite = 0;
+    private int lastDiskRead = 0;
+    private int lastDiskWrite = 0;
+    private int lastNetRead = 0;
+    private int lastNetWrite = 0;
+
     public NativeSaveTask(LagMonitor plugin) {
         this.plugin = plugin;
     }
@@ -22,11 +31,16 @@ public class NativeSaveTask implements Runnable {
     @Override
     public void run() {
         TrafficReader trafficReader = plugin.getTrafficReader();
-        int mcRead = 0;
-        int mcWrite = 0;
+        int mcReadDiff = 0;
+        int mcWriteDiff = 0;
         if (trafficReader != null) {
-            mcRead = byteToMega(trafficReader.getIncomingBytes().get());
-            mcWrite = byteToMega(trafficReader.getOutgoingBytes().get());
+            int mcRead = byteToMega(trafficReader.getIncomingBytes().get());
+            mcReadDiff = mcRead - lastMcRead;
+            lastMcRead = mcRead;
+
+            int mcWrite = byteToMega(trafficReader.getOutgoingBytes().get());;
+            mcWriteDiff = mcRead - lastMcWrite;
+            lastMcWrite = mcWrite;
         }
 
         File[] listRoots = File.listRoots();
@@ -41,34 +55,43 @@ public class NativeSaveTask implements Runnable {
         freeSpace = byteToMega(freeSpace);
 
         //4 decimal places -> Example: 0.2456
-        float freeSpacePct = Math.round(((float) freeSpace / totalSpace) * 10000) / 10000;
+        float freeSpacePct = round((freeSpace * 100 / (float) totalSpace), 4);
 
-        int diskRead = 0;
-        int diskWrite = 0;
-        int netRead = 0;
-        int netWrite = 0;
+        int diskReadDiff = 0;
+        int diskWriteDiff = 0;
+        int netReadDiff = 0;
+        int netWriteDiff = 0;
 
         Sigar sigar = plugin.getSigar();
         if (sigar != null) {
             try {
                 String rootFileSystem = File.listRoots()[0].getAbsolutePath();
                 FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
-                diskRead = byteToMega(fileSystemUsage.getDiskReadBytes());
-                diskWrite = byteToMega(fileSystemUsage.getDiskWriteBytes());
+                int diskRead = byteToMega(fileSystemUsage.getDiskReadBytes());
+                diskReadDiff = diskRead - lastDiskRead;
+                lastDiskRead = diskRead;
+
+                int diskWrite = byteToMega(fileSystemUsage.getDiskWriteBytes());
+                diskWriteDiff = diskWrite - lastDiskWrite;
+                lastDiskWrite = diskRead;
 
                 NetInterfaceStat usedNetInterfaceStat = findNetworkInterface(sigar);
-
                 if (usedNetInterfaceStat != null) {
-                    netRead = byteToMega(usedNetInterfaceStat.getRxBytes());
-                    netWrite = byteToMega(usedNetInterfaceStat.getTxBytes());
+                    int netRead = byteToMega(usedNetInterfaceStat.getRxBytes());
+                    netReadDiff = netRead - lastNetRead;
+                    lastNetRead = netRead;
+
+                    int netWrite = byteToMega(usedNetInterfaceStat.getTxBytes());
+                    netWriteDiff = netWrite - lastNetWrite;
+                    lastNetWrite = netWrite;
                 }
             } catch (SigarException ex) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to get the disk read/writer for database monitoring", ex);
             }
         }
 
-        plugin.getStorage().saveNative(mcRead, mcWrite, freeSpace, freeSpacePct, diskRead, diskWrite
-                , netRead, netWrite);
+        plugin.getStorage().saveNative(mcReadDiff, mcWriteDiff, freeSpace, freeSpacePct, diskReadDiff, diskWriteDiff
+                , netReadDiff, netWriteDiff);
     }
 
     private NetInterfaceStat findNetworkInterface(Sigar sigar) throws SigarException {
@@ -81,7 +104,14 @@ public class NativeSaveTask implements Runnable {
                 break;
             }
         }
+        
         return usedNetInterfaceStat;
+    }
+
+    private float round(double value, int places) {
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.floatValue();
     }
 
     private int byteToMega(long bytes) {
