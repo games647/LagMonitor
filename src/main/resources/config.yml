@@ -40,3 +40,29 @@ securityMangerBlockingCheck: false
 # If you don't know which driver you need, you can invoke /env or activate this option and
 # invoke /hardware - This plugin will show which driver it exactly want.
 native-library: false
+
+# If you enable this, it will save some monitoring data peridically into a MySQL database
+# There you can find lag sources with a history
+# And you could create a webinterface for monitoring your server
+monitor-database: false
+
+# Database configuration
+# Recommened is the use of MariaDB (a better version of MySQL)
+host: localhost
+port: 3306
+database: lagmonitor
+username: myUser
+password: myPassword
+
+# Interval is in seconds
+
+# Containing the current TPS and a updated timestamp
+tps-save-interval: 300
+
+# Containing some monitoring information to analyze your log
+monitor-save-interval: 900
+
+# Information about your server which is good to see, but might not be really useful for finding lag sources
+# Some information might be NULL if you disabled the feature above
+# For example: native and minecraft-traffic-counter
+native-save-interval: 1200

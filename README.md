@@ -12,6 +12,7 @@ server timings and so on.
 ## Features
 
 * Player ping
+* Log the server performance into a MySQL database
 * Sample CPU usage
 * Analyze RAM usage
 * Access to Stacktraces of running threads

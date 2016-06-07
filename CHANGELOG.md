@@ -1,5 +1,10 @@
 # Changelog
 
+##1.4
+
+* Added monitoring to a MySQL database
+* Speed up the native command by loading the native driver only on plugin load
+
 ##1.3.2
 
 * Fix command permission for /ping player

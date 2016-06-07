@@ -9,8 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.hyperic.jni.ArchLoader;
-import org.hyperic.jni.ArchNotSupportedException;
 import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.FileSystemUsage;
@@ -28,10 +26,6 @@ public class NativeCommand implements CommandExecutor {
 
     public NativeCommand(LagMonitor plugin) {
         this.plugin = plugin;
-
-        //setting the location where sigar can find the library
-        //otherwise it would lookup the library path of Java
-        System.setProperty("org.hyperic.sigar.path", plugin.getDataFolder().getPath());
     }
 
     @Override
@@ -41,32 +35,8 @@ public class NativeCommand implements CommandExecutor {
             return true;
         }
 
-        //we have to check this manually because the load statement in sigar is static
-        String driverName = null;
-        try {
-            ArchLoader archLoader = new ArchLoader();
-            archLoader.setName("sigar");
-            driverName = ArchLoader.getLibraryPrefix()
-                    + archLoader.getArchLibName()
-                    + ArchLoader.getLibraryExtension();
-        } catch (ArchNotSupportedException archNotSupportedException) {
-            plugin.getLogger().log(Level.SEVERE, null, archNotSupportedException);
-        }
-
-        File driverFile = new File(plugin.getDataFolder(), driverName);
-        if (driverFile == null || !driverFile.exists()) {
-            sender.sendMessage(ChatColor.DARK_RED + "Couldn't find driver in the plugin folder");
-            sender.sendMessage(ChatColor.DARK_RED + "You need: " + driverName);
-            sender.sendMessage(ChatColor.DARK_RED + "and place it here: " + plugin.getDataFolder().getPath());
-            return true;
-        }
-
-        printNativeInfo(sender);
-        return true;
-    }
-
-    private void printNativeInfo(CommandSender sender) {
-        Sigar sigar = new Sigar();
+        //swap and load is already avaiable in the environment command because MBeans already supports this
+        Sigar sigar = plugin.getSigar();
         try {
             int uptime = (int) sigar.getUptime().getUptime();
             sender.sendMessage(PRIMARY_COLOR + "OS Uptime: " + SECONDARY_COLOR + formatUptime(uptime));
@@ -88,34 +58,7 @@ public class NativeCommand implements CommandExecutor {
             long cache = used - actualUsed;
             sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
 
-            //net upload download
-            NetInterfaceStat usedNetInterfaceStat = null;
-            String[] netInterfaceList = sigar.getNetInterfaceList();
-            for (String interfaceName : netInterfaceList) {
-                NetInterfaceStat interfaceStat = sigar.getNetInterfaceStat(interfaceName);
-                if (interfaceStat.getRxBytes() != 0) {
-                    usedNetInterfaceStat = interfaceStat;
-                    break;
-                }
-            }
-
-            if (usedNetInterfaceStat != null) {
-                long speed = usedNetInterfaceStat.getSpeed();
-                sender.sendMessage(PRIMARY_COLOR + "Net Speed: " + SECONDARY_COLOR + Sigar.formatSize(speed));
-
-                long receivedBytes = usedNetInterfaceStat.getRxBytes();
-                long sentBytes = usedNetInterfaceStat.getTxBytes();
-                sender.sendMessage(PRIMARY_COLOR + "Net Rec: " + SECONDARY_COLOR + Sigar.formatSize(receivedBytes));
-                sender.sendMessage(PRIMARY_COLOR + "Net Sent: " + SECONDARY_COLOR + Sigar.formatSize(sentBytes));
-            }
-
-            //*should* already included in environment - because its queryable with mbeans too
-            //            Swap swap = sigar.getSwap();
-            //            long swapTotal = swap.getTotal();
-            //            long swapUsed = swap.getUsed();
-
-            //load - only available in linux/Unix already included in environment
-            //            System.out.println(Arrays.toString(sigar.getLoadAverage()));
+            printNetworkInfo(sender, sigar);
 
             //disk read write
             String rootFileSystem = File.listRoots()[0].getAbsolutePath();
@@ -126,8 +69,30 @@ public class NativeCommand implements CommandExecutor {
             sender.sendMessage(PRIMARY_COLOR + "Disk Write: " + SECONDARY_COLOR + Sigar.formatSize(diskWriteBytes));
         } catch (SigarException sigarException) {
             plugin.getLogger().log(Level.SEVERE, null, sigarException);
-        } finally {
-            sigar.close();
+        }
+        return true;
+    }
+
+    private void printNetworkInfo(CommandSender sender, Sigar sigar) throws SigarException {
+        //net upload download
+        NetInterfaceStat usedNetInterfaceStat = null;
+        String[] netInterfaceList = sigar.getNetInterfaceList();
+        for (String interfaceName : netInterfaceList) {
+            NetInterfaceStat interfaceStat = sigar.getNetInterfaceStat(interfaceName);
+            if (interfaceStat.getRxBytes() != 0) {
+                usedNetInterfaceStat = interfaceStat;
+                break;
+            }
+        }
+
+        if (usedNetInterfaceStat != null) {
+            long speed = usedNetInterfaceStat.getSpeed();
+            sender.sendMessage(PRIMARY_COLOR + "Net Speed: " + SECONDARY_COLOR + Sigar.formatSize(speed));
+
+            long receivedBytes = usedNetInterfaceStat.getRxBytes();
+            long sentBytes = usedNetInterfaceStat.getTxBytes();
+            sender.sendMessage(PRIMARY_COLOR + "Net Rec: " + SECONDARY_COLOR + Sigar.formatSize(receivedBytes));
+            sender.sendMessage(PRIMARY_COLOR + "Net Sent: " + SECONDARY_COLOR + Sigar.formatSize(sentBytes));
         }
     }
 
