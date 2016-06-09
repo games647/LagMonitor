@@ -28,9 +28,10 @@ import org.bukkit.map.MapView;
 
 public class GraphCommand implements TabExecutor {
 
+    private static final int MAX_COMBINED = 4;
+
     private final LagMonitor plugin;
     private final Map<String, GraphRenderer> graphTypes = Maps.newHashMap();
-    private int MAX_COMBINED;
 
     public GraphCommand(LagMonitor plugin) {
         this.plugin = plugin;
@@ -47,7 +48,7 @@ public class GraphCommand implements TabExecutor {
             Player player = (Player) sender;
 
             if (args.length > 0) {
-                if (args.length > 2) {
+                if (args.length > 1) {
                     buildCombinedGraph(player, args);
                 } else {
                     String graph = args[0];
@@ -55,24 +56,17 @@ public class GraphCommand implements TabExecutor {
                     if (renderer == null) {
                         sender.sendMessage(ChatColor.DARK_RED + "Unknown graph type");
                     } else {
-                        installRenderer(player, renderer);
+                        giveMap(player, installRenderer(player, renderer));
                     }
                 }
 
                 return true;
             }
 
-            PlayerInventory inventory = player.getInventory();
-
             //default is heap usage
             GraphRenderer graphRenderer = graphTypes.get("heap");
-
             MapView mapView = installRenderer(player, graphRenderer);
-            //amount=0 makes the item disappear if the user drop or try to use it
-            ItemStack mapItem = new ItemStack(Material.MAP, 0, mapView.getId());
-            inventory.addItem(mapItem);
-
-            sender.sendMessage(ChatColor.DARK_GREEN + "You received a map with the graph");
+            giveMap(player, mapView);
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "Not implemented for the console");
             //todo: add a textual graph view for the console
@@ -115,8 +109,19 @@ public class GraphCommand implements TabExecutor {
         if (renderers.size() > MAX_COMBINED) {
             player.sendMessage(ChatColor.DARK_RED + "Too many graphs");
         } else {
-            installRenderer(player, new CombinedGraph(renderers.toArray(new GraphRenderer[renderers.size()])));
+            CombinedGraph combinedGraph = new CombinedGraph(renderers.toArray(new GraphRenderer[renderers.size()]));
+            MapView view = installRenderer(player, combinedGraph);
+            giveMap(player, view);
         }
+    }
+
+    private void giveMap(Player player, MapView mapView) {
+        PlayerInventory inventory = player.getInventory();
+        //amount=0 makes the item disappear if the user drop or try to use it
+        ItemStack mapItem = new ItemStack(Material.MAP, 0, mapView.getId());
+        inventory.addItem(mapItem);
+
+        player.sendMessage(ChatColor.DARK_GREEN + "You received a map with the graph");
     }
 
     private MapView installRenderer(Player player, GraphRenderer graphType) {
