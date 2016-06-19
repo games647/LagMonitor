@@ -1,5 +1,9 @@
 # Changelog
 
+##1.5
+
+* Added a faster and less error-prone blocking http detection
+
 ##1.4
 
 * Added monitoring to a MySQL database

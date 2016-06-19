@@ -20,6 +20,7 @@ import com.github.games647.lagmonitor.commands.VmCommand;
 import com.github.games647.lagmonitor.inject.CommandInjector;
 import com.github.games647.lagmonitor.inject.ListenerInjector;
 import com.github.games647.lagmonitor.inject.TaskInjector;
+import com.github.games647.lagmonitor.listeners.BlockingConnectionSelector;
 import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.storage.MonitorSaveTask;
@@ -31,6 +32,7 @@ import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.collect.Maps;
+import java.net.ProxySelector;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -58,6 +60,7 @@ public class LagMonitor extends JavaPlugin {
     private TrafficReader trafficReader;
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
+    private BlockingConnectionSelector connectionSelector;
     private Storage storage;
     private Sigar sigar;
 
@@ -106,6 +109,11 @@ public class LagMonitor extends JavaPlugin {
             blockDetectionTimer = new Timer(getName() + "-Thread-Blocking-Detection");
             BlockingIODetectorTask blockingIODetectorTask = new BlockingIODetectorTask(this, Thread.currentThread());
             blockDetectionTimer.scheduleAtFixedRate(blockingIODetectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
+        }
+
+        if (getConfig().getBoolean("socket-block-detection")) {
+            connectionSelector = new BlockingConnectionSelector(this, ProxySelector.getDefault());
+            ProxySelector.setDefault(connectionSelector);
         }
 
         if (getConfig().getBoolean("native-library")) {
@@ -165,6 +173,12 @@ public class LagMonitor extends JavaPlugin {
 
         if (sigar != null) {
             sigar.close();
+        }
+
+        if (connectionSelector != null) {
+            ProxySelector oldProxySelector = connectionSelector.getOldProxySelector();
+            ProxySelector.setDefault(oldProxySelector);
+            connectionSelector = null;
         }
 
         for (Plugin plugin : getServer().getPluginManager().getPlugins()) {

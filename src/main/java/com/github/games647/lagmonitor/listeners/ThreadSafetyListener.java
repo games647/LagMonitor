@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import org.bukkit.Bukkit;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -29,7 +30,6 @@ import org.bukkit.event.world.WorldUnloadEvent;
  */
 public class ThreadSafetyListener implements Listener {
 
-    private final Thread mainThread = Thread.currentThread();
     private final LagMonitor plugin;
 
     public ThreadSafetyListener(LagMonitor plugin) {
@@ -127,7 +127,7 @@ public class ThreadSafetyListener implements Listener {
     }
 
     private void checkSafety(Event eventType) {
-        if (Thread.currentThread() != mainThread && !eventType.isAsynchronous()) {
+        if (Bukkit.isPrimaryThread() && !eventType.isAsynchronous()) {
             String eventName = eventType.getEventName();
             throw new IllegalAccessError("Async operation for an sync Event:" + eventName);
         }

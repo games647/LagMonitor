@@ -11,9 +11,13 @@ traffic-counter: true
 thread-safety-check: false
 
 # Check peridically if a server (especially a plugin) is doing block I/O operations on the main Thread.
-# Operations like SQL-, HTTP-Request or Scoket-Connections should be performed in a seperate Thread.
+# Operations like SQL-, HTTP-Request, File or Scoket-Connections should be performed in a seperate Thread.
 # If this is not the case, the server will wait for the response and therefore causes lags.
 thread-block-detection: false
+
+# This does the same as the option above, but is more performant by as a proxy. This means it can only check for
+# Socket connections -> HTTP, SQL, but not for file operations
+socket-block-detection: true
 
 # This is a more efficient system as the method above (thread-block detection)
 # By setting a new security manager we can receive the operations above as events and don't have
