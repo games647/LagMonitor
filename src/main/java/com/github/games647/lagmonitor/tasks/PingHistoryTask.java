@@ -1,7 +1,6 @@
 package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.RollingOverHistory;
-import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.Field;
@@ -21,20 +20,8 @@ public class PingHistoryTask implements Runnable {
 
     private final Map<Player, RollingOverHistory> playerHistory = Maps.newHashMap();
 
-    private final boolean pingMethodAvailable;
     private Method getHandleMethod;
     private Field pingField;
-
-    public PingHistoryTask() {
-        boolean methodFound;
-        try {
-            methodFound = Reflection.getMethod(Player.Spigot.class, "getPing") != null;
-        } catch (Exception ex) {
-            methodFound = false;
-        }
-
-        pingMethodAvailable = methodFound;
-    }
 
     @Override
     public void run() {
@@ -61,11 +48,6 @@ public class PingHistoryTask implements Runnable {
     }
 
     private int getPing(Player player) {
-        //PaperSpigot method
-        if (pingMethodAvailable) {
-            return player.spigot().getPing();
-        }
-
         return getReflectionPing(player);
     }
 
