@@ -26,6 +26,11 @@ public class VmCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 
         //java info

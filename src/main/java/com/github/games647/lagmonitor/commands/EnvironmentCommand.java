@@ -25,6 +25,11 @@ public class EnvironmentCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
 
         //os general info

@@ -21,6 +21,11 @@ public class PaginationCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         Pagination pagination = plugin.getPaginations().get(sender);
         if (pagination == null) {
             sender.sendMessage(ChatColor.DARK_RED + "You have no pagination session");

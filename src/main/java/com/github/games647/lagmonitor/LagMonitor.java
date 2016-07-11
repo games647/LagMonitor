@@ -35,11 +35,13 @@ import com.google.common.collect.Maps;
 import java.net.ProxySelector;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -218,6 +220,27 @@ public class LagMonitor extends JavaPlugin {
 
     public Storage getStorage() {
         return storage;
+    }
+
+    public boolean isAllowed(CommandSender sender, Command cmd) {
+        if (!(sender instanceof Player)) {
+            return true;
+        }
+
+        List<String> commandWhitelist = getConfig().getStringList("whitelist-" + cmd.getName());
+        if (commandWhitelist != null && !commandWhitelist.isEmpty()) {
+            return commandWhitelist.contains(sender.getName());
+        }
+
+        for (String alias : cmd.getAliases()) {
+            List<String> aliasWhitelist = getConfig().getStringList("whitelist-" + alias);
+            if (aliasWhitelist != null && !aliasWhitelist.isEmpty()) {
+                return aliasWhitelist.contains(sender.getName());
+            }
+        }
+
+        //whitelist doesn't exist
+        return true;
     }
 
     private void registerCommands() {

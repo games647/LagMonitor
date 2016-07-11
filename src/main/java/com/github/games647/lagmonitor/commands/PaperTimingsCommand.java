@@ -79,6 +79,11 @@ public class PaperTimingsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         if (!ClassUtil.isPresent(EXPORT_CLASS)) {
             sender.sendMessage(ChatColor.DARK_RED + "You aren't using PaperSpigot.");
             sender.sendMessage(ChatColor.DARK_RED + "This command is for the new timings (v2) system only");

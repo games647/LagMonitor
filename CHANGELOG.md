@@ -1,5 +1,9 @@
 # Changelog
 
+##1.6
+
+* Added whitelist for certain commands for specific users
+
 ##1.5
 
 * Added a faster and less error-prone blocking http detection

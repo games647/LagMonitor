@@ -44,6 +44,11 @@ public class GraphCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         if (sender instanceof Player) {
             Player player = (Player) sender;
 

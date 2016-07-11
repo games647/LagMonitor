@@ -35,6 +35,11 @@ public class MonitorCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         if (args.length > 0) {
             String monitorCommand = args[0];
             if ("start".equalsIgnoreCase(monitorCommand)) {

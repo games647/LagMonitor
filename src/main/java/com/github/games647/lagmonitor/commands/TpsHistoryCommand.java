@@ -36,6 +36,11 @@ public class TpsHistoryCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!plugin.isAllowed(sender, command)) {
+            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            return true;
+        }
+
         List<StringBuilder> graphLines = Lists.newArrayListWithExpectedSize(GRAPH_LINES);
         for (int line = 1; line <= GRAPH_LINES; line++) {
             graphLines.add(new StringBuilder(GRAPH_WIDTH * 2));
