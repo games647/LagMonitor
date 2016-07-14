@@ -93,7 +93,11 @@ public class LagMonitor extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, pingHistoryTask, 20L, PING_INTERVAL);
 
         if (getConfig().getBoolean("traffic-counter")) {
-            trafficReader = new TrafficReader(this);
+            try {
+                trafficReader = new TrafficReader(this);
+            } catch (Exception ex) {
+                getLogger().log(Level.SEVERE, "Failed to initialize packet reader", ex);
+            }
         }
 
         //register listeners

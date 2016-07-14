@@ -108,8 +108,6 @@ public abstract class TinyProtocol {
         Object serverConnection = GET_CONNECTION.get(mcServer);
         boolean looking = true;
 
-        // We need to synchronize against this list
-//        networkManagers = (List<Object>) getNetworkMarkers.invoke(null, serverConnection);
         createServerChannelHandler();
 
         // Find the correct list, or implicitly throw an exception
@@ -137,9 +135,8 @@ public abstract class TinyProtocol {
         }
 
         for (Channel serverChannel : serverChannels) {
-            final ChannelPipeline pipeline = serverChannel.pipeline();
-
             // Remove channel handler
+            ChannelPipeline pipeline = serverChannel.pipeline();
             serverChannel.eventLoop().execute(new CleanUpTask(pipeline, serverChannelHandler));
         }
     }
