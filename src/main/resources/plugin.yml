@@ -11,6 +11,8 @@ description: |
 website: ${project.url}
 dev-url: ${project.url}
 
+softdepend: [PacketListenerApi]
+
 commands:
     ping:
         description: 'Gets the ping of the selected player'
