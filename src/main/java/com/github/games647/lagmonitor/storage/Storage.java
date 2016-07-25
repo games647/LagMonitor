@@ -26,12 +26,15 @@ public class Storage {
     private final String jdbcUrl;
     private final String username;
     private final String password;
+    private final String tablePrefix;
 
-    public Storage(LagMonitor plugin, String host, int port, String database, String username, String password) {
+    public Storage(LagMonitor plugin, String host, int port, String database, String username, String password
+            , String tablePrefix) {
         this.plugin = plugin;
 
         this.username = username;
         this.password = password;
+        this.tablePrefix = tablePrefix;
 
         this.jdbcUrl = "jdbc:mysql://" + host + ':' + port + '/' + database;
 
@@ -49,13 +52,13 @@ public class Storage {
             con = getConnection();
 
             createTpsStmt = con.createStatement();
-            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + TPS_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + TPS_TABLE + " ("
                     + "tps_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
                     + "tps FLOAT UNSIGNED NOT NULL, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
                     + ")");
 
-            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + MONITOR_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + MONITOR_TABLE + " ("
                     + "monitor_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
                     + "process_usage FLOAT UNSIGNED NOT NULL, "
                     + "os_usage FLOAT UNSIGNED NOT NULL, "
@@ -67,7 +70,7 @@ public class Storage {
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
                     + ")");
 
-            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + WORLDS_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + WORLDS_TABLE + " ("
                     + "world_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
                     + "monitor_id INTEGER UNSIGNED NOT NULL, "
                     + "world_name VARCHAR(255) NOT NULL, "
@@ -75,19 +78,19 @@ public class Storage {
                     + "tile_entities SMALLINT UNSIGNED NOT NULL, "
                     + "world_size SMALLINT UNSIGNED NOT NULL, "
                     + "entities INT UNSIGNED NOT NULL, "
-                    + "FOREIGN KEY (monitor_id) REFERENCES " + MONITOR_TABLE + "(monitor_id) "
+                    + "FOREIGN KEY (monitor_id) REFERENCES " + tablePrefix + MONITOR_TABLE + "(monitor_id) "
                     + ")");
 
-            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + PLAYERS_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + PLAYERS_TABLE + " ("
                     + "world_id INTEGER UNSIGNED, "
                     + "uuid CHAR(40) NOT NULL, "
                     + "name VARCHAR(16) NOT NULL, "
                     + "ping SMALLINT UNSIGNED NOT NULL, "
                     + "PRIMARY KEY (world_id, uuid), "
-                    + "FOREIGN KEY (world_id) REFERENCES " + WORLDS_TABLE + "(world_id) "
+                    + "FOREIGN KEY (world_id) REFERENCES " + tablePrefix + WORLDS_TABLE + "(world_id) "
                     + ")");
             
-            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + NATIVE_TABLE + " ("
+            createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + NATIVE_TABLE + " ("
                     + "native_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
                     + "mc_read SMALLINT UNSIGNED , "
                     + "mc_write SMALLINT UNSIGNED, "
@@ -113,7 +116,7 @@ public class Storage {
         try {
             con = getConnection();
 
-            saveMonitorStmt = con.prepareStatement("INSERT INTO " + MONITOR_TABLE
+            saveMonitorStmt = con.prepareStatement("INSERT INTO " + tablePrefix + MONITOR_TABLE
                     + " (process_usage, os_usage, free_ram, free_ram_pct, os_free_ram, os_free_ram_pct, load_avg)"
                     + " VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             saveMonitorStmt.setFloat(1, procUsage);
@@ -151,7 +154,7 @@ public class Storage {
         try {
             con = getConnection();
 
-            saveMonitorStmt = con.prepareStatement("INSERT INTO " + WORLDS_TABLE
+            saveMonitorStmt = con.prepareStatement("INSERT INTO " + tablePrefix + WORLDS_TABLE
                     + " (monitor_id, world_name, chunks_loaded, tile_entities, entities, world_size)"
                     + " VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
@@ -196,7 +199,8 @@ public class Storage {
         try {
             con = getConnection();
 
-            saveMonitorStmt = con.prepareStatement("INSERT INTO " + PLAYERS_TABLE + " (world_id, uuid, name, ping) "
+            saveMonitorStmt = con.prepareStatement("INSERT INTO " + tablePrefix + PLAYERS_TABLE
+                    + " (world_id, uuid, name, ping) "
                     + "VALUES (?, ?, ?, ?)");
 
             for (PlayerData data : playerData) {
@@ -227,7 +231,7 @@ public class Storage {
         try {
             con = getConnection();
 
-            saveNativeStmt = con.prepareStatement("INSERT INTO " + NATIVE_TABLE 
+            saveNativeStmt = con.prepareStatement("INSERT INTO " + tablePrefix + NATIVE_TABLE
                     + " (mc_read, mc_write, free_space, free_space_pct, disk_read, disk_write, net_read, net_write)"
                     + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             saveNativeStmt.setInt(1, mcRead);
@@ -257,7 +261,7 @@ public class Storage {
         try {
             con = getConnection();
 
-            saveTpsStmt = con.prepareStatement("INSERT INTO " + TPS_TABLE + " (tps) VALUES (?)");
+            saveTpsStmt = con.prepareStatement("INSERT INTO " + tablePrefix + TPS_TABLE + " (tps) VALUES (?)");
             saveTpsStmt.setFloat(1, tps);
             saveTpsStmt.execute();
         } catch (SQLException sqlEx) {

@@ -1,5 +1,10 @@
 # Changelog
 
+##1.7
+
+* Fail safely on an error for traffic reader
+* Add configurable table prefix
+
 ##1.6
 
 * Added whitelist for certain commands for specific users

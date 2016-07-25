@@ -57,6 +57,7 @@ port: 3306
 database: lagmonitor
 username: myUser
 password: myPassword
+tablePrefix: ''
 
 # Interval is in seconds
 

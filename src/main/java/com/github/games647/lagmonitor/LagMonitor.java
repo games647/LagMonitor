@@ -134,7 +134,8 @@ public class LagMonitor extends JavaPlugin {
                 
                 String username = getConfig().getString("username");
                 String password = getConfig().getString("password");
-                Storage localStorage = new Storage(this, host, port, database, username, password);
+                String tablePrefix = getConfig().getString("tablePrefix");
+                Storage localStorage = new Storage(this, host, port, database, username, password, tablePrefix);
                 localStorage.createTables();
                 this.storage = localStorage;
 
