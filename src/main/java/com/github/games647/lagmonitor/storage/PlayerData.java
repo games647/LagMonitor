@@ -31,4 +31,14 @@ public class PlayerData {
     public int getPing() {
         return ping;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerData{"
+                + "worldId=" + worldId
+                + ", uuid=" + uuid
+                + ", playerName=" + playerName
+                + ", ping=" + ping
+                + '}';
+    }
 }

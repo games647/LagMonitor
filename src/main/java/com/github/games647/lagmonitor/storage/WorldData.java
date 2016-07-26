@@ -48,4 +48,16 @@ public class WorldData {
     public void setRowId(int rowId) {
         this.rowId = rowId;
     }
+
+    @Override
+    public String toString() {
+        return "WorldData{" 
+                + "worldName=" + worldName
+                + ", loadedChunks=" + loadedChunks
+                + ", tileEntities=" + tileEntities
+                + ", entities=" + entities
+                + ", worldSize=" + worldSize
+                + ", rowId=" + rowId
+                + '}';
+    }
 }

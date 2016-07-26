@@ -82,7 +82,7 @@ public class EnvironmentCommand implements CommandExecutor {
         long totalSpace = 0;
         long freeSpace = 0;
         for (File rootFile : listRoots) {
-            freeSpace += rootFile.getUsableSpace();
+            freeSpace += rootFile.getFreeSpace();
             totalSpace += rootFile.getTotalSpace();
         }
 

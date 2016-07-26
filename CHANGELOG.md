@@ -4,6 +4,7 @@
 
 * Fail safely on an error for traffic reader
 * Add configurable table prefix
+* Add debug code if the storage insert failed
 
 ##1.6
 

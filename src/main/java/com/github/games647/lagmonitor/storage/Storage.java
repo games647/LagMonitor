@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.google.common.collect.Lists;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -134,6 +135,8 @@ public class Storage {
             }
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving monitor data to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Using this data {0}"
+                    , Lists.newArrayList(procUsage, osUsage, freeRam, freeRamPct, osRam, osRamPct, loadAvg));
         } finally {
             closeQuietly(generatedKeys);
             closeQuietly(saveMonitorStmt);
@@ -179,6 +182,7 @@ public class Storage {
             return true;
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving worlds data to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", worldsData);
         } finally {
             closeQuietly(generatedKeys);
             closeQuietly(saveMonitorStmt);
@@ -215,6 +219,7 @@ public class Storage {
             return true;
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving player data to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", playerData);
         } finally {
             closeQuietly(generatedKeys);
             closeQuietly(saveMonitorStmt);
@@ -249,6 +254,8 @@ public class Storage {
             saveNativeStmt.execute();
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving native stats to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Using this data {0}"
+                    , Lists.newArrayList(mcRead, mcWrite, freeSpace, freePct, diskRead, diskWrite, netRead, netWrite));
         } finally {
             closeQuietly(saveNativeStmt);
             closeQuietly(con);
@@ -266,6 +273,7 @@ public class Storage {
             saveTpsStmt.execute();
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving tps to database", sqlEx);
+            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", new Object[] {tps});
         } finally {
             closeQuietly(saveTpsStmt);
             closeQuietly(con);

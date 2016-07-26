@@ -47,7 +47,7 @@ public class NativeSaveTask implements Runnable {
         int totalSpace = 0;
         int freeSpace = 0;
         for (File rootFile : listRoots) {
-            freeSpace += rootFile.getUsableSpace();
+            freeSpace += rootFile.getFreeSpace();
             totalSpace += rootFile.getTotalSpace();
         }
 
