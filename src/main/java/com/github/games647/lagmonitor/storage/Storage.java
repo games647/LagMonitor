@@ -229,7 +229,7 @@ public class Storage {
         return false;
     }
 
-    public void saveNative(int mcRead, int mcWrite, int freeSpace, float freePct, int diskRead, int diskWrite
+    public void saveNative(int mcRead, int mcWrite, long freeSpace, float freePct, int diskRead, int diskWrite
             , int netRead, int netWrite) {
         Connection con = null;
         PreparedStatement saveNativeStmt = null;
@@ -242,7 +242,7 @@ public class Storage {
             saveNativeStmt.setInt(1, mcRead);
             saveNativeStmt.setInt(2, mcWrite);
 
-            saveNativeStmt.setInt(3, freeSpace);
+            saveNativeStmt.setInt(3, (int) freeSpace);
 
             saveNativeStmt.setFloat(4, freePct);
 

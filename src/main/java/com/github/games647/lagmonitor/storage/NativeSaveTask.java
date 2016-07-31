@@ -38,14 +38,14 @@ public class NativeSaveTask implements Runnable {
             mcReadDiff = mcRead - lastMcRead;
             lastMcRead = mcRead;
 
-            int mcWrite = byteToMega(trafficReader.getOutgoingBytes().get());;
+            int mcWrite = byteToMega(trafficReader.getOutgoingBytes().get());
             mcWriteDiff = mcRead - lastMcWrite;
             lastMcWrite = mcWrite;
         }
 
         File[] listRoots = File.listRoots();
-        int totalSpace = 0;
-        int freeSpace = 0;
+        long totalSpace = 0;
+        long freeSpace = 0;
         for (File rootFile : listRoots) {
             freeSpace += rootFile.getFreeSpace();
             totalSpace += rootFile.getTotalSpace();
