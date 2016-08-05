@@ -17,8 +17,8 @@ public class NativeSaveTask implements Runnable {
 
     private final LagMonitor plugin;
 
-    private int lastMcRead = 0;
-    private int lastMcWrite = 0;
+    private long lastMcRead = 0;
+    private long lastMcWrite = 0;
     private int lastDiskRead = 0;
     private int lastDiskWrite = 0;
     private int lastNetRead = 0;
@@ -39,7 +39,7 @@ public class NativeSaveTask implements Runnable {
             lastMcRead = mcRead;
 
             int mcWrite = byteToMega(trafficReader.getOutgoingBytes().get());
-            mcWriteDiff = mcRead - lastMcWrite;
+            mcWriteDiff = mcWrite - lastMcWrite;
             lastMcWrite = mcWrite;
         }
 
@@ -104,7 +104,7 @@ public class NativeSaveTask implements Runnable {
                 break;
             }
         }
-        
+
         return usedNetInterfaceStat;
     }
 
