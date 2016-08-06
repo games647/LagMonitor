@@ -17,8 +17,8 @@ public class NativeSaveTask implements Runnable {
 
     private final LagMonitor plugin;
 
-    private long lastMcRead = 0;
-    private long lastMcWrite = 0;
+    private int lastMcRead = 0;
+    private int lastMcWrite = 0;
     private int lastDiskRead = 0;
     private int lastDiskWrite = 0;
     private int lastNetRead = 0;

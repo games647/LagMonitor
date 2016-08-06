@@ -131,7 +131,7 @@ public class LagMonitor extends JavaPlugin {
                 String host = getConfig().getString("host");
                 int port = getConfig().getInt("port");
                 String database = getConfig().getString("database");
-                
+
                 String username = getConfig().getString("username");
                 String password = getConfig().getString("password");
                 String tablePrefix = getConfig().getString("tablePrefix");

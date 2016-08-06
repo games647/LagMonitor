@@ -44,27 +44,6 @@ public class BlockingIODetectorTask extends TimerTask {
                 }
             }
         }
-
-        //Based on https://github.com/vemacs/GlobalUUIDCache
-        //we could use this for new connections in order to have a event like system instead of checking every
-        //specific interval
-        //cons:
-        //* we would overwrite a existing factory
-        //* we have to access native classes to fallback to the default state
-//        URL.setURLStreamHandlerFactory(new URLStreamHandlerFactory() {
-//            @Override
-//            public URLStreamHandler createURLStreamHandler(String protocol) {
-//                System.out.println("NEW: " + protocol);
-//                return null;
-//            }
-//        });
-//        Socket.setSocketImplFactory(new SocketImplFactory() {
-//            @Override
-//            public SocketImpl createSocketImpl() {
-//                //fallback to defaultsocketfactory?
-//                return null;
-//            }
-//        });
     }
 
     private boolean isElementEqual(StackTraceElement traceElement, String className, String methodName) {
