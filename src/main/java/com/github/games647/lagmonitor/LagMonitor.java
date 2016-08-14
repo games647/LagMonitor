@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Level;
+import org.apache.commons.lang.SystemUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -149,6 +150,11 @@ public class LagMonitor extends JavaPlugin {
             } catch (SQLException sqlEx) {
                 getLogger().log(Level.SEVERE, "Failed to setup monitoring database", sqlEx);
             }
+        }
+
+        //warn about a outdated java version
+        if (!SystemUtils.isJavaVersionAtLeast(180)) {
+            getLogger().warning("You are using an outdated java 7 version");
         }
     }
 
