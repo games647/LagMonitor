@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>LagMonitor</name>
-    <version>1.8</version>
+    <version>1.7.2</version>
     <inceptionYear>2016</inceptionYear>
     <url>http://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.10-R0.1-SNAPSHOT</version>
+            <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

@@ -1,5 +1,10 @@
 # Changelog
 
+##1.7.2
+
+* Fix traffic reader storage save
+* Warn users who still use the outdated Java 7 to upgrade to a newer version
+
 ##1.7
 
 * Fail safely on an error for traffic reader
