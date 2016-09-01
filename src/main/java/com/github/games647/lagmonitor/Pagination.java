@@ -111,7 +111,7 @@ public class Pagination {
     }
 
     public String buildFooter(int page, boolean isPlayer) {
-        int endIndex = 0;
+        int endIndex;
         if (isPlayer) {
             endIndex = page * PLAYER_HEIGHT;
         } else {

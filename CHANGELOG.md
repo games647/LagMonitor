@@ -1,5 +1,9 @@
 # Changelog
 
+##1.8
+
+* Add /lagpage < save >  and /lagpage < all >
+
 ##1.7.2
 
 * Fix traffic reader storage save

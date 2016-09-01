@@ -98,7 +98,7 @@ lagmonitor.commands.* - Access to all commands
     /tasks - Information about running and pending tasks
     /paper - Outputs paper spigot timings
     /heap - Heap dump about your current memory
-    /lagpage <next/prev/pageNumber> - Pagination command for the current pagination session
+    /lagpage <next/prev/pageNumber/save/all> - Pagination command for the current pagination session
     /jfr <start/stop/dump> - Manages the Java Flight Recordings of the native Java VM. It gives you much more detailed
         information including network communications, file read/write times, detailed heap and thread data, ...
 
