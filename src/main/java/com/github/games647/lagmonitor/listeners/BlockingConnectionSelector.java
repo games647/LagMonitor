@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -23,7 +24,7 @@ public class BlockingConnectionSelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
-        if (Bukkit.isPrimaryThread()) {
+        if (!uri.getScheme().startsWith("http") && Bukkit.isPrimaryThread()) {
             plugin.getLogger().log(Level.WARNING
                     , "Server is performing a blocking socket connection {0} on the main thread"
                     , new Object[]{uri});
