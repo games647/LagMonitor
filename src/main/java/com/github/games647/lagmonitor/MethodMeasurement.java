@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -79,12 +78,34 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
         child.onMeasurement(stackTrace, skipElements + 1, time);
     }
 
+    public void writeString(StringBuilder builder, int indent) {
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            b.append(" ");
+        }
+        String padding = b.toString();
+
+        for (MethodMeasurement child : getChildInvokes().values()) {
+            builder.append(padding).append(child.getId()).append("()");
+            builder.append(" ");
+            builder.append(child.getTotalTime()).append("ms");
+            builder.append("\n");
+            child.writeString(builder, indent + 1);
+        }
+    }
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("name", id)
-                .add("totalTime", totalTime)
-                .toString();
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, MethodMeasurement> entry : getChildInvokes().entrySet()) {
+            builder.append(entry.getKey()).append("()");
+            builder.append(" ");
+            builder.append(entry.getValue().getTotalTime()).append("ms");
+            builder.append("\n");
+            entry.getValue().writeString(builder, 1);
+        }
+
+        return builder.toString();
     }
 
     @Override

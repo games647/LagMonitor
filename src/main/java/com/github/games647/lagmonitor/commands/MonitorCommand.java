@@ -16,6 +16,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,6 +47,8 @@ public class MonitorCommand implements CommandExecutor {
                 startMonitor(sender);
             } else if ("stop".equalsIgnoreCase(monitorCommand)) {
                 stopMonitor(sender);
+            } else if ("paste".equalsIgnoreCase(monitorCommand)) {
+                pasteMonitor(sender);
             } else {
                 sender.sendMessage(ChatColor.DARK_RED + "Invalid command parameter");
             }
@@ -119,5 +122,24 @@ public class MonitorCommand implements CommandExecutor {
 
             sender.sendMessage(ChatColor.DARK_GREEN + "Monitor stopped");
         }
+    }
+
+    private void pasteMonitor(final CommandSender sender) {
+        Timer timer = plugin.getMonitorTimer();
+        if (monitorTask == null && timer == null) {
+            sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                String reportUrl = monitorTask.paste();
+                if (reportUrl == null) {
+                    sender.sendMessage(ChatColor.DARK_RED + "Error occured. Please check the console");
+                } else {
+                    sender.sendMessage(ChatColor.DARK_GREEN + "Report url: " + reportUrl + ".profile");
+                }
+            }
+        });
     }
 }

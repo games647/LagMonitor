@@ -1,5 +1,11 @@
 # Changelog
 
+##1.9
+
+* Add monitor pastes to http://paste.enginehub.org/ - Please support for this awesome service and please do not spam it
+* Fix showing duplicate http blocking messages, because a http connection is also a socket connection
+* Fix showing stacktrace on blocking action
+
 ##1.8
 
 * Add /lagpage < save >  and /lagpage < all >
