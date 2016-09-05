@@ -34,13 +34,13 @@ public class BlockingIODetectorTask extends TimerTask {
                         || isElementEqual(topElement, "java.net.SocketInputStream", "socketRead0")
                         || isElementEqual(topElement, "java.net.SocketOutputStream", "socketWrite0")) {
                     plugin.getLogger().log(Level.WARNING
-                            , "Server is performing socket operations on the main thread", stackTrace);
+                            , "Server is performing socket operations on the main thread", new Throwable());
                 } //File (in) - java.io.FileInputStream.readBytes
                 //File (out) - java.io.FileOutputStream.writeBytes
                 else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes")
                         || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
                     plugin.getLogger().log(Level.WARNING
-                            , "Server is performing file operations on the main thread", stackTrace);
+                            , "Server is performing file operations on the main thread", new Throwable());
                 }
             }
         }

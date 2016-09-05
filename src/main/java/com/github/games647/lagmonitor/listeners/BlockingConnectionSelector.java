@@ -24,10 +24,10 @@ public class BlockingConnectionSelector extends ProxySelector {
     @Override
     public List<Proxy> select(URI uri) {
         if (Bukkit.isPrimaryThread()) {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             plugin.getLogger().log(Level.WARNING
-                    , "Server is performing a blocking socket connection {0} on the main thread {1}"
-                    , new Object[]{uri, stackTrace});
+                    , "Server is performing a blocking socket connection {0} on the main thread"
+                    , new Object[]{uri});
+            plugin.getLogger().log(Level.WARNING, "", new Throwable());
         }
 
         return oldProxySelector.select(uri);
