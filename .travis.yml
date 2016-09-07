@@ -8,8 +8,6 @@ language: java
 
 script: mvn compile test
 
-# We run on 7+
+# We run on 8+
 jdk:
-  - openjdk7
-  - oraclejdk7
   - oraclejdk8
