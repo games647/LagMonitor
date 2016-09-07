@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServer;
@@ -59,9 +60,9 @@ public class MbeanCommand implements TabExecutor {
             }
         } else {
             Set<ObjectInstance> allBeans = mBeanServer.queryMBeans(null, null);
-            for (ObjectInstance mbean : allBeans) {
+            allBeans.stream().forEach((mbean) -> {
                 sender.sendMessage(ChatColor.DARK_AQUA + mbean.getObjectName().getCanonicalName());
-            }
+            });
         }
 
         return true;
@@ -75,11 +76,10 @@ public class MbeanCommand implements TabExecutor {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         if (args.length == 1) {
             Set<ObjectName> mbeans = mBeanServer.queryNames(null, null);
-            for (ObjectName mbean : mbeans) {
-                if (mbean.getCanonicalName().startsWith(lastArg)) {
-                    result.add(mbean.getCanonicalName());
-                }
-            }
+            result.addAll(mbeans.stream()
+                    .filter(mbean -> mbean.getCanonicalName().startsWith(lastArg))
+                    .map(ObjectName::getCanonicalName)
+                    .collect(Collectors.toList()));
         } else if (args.length == 2) {
             try {
                 ObjectName beanObject = ObjectName.getInstance(args[0]);

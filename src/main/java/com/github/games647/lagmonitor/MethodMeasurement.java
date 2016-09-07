@@ -69,12 +69,8 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
         String nextMethod = nextChildElement.getMethodName();
 
         String idName = nextChildElement.getClassName() + '.' + nextChildElement.getMethodName();
-        MethodMeasurement child = childInvokes.get(idName);
-        if (child == null) {
-            child = new MethodMeasurement(idName, nextClass, nextMethod);
-            childInvokes.put(idName, child);
-        }
-
+        MethodMeasurement child = childInvokes
+                .computeIfAbsent(idName, (key) -> new MethodMeasurement(key, nextClass, nextMethod));
         child.onMeasurement(stackTrace, skipElements + 1, time);
     }
 

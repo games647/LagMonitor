@@ -139,13 +139,13 @@ public class PaginationCommand implements CommandExecutor {
             sender.sendMessage(headerBuilder.toString());
         }
 
-        for (BaseComponent[] line : pagination.getAllLines()) {
+        pagination.getAllLines().stream().map((line) -> {
             StringBuilder lineBuilder = new StringBuilder();
             for (BaseComponent component : line) {
                 lineBuilder.append(component.toLegacyText());
             }
 
-            sender.sendMessage(lineBuilder.toString());
-        }
+            return lineBuilder.toString();
+        }).forEach(sender::sendMessage);
     }
 }

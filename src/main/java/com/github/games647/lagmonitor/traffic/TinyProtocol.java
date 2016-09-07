@@ -58,13 +58,9 @@ public abstract class TinyProtocol {
             plugin.getLogger().info("[TinyProtocol] Delaying server channel injection due to late bind.");
 
             // Damn you, late bind
-            Bukkit.getScheduler().runTask(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    registerChannelHandler();
-                    plugin.getLogger().info("[TinyProtocol] Late bind injection successful.");
-                }
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                registerChannelHandler();
+                plugin.getLogger().info("[TinyProtocol] Late bind injection successful.");
             });
         }
     }
@@ -141,11 +137,11 @@ public abstract class TinyProtocol {
             return;
         }
 
-        for (Channel serverChannel : serverChannels) {
+        serverChannels.stream().forEach((serverChannel) -> {
             // Remove channel handler
             ChannelPipeline pipeline = serverChannel.pipeline();
             serverChannel.eventLoop().execute(new CleanUpTask(pipeline, serverChannelHandler));
-        }
+        });
     }
 
     /**

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Level;
-import org.apache.commons.lang.SystemUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -103,10 +102,8 @@ public class LagMonitor extends JavaPlugin {
 
         //register listeners
         getServer().getPluginManager().registerEvents(new PlayerPingListener(this), this);
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            //add the player to the list in the case the plugin is loaded at runtime
-            pingHistoryTask.addPlayer(onlinePlayer);
-        }
+        //add the player to the list in the case the plugin is loaded at runtime
+        Bukkit.getOnlinePlayers().stream().forEach(pingHistoryTask::addPlayer);
 
         if (getConfig().getBoolean("thread-safety-check")) {
             getServer().getPluginManager().registerEvents(new ThreadSafetyListener(this), this);
@@ -150,11 +147,6 @@ public class LagMonitor extends JavaPlugin {
             } catch (SQLException sqlEx) {
                 getLogger().log(Level.SEVERE, "Failed to setup monitoring database", sqlEx);
             }
-        }
-
-        //warn about a outdated java version
-        if (!SystemUtils.isJavaVersionAtLeast(180)) {
-            getLogger().warning("You are using an outdated java 7 version");
         }
     }
 

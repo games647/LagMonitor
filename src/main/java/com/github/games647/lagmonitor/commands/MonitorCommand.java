@@ -90,9 +90,9 @@ public class MonitorCommand implements CommandExecutor {
         List<MethodMeasurement> sortedList = Lists.newArrayList(childInvokes);
         Collections.sort(sortedList);
 
-        for (MethodMeasurement child : sortedList) {
+        sortedList.stream().forEach((child) -> {
             printTrace(lines, currentTime, child, depth + 1);
-        }
+        });
     }
 
     private void startMonitor(CommandSender sender) {
@@ -130,15 +130,12 @@ public class MonitorCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
         }
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                String reportUrl = monitorTask.paste();
-                if (reportUrl == null) {
-                    sender.sendMessage(ChatColor.DARK_RED + "Error occured. Please check the console");
-                } else {
-                    sender.sendMessage(ChatColor.DARK_GREEN + "Report url: " + reportUrl + ".profile");
-                }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            String reportUrl = monitorTask.paste();
+            if (reportUrl == null) {
+                sender.sendMessage(ChatColor.DARK_RED + "Error occured. Please check the console");
+            } else {
+                sender.sendMessage(ChatColor.DARK_GREEN + "Report url: " + reportUrl + ".profile");
             }
         });
     }

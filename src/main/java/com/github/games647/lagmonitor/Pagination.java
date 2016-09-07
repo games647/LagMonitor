@@ -137,9 +137,8 @@ public class Pagination {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             player.spigot().sendMessage(buildHeader(page, getTotalPages(true)));
-            for (BaseComponent[] line : getPage(page, true)) {
-                player.spigot().sendMessage(line);
-            }
+            
+            getPage(page, true).stream().forEach(player.spigot()::sendMessage);
 
             String footer = buildFooter(page, true);
             if (!footer.isEmpty()) {
@@ -153,14 +152,14 @@ public class Pagination {
             }
 
             sender.sendMessage(headerBuilder.toString());
-            for (BaseComponent[] line : getPage(page, false)) {
+            getPage(page, false).stream().map((line) -> {
                 StringBuilder lineBuilder = new StringBuilder();
                 for (BaseComponent component : line) {
                     lineBuilder.append(component.toLegacyText());
                 }
-
-                sender.sendMessage(lineBuilder.toString());
-            }
+                
+                return lineBuilder.toString();
+            }).forEach(sender::sendMessage);
 
             String footer = buildFooter(page, false);
             if (!footer.isEmpty()) {

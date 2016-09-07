@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -89,11 +90,8 @@ public class GraphCommand implements TabExecutor {
         }
 
         String lastArg = args[args.length - 1];
-        for (String type : graphTypes.keySet()) {
-            if (type.startsWith(lastArg)) {
-                result.add(type);
-            }
-        }
+        result.addAll(graphTypes.keySet().stream()
+                .filter(type -> type.startsWith(lastArg)).collect(Collectors.toList()));
 
         Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
         return result;
@@ -131,9 +129,7 @@ public class GraphCommand implements TabExecutor {
 
     private MapView installRenderer(Player player, GraphRenderer graphType) {
         MapView mapView = Bukkit.createMap(player.getWorld());
-        for (MapRenderer mapRenderer : mapView.getRenderers()) {
-            mapView.removeRenderer(mapRenderer);
-        }
+        mapView.getRenderers().forEach(mapView::removeRenderer);
 
         mapView.addRenderer(graphType);
         return mapView;

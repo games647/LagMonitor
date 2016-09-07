@@ -56,9 +56,7 @@ public class TpsHistoryCommand implements CommandExecutor {
         float[] lastSeconds = tpsHistoryTask.getMinuteSample().getSamples();
         int position = tpsHistoryTask.getMinuteSample().getCurrentPosition();
         buildGraph(lastSeconds, position, graphLines, console);
-        for (StringBuilder graphLine : graphLines) {
-            sender.sendMessage(graphLine.toString());
-        }
+        graphLines.stream().map(Object::toString).forEach(sender::sendMessage);
 
         printAverageHistory(tpsHistoryTask, sender);
         sender.sendMessage(PRIMARY_COLOR + "Current TPS: " + tpsHistoryTask.getLastSample());

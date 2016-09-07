@@ -9,7 +9,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,13 +24,13 @@ public class PingHistoryTask implements Runnable {
 
     @Override
     public void run() {
-        for (Entry<Player, RollingOverHistory> entry : playerHistory.entrySet()) {
+        playerHistory.entrySet().stream().forEach((entry) -> {
             Player player = entry.getKey();
             int ping = getPing(player);
 
             RollingOverHistory history = entry.getValue();
             history.add(ping);
-        }
+        });
     }
 
     public RollingOverHistory getHistory(Player player) {
@@ -82,13 +81,7 @@ public class PingHistoryTask implements Runnable {
     private boolean isModdedServer() {
         //aggressive checking for modded servers
         List<String> versionNames = Arrays.asList(Bukkit.getVersion(), Bukkit.getName(), Bukkit.getServer().toString());
-        for (String version : versionNames) {
-            if (version.contains("MCPC") || version.contains("Cauldron")) {
-                return true;
-            }
-        }
-
-        return false;
+        return versionNames.stream().anyMatch((version) -> (version.contains("MCPC") || version.contains("Cauldron")));
     }
 
     private void setMCPCPing(Object entityPlayer) {

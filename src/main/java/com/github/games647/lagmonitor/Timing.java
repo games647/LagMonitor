@@ -54,13 +54,9 @@ public class Timing implements Comparable<Timing> {
             subcategories = Maps.newHashMap();
         }
 
-        Timing timing = subcategories.get(name);
-        if (timing == null) {
-            subcategories.put(name, new Timing(name, totalTime, count));
-        } else {
-            timing.addTotal(totalTime);
-            timing.addCount(totalTime);
-        }
+        Timing timing = subcategories.computeIfAbsent(name, (key) -> new Timing(key, totalTime, count));
+        timing.addTotal(totalTime);
+        timing.addCount(totalTime);
     }
 
     @Override

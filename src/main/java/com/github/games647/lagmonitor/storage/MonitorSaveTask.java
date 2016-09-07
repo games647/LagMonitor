@@ -58,28 +58,25 @@ public class MonitorSaveTask implements Runnable {
     private List<PlayerData> getPlayerData(final Map<UUID, WorldData> worldsData)
             throws InterruptedException, ExecutionException {
         Future<List<PlayerData>> playerFuture = Bukkit.getScheduler()
-                .callSyncMethod(plugin, new Callable<List<PlayerData>>() {
-                    @Override
-                    public List<PlayerData> call() throws Exception {
-                        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-                        List<PlayerData> playerData = Lists.newArrayListWithCapacity(onlinePlayers.size());
-                        for (Player player : onlinePlayers) {
-                            UUID worldId = player.getWorld().getUID();
+                .callSyncMethod(plugin, () -> {
+                    Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+                    List<PlayerData> playerData = Lists.newArrayListWithCapacity(onlinePlayers.size());
+                    for (Player player : onlinePlayers) {
+                        UUID worldId = player.getWorld().getUID();
 
-                            int worldRowId = 0;
-                            WorldData worldData = worldsData.get(worldId);
-                            if (worldData != null) {
-                                worldRowId = worldData.getRowId();
-                            }
-
-                            int lastPing = (int) plugin.getPingHistoryTask().getHistory(player).getLastSample();
-                            String playerName = player.getName();
-                            UUID playerId = player.getUniqueId();
-                            playerData.add(new PlayerData(worldRowId, playerId, playerName, lastPing));
+                        int worldRowId = 0;
+                        WorldData worldData = worldsData.get(worldId);
+                        if (worldData != null) {
+                            worldRowId = worldData.getRowId();
                         }
 
-                        return playerData;
+                        int lastPing = (int) plugin.getPingHistoryTask().getHistory(player).getLastSample();
+                        String playerName = player.getName();
+                        UUID playerId = player.getUniqueId();
+                        playerData.add(new PlayerData(worldRowId, playerId, playerName, lastPing));
                     }
+
+                    return playerData;
                 });
         
         return playerFuture.get();
@@ -89,28 +86,25 @@ public class MonitorSaveTask implements Runnable {
             throws ExecutionException, InterruptedException {
         //this is not thread-safe and have to run sync
         Future<Map<UUID, WorldData>> worldFuture = Bukkit.getScheduler()
-                .callSyncMethod(plugin, new Callable<Map<UUID, WorldData>>() {
-                    @Override
-                    public Map<UUID, WorldData> call() throws Exception {
-                        List<World> worlds = Bukkit.getWorlds();
-                        Map<UUID, WorldData> worldsData = Maps.newHashMapWithExpectedSize(worlds.size());
-                        for (World world : worlds) {
-                            UUID worldId = world.getUID();
-                            String worldName = world.getName();
-                            int tileEntities = 0;
-                            for (Chunk loadedChunk : world.getLoadedChunks()) {
-                                tileEntities += loadedChunk.getTileEntities().length;
-                            }
-
-                            int entities = world.getEntities().size();
-                            int chunks = world.getLoadedChunks().length;
-
-                            WorldData worldData = new WorldData(worldName, chunks, tileEntities, entities);
-                            worldsData.put(worldId, worldData);
+                .callSyncMethod(plugin, () -> {
+                    List<World> worlds = Bukkit.getWorlds();
+                    Map<UUID, WorldData> worldsData = Maps.newHashMapWithExpectedSize(worlds.size());
+                    for (World world : worlds) {
+                        UUID worldId = world.getUID();
+                        String worldName = world.getName();
+                        int tileEntities = 0;
+                        for (Chunk loadedChunk : world.getLoadedChunks()) {
+                            tileEntities += loadedChunk.getTileEntities().length;
                         }
 
-                        return worldsData;
+                        int entities = world.getEntities().size();
+                        int chunks = world.getLoadedChunks().length;
+
+                        WorldData worldData = new WorldData(worldName, chunks, tileEntities, entities);
+                        worldsData.put(worldId, worldData);
                     }
+
+                    return worldsData;
                 });
 
         Map<UUID, WorldData> worldsData = worldFuture.get();

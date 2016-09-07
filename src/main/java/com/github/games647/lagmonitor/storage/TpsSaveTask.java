@@ -14,11 +14,6 @@ public class TpsSaveTask implements Runnable {
     @Override
     public void run() {
         final float lastSample = plugin.getTpsHistoryTask().getLastSample();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.getStorage().saveTps(lastSample);
-            }
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getStorage().saveTps(lastSample));
     }
 }
