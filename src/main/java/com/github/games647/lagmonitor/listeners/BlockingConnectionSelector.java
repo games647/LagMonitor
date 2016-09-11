@@ -26,7 +26,9 @@ public class BlockingConnectionSelector extends ProxySelector {
     public List<Proxy> select(URI uri) {
         if (!uri.getScheme().startsWith("http") && Bukkit.isPrimaryThread()) {
             plugin.getLogger().log(Level.WARNING
-                    , "Server is performing a blocking socket connection {0} on the main thread"
+                    , "Another plugin is performing a blocking socket connection {0} on the main thread. "
+                            + "This could be a performance hit. "
+                            + "Report it to the plugin author"
                     , new Object[]{uri});
             plugin.getLogger().log(Level.WARNING, "", new Throwable());
         }

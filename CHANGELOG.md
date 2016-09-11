@@ -1,5 +1,11 @@
 # Changelog
 
+##1.9.1
+
+* Allow blocking actions on server startup (Fixes #15)
+* Clarify blocking action message
+* Upgrade to Java 8 (requires now Java 8)
+
 ##1.9
 
 * Add monitor pastes to http://paste.enginehub.org/ - Please support for this awesome service and please do not spam it

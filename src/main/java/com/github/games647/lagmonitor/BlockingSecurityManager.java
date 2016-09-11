@@ -46,7 +46,9 @@ public class BlockingSecurityManager extends SecurityManager {
 
     private void checkMainThreadOperation(Permission perm) {
         if (Thread.currentThread() == mainThread && isBlockingAction(perm)) {
-            plugin.getLogger().log(Level.WARNING, "Blocking action on the main thread {0}", perm);
+            plugin.getLogger().log(Level.WARNING, "Another plugin is performing a blocking action on the main thread "
+                    + "This could be a performance hit {0}."
+                    + "Report it to the plugin author", perm);
             plugin.getLogger().log(Level.WARNING, "", new Throwable());
         }
     }
