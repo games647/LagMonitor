@@ -24,7 +24,7 @@ public class PingHistoryTask implements Runnable {
 
     @Override
     public void run() {
-        playerHistory.entrySet().stream().forEach((entry) -> {
+        playerHistory.entrySet().forEach((entry) -> {
             Player player = entry.getKey();
             int ping = getPing(player);
 

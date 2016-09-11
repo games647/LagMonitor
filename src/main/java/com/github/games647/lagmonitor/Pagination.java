@@ -138,7 +138,7 @@ public class Pagination {
             Player player = (Player) sender;
             player.spigot().sendMessage(buildHeader(page, getTotalPages(true)));
             
-            getPage(page, true).stream().forEach(player.spigot()::sendMessage);
+            getPage(page, true).forEach(player.spigot()::sendMessage);
 
             String footer = buildFooter(page, true);
             if (!footer.isEmpty()) {

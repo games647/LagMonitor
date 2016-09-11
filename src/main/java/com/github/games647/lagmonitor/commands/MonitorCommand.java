@@ -90,9 +90,7 @@ public class MonitorCommand implements CommandExecutor {
         List<MethodMeasurement> sortedList = Lists.newArrayList(childInvokes);
         Collections.sort(sortedList);
 
-        sortedList.stream().forEach((child) -> {
-            printTrace(lines, currentTime, child, depth + 1);
-        });
+        sortedList.forEach((child) -> printTrace(lines, currentTime, child, depth + 1));
     }
 
     private void startMonitor(CommandSender sender) {

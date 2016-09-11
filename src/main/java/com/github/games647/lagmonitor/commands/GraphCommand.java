@@ -24,7 +24,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
 public class GraphCommand implements TabExecutor {

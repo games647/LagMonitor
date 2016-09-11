@@ -62,7 +62,6 @@ public class LagMonitor extends JavaPlugin {
     private TrafficReader trafficReader;
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
-    private BlockingConnectionSelector connectionSelector;
     private Storage storage;
     private Sigar sigar;
 
@@ -81,9 +80,11 @@ public class LagMonitor extends JavaPlugin {
         registerCommands();
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
-            SecurityManager oldSecurityManager = System.getSecurityManager();
-            Thread mainThread = Thread.currentThread();
-            System.setSecurityManager(new BlockingSecurityManager(this, mainThread, oldSecurityManager));
+            Bukkit.getScheduler().runTask(this, () -> {
+                SecurityManager oldSecurityManager = System.getSecurityManager();
+                Thread mainThread = Thread.currentThread();
+                System.setSecurityManager(new BlockingSecurityManager(this, mainThread, oldSecurityManager));
+            });
         }
 
         //register schedule tasks
@@ -103,21 +104,24 @@ public class LagMonitor extends JavaPlugin {
         //register listeners
         getServer().getPluginManager().registerEvents(new PlayerPingListener(this), this);
         //add the player to the list in the case the plugin is loaded at runtime
-        Bukkit.getOnlinePlayers().stream().forEach(pingHistoryTask::addPlayer);
+        Bukkit.getOnlinePlayers().forEach(pingHistoryTask::addPlayer);
 
         if (getConfig().getBoolean("thread-safety-check")) {
             getServer().getPluginManager().registerEvents(new ThreadSafetyListener(this), this);
         }
 
         if (getConfig().getBoolean("thread-block-detection")) {
-            blockDetectionTimer = new Timer(getName() + "-Thread-Blocking-Detection");
-            BlockingIODetectorTask blockingIODetectorTask = new BlockingIODetectorTask(this, Thread.currentThread());
-            blockDetectionTimer.scheduleAtFixedRate(blockingIODetectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
+            Bukkit.getScheduler().runTask(this, () -> {
+                blockDetectionTimer = new Timer(getName() + "-Thread-Blocking-Detection");
+                BlockingIODetectorTask detectorTask = new BlockingIODetectorTask(this, Thread.currentThread());
+                blockDetectionTimer.scheduleAtFixedRate(detectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
+            });
         }
 
         if (getConfig().getBoolean("socket-block-detection")) {
-            connectionSelector = new BlockingConnectionSelector(this, ProxySelector.getDefault());
-            ProxySelector.setDefault(connectionSelector);
+            Bukkit.getScheduler().runTask(this, () -> {
+                ProxySelector.setDefault(new BlockingConnectionSelector(this, ProxySelector.getDefault()));
+            });
         }
 
         if (getConfig().getBoolean("native-library")) {
@@ -180,10 +184,10 @@ public class LagMonitor extends JavaPlugin {
             sigar.close();
         }
 
-        if (connectionSelector != null) {
-            ProxySelector oldProxySelector = connectionSelector.getOldProxySelector();
+        ProxySelector proxySelector = ProxySelector.getDefault();
+        if (proxySelector != null && proxySelector instanceof BlockingConnectionSelector) {
+            ProxySelector oldProxySelector = ((BlockingConnectionSelector) proxySelector).getOldProxySelector();
             ProxySelector.setDefault(oldProxySelector);
-            connectionSelector = null;
         }
 
         for (Plugin plugin : getServer().getPluginManager().getPlugins()) {

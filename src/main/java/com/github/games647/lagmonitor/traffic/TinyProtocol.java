@@ -34,11 +34,11 @@ public abstract class TinyProtocol {
     private static final FieldAccessor<Object> GET_CONNECTION = Reflection.getField(SERVER_CLASS, CONNECTION_CLASS, 0);
 
     // Injected channel handlers
-    private List<Channel> serverChannels = Lists.newArrayList();
+    private final List<Channel> serverChannels = Lists.newArrayList();
     private ChannelInboundHandlerAdapter serverChannelHandler;
 
     private volatile boolean closed;
-    protected Plugin plugin;
+    protected final Plugin plugin;
 
     /**
      * Construct a new instance of TinyProtocol, and start intercepting packets for all connected clients and future
@@ -137,7 +137,7 @@ public abstract class TinyProtocol {
             return;
         }
 
-        serverChannels.stream().forEach((serverChannel) -> {
+        serverChannels.forEach((serverChannel) -> {
             // Remove channel handler
             ChannelPipeline pipeline = serverChannel.pipeline();
             serverChannel.eventLoop().execute(new CleanUpTask(pipeline, serverChannelHandler));
