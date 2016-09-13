@@ -1,5 +1,11 @@
 # Changelog
 
+##1.10
+
+* Add hideStacktrace config property, which shows only two lines
+* Add oncePerPlugin config property which report it only one time per startup and plugin
+* Add a way to find the plugin source. [Experimental]
+
 ##1.9.1
 
 * Allow blocking actions on server startup (Fixes #15)

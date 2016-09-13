@@ -1,15 +1,24 @@
 package com.github.games647.lagmonitor;
 
+import com.google.common.collect.Sets;
+
 import java.io.FilePermission;
 import java.net.SocketPermission;
 import java.security.Permission;
+import java.util.Arrays;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
+
+import org.bukkit.plugin.Plugin;
 
 public class BlockingSecurityManager extends SecurityManager {
 
     private final LagMonitor plugin;
     private final Thread mainThread;
     private final SecurityManager delegate;
+
+    private final Set<String> violatedPlugins = Sets.newHashSet();
 
     public BlockingSecurityManager(LagMonitor plugin, Thread mainThread, SecurityManager delegate) {
         this.plugin = plugin;
@@ -46,10 +55,33 @@ public class BlockingSecurityManager extends SecurityManager {
 
     private void checkMainThreadOperation(Permission perm) {
         if (Thread.currentThread() == mainThread && isBlockingAction(perm)) {
-            plugin.getLogger().log(Level.WARNING, "Another plugin is performing a blocking action on the main thread "
-                    + "This could be a performance hit {0}."
-                    + "Report it to the plugin author", perm);
-            plugin.getLogger().log(Level.WARNING, "", new Throwable());
+            Exception stackTraceCreator = new Exception();
+            StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
+
+            //remove the parts from LagMonitor
+            StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
+            Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
+            String pluginName = "unknown";
+            if (foundPlugin != null) {
+                pluginName = foundPlugin.getKey().getName();
+                if (!violatedPlugins.add(pluginName) && plugin.getConfig().getBoolean("oncePerPlugin")) {
+                    return;
+                }
+            }
+
+            plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action on the main thread "
+                    + "This could be a performance hit {1}."
+                    + "Report it to the plugin author", new Object[]{pluginName, perm});
+
+            if (plugin.getConfig().getBoolean("hideStacktrace")) {
+                if (foundPlugin != null) {
+                    StackTraceElement source = foundPlugin.getValue();
+                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
+                            , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
+                }
+            } else {
+                plugin.getLogger().log(Level.WARNING, "", stackTraceCreator);
+            }
         }
     }
 

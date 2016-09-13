@@ -1,14 +1,10 @@
 # ${project.name} main config
 
-# By hooking into the network management of Minecraft we can read how many bytes
-# the server is receiving or is sending.
-traffic-counter: true
-
 # If this option is enabled, this plugin will check for events which should run on the main
 # thread. If this not the cause the plugin will throw an exception to inform you. Therefore
 # you can detect thread-safety issues which could end up in ConcurrentModificationExceptions
 # or other issues.
-thread-safety-check: false
+thread-safety-check: true
 
 # Check peridically if a server (especially a plugin) is doing block I/O operations on the main Thread.
 # Operations like SQL-, HTTP-Request, File or Scoket-Connections should be performed in a seperate Thread.
@@ -24,6 +20,21 @@ socket-block-detection: true
 # to check it peridically.
 # Warning: this may override the existing security manager which could be set by your hoster
 securityMangerBlockingCheck: false
+
+# If you see something like: "Server is performing a blocking socket connection ..." and then a long list with "at .."
+# It's proparly one of the four features above. The last part is the stacktrace. 
+# This can help developers where their was running in order to find the source.
+# 
+# If the developer is unreachable and it's too spamy for you can deactivite it here. Then you still get the warning
+# but you don't see the stacktrace.
+hideStacktrace: false
+
+# Show the warning from above only once per plugin
+oncePerPlugin: false
+
+# By hooking into the network management of Minecraft we can read how many bytes
+# the server is receiving or is sending.
+traffic-counter: true
 
 # With this options it's possible to access more native features of the OS like:
 # * CPU MHZ

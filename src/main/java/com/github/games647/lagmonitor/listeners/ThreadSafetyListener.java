@@ -1,8 +1,15 @@
 package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import org.bukkit.Bukkit;
+import com.github.games647.lagmonitor.PluginUtil;
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.Map.Entry;
 
+import java.util.Set;
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +30,7 @@ import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.plugin.Plugin;
 
 /**
  * We can listen to events which are intended to run sync to the main thread.
@@ -31,6 +39,8 @@ import org.bukkit.event.world.WorldUnloadEvent;
 public class ThreadSafetyListener implements Listener {
 
     private final LagMonitor plugin;
+
+    private final Set<String> violatedPlugins = Sets.newHashSet();
 
     public ThreadSafetyListener(LagMonitor plugin) {
         this.plugin = plugin;
@@ -128,8 +138,34 @@ public class ThreadSafetyListener implements Listener {
 
     private void checkSafety(Event eventType) {
         if (Bukkit.isPrimaryThread() && !eventType.isAsynchronous()) {
+            IllegalAccessException stackTraceCreator = new IllegalAccessException();
+            StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
+
+            //remove the parts from LagMonitor
+            StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
+            Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
+            String pluginName = "unknown";
+            if (foundPlugin != null) {
+                pluginName = foundPlugin.getKey().getName();
+                if (!violatedPlugins.add(pluginName) && plugin.getConfig().getBoolean("oncePerPlugin")) {
+                    return;
+                }
+            }
+
             String eventName = eventType.getEventName();
-            throw new IllegalAccessError("Async operation for an sync Event:" + eventName);
+            plugin.getLogger().log(Level.WARNING, "Plugin {0} is performed a async operation for an sync Event "
+                    + "This could be a very dangerous {1}."
+                    + "Report it to the plugin author", new Object[]{pluginName, eventName});
+
+            if (plugin.getConfig().getBoolean("hideStacktrace")) {
+                if (foundPlugin != null) {
+                    StackTraceElement source = foundPlugin.getValue();
+                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
+                            , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
+                }
+            } else {
+                plugin.getLogger().log(Level.WARNING, "", stackTraceCreator);
+            }
         }
     }
 }
