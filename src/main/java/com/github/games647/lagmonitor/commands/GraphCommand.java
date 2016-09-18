@@ -37,7 +37,7 @@ public class GraphCommand implements TabExecutor {
         this.plugin = plugin;
 
         graphTypes.put("classes", new ClassesGraph());
-        graphTypes.put("cpu", new CpuGraph());
+        graphTypes.put("cpu", new CpuGraph(plugin, plugin.getNativeData()));
         graphTypes.put("heap", new HeapGraph());
         graphTypes.put("threads", new ThreadsGraph());
     }

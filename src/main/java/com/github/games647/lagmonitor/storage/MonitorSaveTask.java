@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.NativeData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -126,12 +127,6 @@ public class MonitorSaveTask implements Runnable {
 
         float freeRamPct = round((freeRam * 100) / maxMemory, 4);
 
-        float systemUsage = 0;
-        float procUsage = 0;
-
-        int totalOsMemory = 0;
-        int freeOsRam = 0;
-
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         float loadAvg = round(osBean.getSystemLoadAverage(), 4);
         if (loadAvg == -1) {
@@ -139,14 +134,12 @@ public class MonitorSaveTask implements Runnable {
             loadAvg = 0;
         }
 
-        if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
-            com.sun.management.OperatingSystemMXBean sunOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
-            systemUsage = round(sunOsBean.getSystemCpuLoad() * 100, 4);
-            procUsage = round(sunOsBean.getProcessCpuLoad() * 100, 4);
+        NativeData nativeData = plugin.getNativeData();
+        float systemUsage = round(nativeData.getCPULoad()* 100, 4);
+        float procUsage = round(nativeData.getProcessCPULoad()* 100, 4);
 
-            totalOsMemory = byteToMega(sunOsBean.getTotalPhysicalMemorySize());
-            freeOsRam = byteToMega(sunOsBean.getFreePhysicalMemorySize());
-        }
+        int totalOsMemory = byteToMega(nativeData.getTotalMemory());
+        int freeOsRam = byteToMega(nativeData.getFreeMemory());
 
         float freeOsRamPct = round((freeOsRam * 100) / totalOsMemory, 4);
         return storage.saveMonitor(procUsage, systemUsage, freeRam, freeRamPct, freeOsRam, freeOsRamPct, loadAvg);

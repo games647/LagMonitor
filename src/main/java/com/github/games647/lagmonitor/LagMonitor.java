@@ -63,7 +63,7 @@ public class LagMonitor extends JavaPlugin {
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
     private Storage storage;
-    private Sigar sigar;
+    private NativeData nativeData;
 
     public LagMonitor() {
         super();
@@ -77,7 +77,6 @@ public class LagMonitor extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         saveResource("default.jfc", false);
-        registerCommands();
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
             Bukkit.getScheduler().runTask(this, () -> {
@@ -124,7 +123,10 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("native-library")) {
-            sigar = new Sigar();
+            Sigar sigar = new Sigar();
+            nativeData = new NativeData(getLogger(), sigar);
+        } else {
+            nativeData = new NativeData(getLogger(), null);
         }
 
         if (getConfig().getBoolean("monitor-database")) {
@@ -151,6 +153,8 @@ public class LagMonitor extends JavaPlugin {
                 getLogger().log(Level.SEVERE, "Failed to setup monitoring database", sqlEx);
             }
         }
+
+        registerCommands();
     }
 
     @Override
@@ -179,8 +183,8 @@ public class LagMonitor extends JavaPlugin {
             System.setSecurityManager(oldSecurityManager);
         }
 
-        if (sigar != null) {
-            sigar.close();
+        if (nativeData != null) {
+            nativeData.close();
         }
 
         ProxySelector proxySelector = ProxySelector.getDefault();
@@ -220,12 +224,12 @@ public class LagMonitor extends JavaPlugin {
         return pingHistoryTask;
     }
 
-    public Sigar getSigar() {
-        return sigar;
-    }
-
     public Storage getStorage() {
         return storage;
+    }
+
+    public NativeData getNativeData() {
+        return nativeData;
     }
 
     public boolean isAllowed(CommandSender sender, Command cmd) {

@@ -31,7 +31,7 @@ public abstract class GraphRenderer extends MapRenderer {
     @Override
     public void render(MapView map, MapCanvas canvas, Player player) {
         if (nextUpdate <= 0) {
-            //paint only every half seonds (20 Ticks / 2)
+            //paint only every half seconds (20 Ticks / 2)
             nextUpdate = 10;
 
             if (nextPosX >= MAX_WIDTH) {

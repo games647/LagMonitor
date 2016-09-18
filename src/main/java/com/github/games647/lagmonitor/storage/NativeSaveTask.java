@@ -62,7 +62,7 @@ public class NativeSaveTask implements Runnable {
         int netReadDiff = 0;
         int netWriteDiff = 0;
 
-        Sigar sigar = plugin.getSigar();
+        Sigar sigar = plugin.getNativeData().getSigar();
         if (sigar != null) {
             try {
                 String rootFileSystem = File.listRoots()[0].getAbsolutePath();

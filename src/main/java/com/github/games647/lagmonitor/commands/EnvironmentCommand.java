@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.NativeData;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -41,18 +42,18 @@ public class EnvironmentCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
         sender.sendMessage(PRIMARY_COLOR + "CPU: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
         sender.sendMessage(PRIMARY_COLOR + "Load Average: " + SECONDARY_COLOR + osBean.getSystemLoadAverage());
-        if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
-            printExtendOsInfo((com.sun.management.OperatingSystemMXBean) osBean, sender);
-        }
+        printExtendOsInfo(sender);
 
         displayDiskSpace(sender);
         return true;
     }
 
-    private void printExtendOsInfo(com.sun.management.OperatingSystemMXBean sunOsBean, CommandSender sender) {
+    private void printExtendOsInfo(CommandSender sender) {
+        NativeData nativeData = plugin.getNativeData();
+
         //cpu
-        double systemCpuLoad = sunOsBean.getSystemCpuLoad();
-        double processCpuLoad = sunOsBean.getProcessCpuLoad();
+        double systemCpuLoad = nativeData.getCPULoad();
+        double processCpuLoad = nativeData.getProcessCPULoad();
 
         //these numbers are in percent (0.01 -> 1%)
         //we want to to have four places in a human readable percent value to multiple it wiht 100
@@ -65,14 +66,14 @@ public class EnvironmentCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Process Usage: " + SECONDARY_COLOR + processLoadFormat);
 
         //swap
-        long totalSwap = sunOsBean.getTotalSwapSpaceSize();
-        long freeSwap = sunOsBean.getFreeSwapSpaceSize();
+        long totalSwap = nativeData.getTotalSwap();
+        long freeSwap = nativeData.getFreeSwap();
         sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + reabableByteCount(totalSwap, true));
         sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + reabableByteCount(freeSwap, true));
 
         //RAM
-        long totalMemory = sunOsBean.getTotalPhysicalMemorySize();
-        long freeMemory = sunOsBean.getFreePhysicalMemorySize();
+        long totalMemory = nativeData.getTotalMemory();
+        long freeMemory = nativeData.getFreeMemory();
         sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + reabableByteCount(totalMemory, true));
         sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + reabableByteCount(freeMemory, true));
     }

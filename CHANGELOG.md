@@ -1,5 +1,9 @@
 # Changelog
 
+##1.10.1
+
+* Fix thread safety check
+
 ##1.10
 
 * Add hideStacktrace config property, which shows only two lines
