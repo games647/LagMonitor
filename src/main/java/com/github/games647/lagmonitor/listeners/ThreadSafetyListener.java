@@ -137,7 +137,8 @@ public class ThreadSafetyListener implements Listener {
     }
 
     private void checkSafety(Event eventType) {
-        if (Bukkit.isPrimaryThread() && !eventType.isAsynchronous()) {
+        //async executing of sync event
+        if (!Bukkit.isPrimaryThread() && !eventType.isAsynchronous()) {
             IllegalAccessException stackTraceCreator = new IllegalAccessException();
             StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
 

@@ -82,8 +82,7 @@ public class LagMonitor extends JavaPlugin {
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
             Bukkit.getScheduler().runTask(this, () -> {
                 SecurityManager oldSecurityManager = System.getSecurityManager();
-                Thread mainThread = Thread.currentThread();
-                System.setSecurityManager(new BlockingSecurityManager(this, mainThread, oldSecurityManager));
+                System.setSecurityManager(new BlockingSecurityManager(this, oldSecurityManager));
             });
         }
 

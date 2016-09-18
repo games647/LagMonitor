@@ -10,25 +10,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 public class BlockingSecurityManager extends SecurityManager {
 
     private final LagMonitor plugin;
-    private final Thread mainThread;
     private final SecurityManager delegate;
 
     private final Set<String> violatedPlugins = Sets.newHashSet();
 
-    public BlockingSecurityManager(LagMonitor plugin, Thread mainThread, SecurityManager delegate) {
+    public BlockingSecurityManager(LagMonitor plugin, SecurityManager delegate) {
         this.plugin = plugin;
 
-        this.mainThread = mainThread;
         this.delegate = delegate;
     }
 
-    public BlockingSecurityManager(LagMonitor plugin, Thread mainThread) {
-        this(plugin, mainThread, null);
+    public BlockingSecurityManager(LagMonitor plugin) {
+        this(plugin, null);
     }
 
     public SecurityManager getOldSecurityManager() {
@@ -54,7 +53,7 @@ public class BlockingSecurityManager extends SecurityManager {
     }
 
     private void checkMainThreadOperation(Permission perm) {
-        if (Thread.currentThread() == mainThread && isBlockingAction(perm)) {
+        if (Bukkit.isPrimaryThread() && isBlockingAction(perm)) {
             Exception stackTraceCreator = new Exception();
             StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
 
