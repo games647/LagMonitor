@@ -12,11 +12,16 @@ public class PluginUtil {
 
     public static Entry<Plugin, StackTraceElement> findPlugin(StackTraceElement[] stacktrace) {
         for (StackTraceElement elem : stacktrace) {
-            Plugin plugin = getPluginByClass(elem.getClass());
-            if (plugin != null) {
-                HashMap<Plugin, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
-                map.put(plugin, elem);
-                return map.entrySet().iterator().next();
+            try {
+                Plugin plugin = getPluginByClass(Class.forName(elem.getClassName()));
+                if (plugin != null) {
+                    HashMap<Plugin, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
+                    map.put(plugin, elem);
+                    return map.entrySet().iterator().next();
+                }
+            } catch (ClassNotFoundException ex) {
+                //this class should be found if it's in the stacktrace
+                throw new RuntimeException(ex);
             }
         }
 
@@ -25,9 +30,11 @@ public class PluginUtil {
 
     public static Plugin getPluginByClass(Class<?> clazz) {
         ClassLoader loader = clazz.getClassLoader();
-        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            if (plugin.getClass().getClassLoader() == loader) {
-                return plugin;
+        synchronized (Bukkit.getPluginManager()) {
+            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                if (plugin.getClass().getClassLoader() == loader) {
+                    return plugin;
+                }
             }
         }
 
