@@ -26,10 +26,10 @@ public class NativeData {
         this.logger = logger;
         this.sigar = sigar;
 
-        if (sigar != null) {
-            pid = sigar.getPid();
-        } else {
+        if (sigar == null) {
             pid = -1;
+        } else {
+            pid = sigar.getPid();
         }
 
         if (sigar == null && !(osBean instanceof com.sun.management.OperatingSystemMXBean)) {

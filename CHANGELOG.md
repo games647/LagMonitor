@@ -1,5 +1,9 @@
 # Changelog
 
+##1.11
+
+* Added sigar as fallback when Oracle API isn't available (com.sun.management.OperatingSystemMXBean)
+
 ##1.10.1
 
 * Fix thread safety check

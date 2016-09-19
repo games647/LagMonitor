@@ -47,9 +47,9 @@ public class BlockingConnectionSelector extends ProxySelector {
                 }
             }
 
-            plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action on the main thread "
-                    + "This could be a performance hit."
-                    + "Report it to the plugin author", pluginName);
+            plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action to {1} on the main thread"
+                    + " This could be a performance hit."
+                    + " Report it to the plugin author", new Object[]{pluginName, uri});
 
             if (plugin.getConfig().getBoolean("hideStacktrace")) {
                 if (foundPlugin != null) {
