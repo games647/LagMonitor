@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.PluginUtil;
+import com.github.games647.lagmonitor.PluginViolation;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -40,6 +41,7 @@ public class ThreadSafetyListener implements Listener {
 
     private final LagMonitor plugin;
 
+    private final Set<PluginViolation> violations = Sets.newHashSet();
     private final Set<String> violatedPlugins = Sets.newHashSet();
 
     public ThreadSafetyListener(LagMonitor plugin) {
@@ -138,6 +140,7 @@ public class ThreadSafetyListener implements Listener {
 
     private void checkSafety(Event eventType) {
         //async executing of sync event
+        String eventName = eventType.getEventName();
         if (!Bukkit.isPrimaryThread() && !eventType.isAsynchronous()) {
             IllegalAccessException stackTraceCreator = new IllegalAccessException();
             StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
@@ -145,25 +148,28 @@ public class ThreadSafetyListener implements Listener {
             //remove the parts from LagMonitor
             StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
             Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
-            String pluginName = "unknown";
+
+            PluginViolation violation = new PluginViolation(eventName);
             if (foundPlugin != null) {
-                pluginName = foundPlugin.getKey().getName();
-                if (!violatedPlugins.add(pluginName) && plugin.getConfig().getBoolean("oncePerPlugin")) {
+                String pluginName = foundPlugin.getKey().getName();
+                violation = new PluginViolation(pluginName, foundPlugin.getValue(), eventName);
+
+                if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
                     return;
                 }
             }
 
-            String eventName = eventType.getEventName();
+            if (!violations.add(violation)) {
+                return;
+            }
+
             plugin.getLogger().log(Level.WARNING, "Plugin {0} is performed a async operation for an sync Event "
                     + "This could be a very dangerous {1}."
-                    + "Report it to the plugin author", new Object[]{pluginName, eventName});
+                    + "Report it to the plugin author", new Object[]{violation.getPluginName(), eventName});
 
             if (plugin.getConfig().getBoolean("hideStacktrace")) {
-                if (foundPlugin != null) {
-                    StackTraceElement source = foundPlugin.getValue();
-                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
-                            , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
-                }
+                plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
+                        , new Object[]{violation.getSourceFile(), violation.getMethodName(), violation.getLineNumber()});
             } else {
                 plugin.getLogger().log(Level.WARNING, "", stackTraceCreator);
             }

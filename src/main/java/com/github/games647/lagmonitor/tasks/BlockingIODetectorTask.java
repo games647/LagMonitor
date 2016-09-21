@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.PluginUtil;
+import com.github.games647.lagmonitor.PluginViolation;
 import com.google.common.collect.Sets;
 
 import java.lang.Thread.State;
@@ -18,6 +19,7 @@ public class BlockingIODetectorTask extends TimerTask {
     private final Thread mainThread;
     private final LagMonitor plugin;
 
+    private final Set<PluginViolation> violations = Sets.newHashSet();
     private final Set<String> violatedPlugins = Sets.newHashSet();
 
     public BlockingIODetectorTask(LagMonitor plugin, Thread mainThread) {
@@ -64,22 +66,26 @@ public class BlockingIODetectorTask extends TimerTask {
         //remove the parts from LagMonitor
         StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
         Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
-        String pluginName = "unknown";
+
+        PluginViolation violation = new PluginViolation("");
         if (foundPlugin != null) {
-            pluginName = foundPlugin.getKey().getName();
-            if (!violatedPlugins.add(pluginName) && plugin.getConfig().getBoolean("oncePerPlugin")) {
+            String pluginName = foundPlugin.getKey().getName();
+            violation = new PluginViolation(pluginName, foundPlugin.getValue(), "");
+
+            if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
                 return;
             }
         }
 
-        plugin.getLogger().log(Level.WARNING, message, pluginName);
+        if (!violations.add(violation)) {
+            return;
+        }
+
+        plugin.getLogger().log(Level.WARNING, message, violation.getPluginName());
 
         if (plugin.getConfig().getBoolean("hideStacktrace")) {
-            if (foundPlugin != null) {
-                StackTraceElement source = foundPlugin.getValue();
-                plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
-                        , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
-            }
+            plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line {2}"
+                    , new Object[]{violation.getSourceFile(), violation.getMethodName(), violation.getLineNumber()});
         } else {
             plugin.getLogger().log(Level.WARNING, "", stackTraceCreator);
         }

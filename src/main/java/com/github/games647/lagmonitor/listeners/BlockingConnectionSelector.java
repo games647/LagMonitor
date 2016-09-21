@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.PluginUtil;
+import com.github.games647.lagmonitor.PluginViolation;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class BlockingConnectionSelector extends ProxySelector {
     private final LagMonitor plugin;
     private final ProxySelector oldProxySelector;
 
+    private final Set<PluginViolation> violations = Sets.newHashSet();
     private final Set<String> violatedPlugins = Sets.newHashSet();
 
     public BlockingConnectionSelector(LagMonitor plugin, ProxySelector oldProxySelector) {
@@ -32,6 +34,7 @@ public class BlockingConnectionSelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
+        String url = uri.toString().replace("www", "");
         if (!uri.getScheme().startsWith("http") && Bukkit.isPrimaryThread()) {
             Exception stackTraceCreator = new Exception();
             StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
@@ -39,22 +42,29 @@ public class BlockingConnectionSelector extends ProxySelector {
             //remove the parts from LagMonitor
             StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 1, stackTrace.length);
             Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
-            String pluginName = "unknown";
+
+            PluginViolation violation = new PluginViolation(url);
             if (foundPlugin != null) {
-                pluginName = foundPlugin.getKey().getName();
-                if (!violatedPlugins.add(pluginName) && plugin.getConfig().getBoolean("oncePerPlugin")) {
+                String pluginName = foundPlugin.getKey().getName();
+                violation = new PluginViolation(pluginName, foundPlugin.getValue(), url);
+
+                if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
                     return oldProxySelector.select(uri);
                 }
             }
 
+            if (!violations.add(violation)) {
+                return oldProxySelector.select(uri);
+            }
+
             plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action to {1} on the main thread"
                     + " This could be a performance hit."
-                    + " Report it to the plugin author", new Object[]{pluginName, uri});
+                    + " Report it to the plugin author", new Object[]{violation.getPluginName(), url});
 
             if (plugin.getConfig().getBoolean("hideStacktrace")) {
                 if (foundPlugin != null) {
                     StackTraceElement source = foundPlugin.getValue();
-                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
+                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line {2}"
                             , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
                 }
             } else {

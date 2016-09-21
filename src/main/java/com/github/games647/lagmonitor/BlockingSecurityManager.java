@@ -1,5 +1,6 @@
 package com.github.games647.lagmonitor;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import java.io.FilePermission;
@@ -18,7 +19,9 @@ public class BlockingSecurityManager extends SecurityManager {
     private final LagMonitor plugin;
     private final SecurityManager delegate;
 
-    private final Set<String> violatedPlugins = Sets.newHashSet();
+    private final Set<PluginViolation> violations = Sets.newConcurrentHashSet();
+    private final Set<String> violatedPlugins = Sets.newConcurrentHashSet();
+    private final Set<String> fileWhitelist = ImmutableSet.of(".jar", "session.lock");
 
     public BlockingSecurityManager(LagMonitor plugin, SecurityManager delegate) {
         this.plugin = plugin;
@@ -60,22 +63,29 @@ public class BlockingSecurityManager extends SecurityManager {
             //remove the parts from LagMonitor
             StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
             Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
-            String pluginName = "unknown";
+
+            PluginViolation violation = new PluginViolation(perm.getName());
             if (foundPlugin != null) {
-                pluginName = foundPlugin.getKey().getName();
-                if (!violatedPlugins.add(pluginName) && plugin.getConfig().getBoolean("oncePerPlugin")) {
+                String pluginName = foundPlugin.getKey().getName();
+                violation = new PluginViolation(pluginName, foundPlugin.getValue(), perm.getName());
+
+                if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
                     return;
                 }
             }
 
+            if (!violations.add(violation)) {
+                return;
+            }
+
             plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action on the main thread "
                     + "This could be a performance hit {1}. "
-                    + "Report it to the plugin author", new Object[]{pluginName, perm});
+                    + "Report it to the plugin author", new Object[]{violation.getPluginName(), perm});
 
             if (plugin.getConfig().getBoolean("hideStacktrace")) {
                 if (foundPlugin != null) {
                     StackTraceElement source = foundPlugin.getValue();
-                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line {2}"
+                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}(), line {2}"
                             , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
                 }
             } else {
@@ -86,14 +96,17 @@ public class BlockingSecurityManager extends SecurityManager {
 
     private boolean isBlockingAction(Permission permission) {
         String actions = permission.getActions();
+
         if (permission instanceof FilePermission) {
             //commented out, because also operations like .createNewFile() is also a write permission
             //which could executed by the main thread, doesn't it`?
 //            ignore jar files because the java runtime load and unload classes at runtime
-            return actions.contains("read") && !permission.getName().contains(".jar");
+            return actions.contains("read")
+                    && fileWhitelist.stream().noneMatch(ignored -> permission.getName().contains(ignored));
             //read write
         } else if (permission instanceof SocketPermission) {
-            return actions.contains("connect");
+            //already handled with connection selector
+//            return actions.contains("connect");
         }
 
         return false;
