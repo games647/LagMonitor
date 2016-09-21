@@ -8,6 +8,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -120,32 +122,22 @@ public class SystemCommand implements CommandExecutor {
     }
 
     private long getFolderSize(File folder) {
-        long size = 0;
-
-        for (File file : folder.listFiles()) {
-            if (file == null) {
-                continue;
-            }
-
-            if (file.isFile()) {
-                size += file.length();
-            } else {
-                size += getFolderSize(file);
-            }
-        }
+        long size = Stream.of(folder.listFiles())
+                .parallel()
+                .filter(Objects::nonNull)
+                .mapToLong((File file) -> {
+                    if (file.isFile()) {
+                        return file.length();
+                    } else {
+                        return getFolderSize(file);
+                    }
+                }).sum();
 
         return size;
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {
-        int enabled = 0;
-        for (Plugin toCheck : plugins) {
-            if (toCheck.isEnabled()) {
-                enabled++;
-            }
-        }
-
-        return enabled;
+        return (int) Stream.of(plugins).filter(Plugin::isEnabled).count();
     }
 
     private String readableByteCount(long bytes, boolean si) {

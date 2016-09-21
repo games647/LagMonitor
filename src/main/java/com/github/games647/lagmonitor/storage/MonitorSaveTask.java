@@ -14,10 +14,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -146,19 +148,16 @@ public class MonitorSaveTask implements Runnable {
     }
 
     private long getFolderSize(File folder) {
-        long size = 0;
-
-        for (File file : folder.listFiles()) {
-            if (file == null) {
-                continue;
-            }
-
-            if (file.isFile()) {
-                size += file.length();
-            } else {
-                size += getFolderSize(file);
-            }
-        }
+        long size = Stream.of(folder.listFiles())
+                .parallel()
+                .filter(Objects::nonNull)
+                .mapToLong((File file) -> {
+                    if (file.isFile()) {
+                        return file.length();
+                    } else {
+                        return getFolderSize(file);
+                    }
+                }).sum();
 
         return size;
     }

@@ -69,13 +69,13 @@ public class BlockingSecurityManager extends SecurityManager {
             }
 
             plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action on the main thread "
-                    + "This could be a performance hit {1}."
+                    + "This could be a performance hit {1}. "
                     + "Report it to the plugin author", new Object[]{pluginName, perm});
 
             if (plugin.getConfig().getBoolean("hideStacktrace")) {
                 if (foundPlugin != null) {
                     StackTraceElement source = foundPlugin.getValue();
-                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line{2}"
+                    plugin.getLogger().log(Level.WARNING, "Source: {0}, method {1}, line {2}"
                             , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
                 }
             } else {
@@ -89,8 +89,8 @@ public class BlockingSecurityManager extends SecurityManager {
         if (permission instanceof FilePermission) {
             //commented out, because also operations like .createNewFile() is also a write permission
             //which could executed by the main thread, doesn't it`?
-//            return actions.contains("read") || actions.contains("write");
-            return actions.contains("read");
+//            ignore jar files because the java runtime load and unload classes at runtime
+            return actions.contains("read") && !permission.getName().contains(".jar");
             //read write
         } else if (permission instanceof SocketPermission) {
             return actions.contains("connect");
