@@ -3,6 +3,7 @@ package com.github.games647.lagmonitor.listeners;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.PluginUtil;
 import com.github.games647.lagmonitor.PluginViolation;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import sun.net.spi.DefaultProxySelector;
 
 public class BlockingConnectionSelector extends ProxySelector {
 
@@ -49,12 +51,12 @@ public class BlockingConnectionSelector extends ProxySelector {
                 violation = new PluginViolation(pluginName, foundPlugin.getValue(), url);
 
                 if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
-                    return oldProxySelector.select(uri);
+                    return oldProxySelector == null ? Lists.newArrayList(Proxy.NO_PROXY) : oldProxySelector.select(uri);
                 }
             }
 
             if (!violations.add(violation)) {
-                return oldProxySelector.select(uri);
+                return oldProxySelector == null ? Lists.newArrayList(Proxy.NO_PROXY) : oldProxySelector.select(uri);
             }
 
             plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action to {1} on the main thread"
@@ -72,12 +74,14 @@ public class BlockingConnectionSelector extends ProxySelector {
             }
         }
 
-        return oldProxySelector.select(uri);
+        return oldProxySelector == null ? Lists.newArrayList(Proxy.NO_PROXY) : oldProxySelector.select(uri);
     }
 
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-        oldProxySelector.connectFailed(uri, sa, ioe);
+        if (oldProxySelector != null) {
+            oldProxySelector.connectFailed(uri, sa, ioe);
+        }
     }
 
     public ProxySelector getOldProxySelector() {
