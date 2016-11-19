@@ -32,8 +32,9 @@ import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.collect.Maps;
-import java.net.ProxySelector;
+import java.io.File;
 
+import java.net.ProxySelector;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,10 @@ public class LagMonitor extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        saveResource("default.jfc", false);
+
+        if (!new File(getDataFolder(), "default.jfc").exists()) {
+            saveResource("default.jfc", false);
+        }
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
             Bukkit.getScheduler().runTask(this, () -> {
