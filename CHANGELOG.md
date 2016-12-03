@@ -2,6 +2,9 @@
 
 ##1.11.4
 
+* Fix users don't receive a map on graph command
+* Display error message for untracked ping players
+* Fail silently if the jfc file already exists
 
 ##1.11.3
 

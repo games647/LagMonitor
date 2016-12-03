@@ -1,5 +1,6 @@
 package com.github.games647.lagmonitor.tasks;
 
+import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.RollingOverHistory;
 import com.google.common.collect.Maps;
 
@@ -9,9 +10,11 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PingHistoryTask implements Runnable {
 
@@ -24,6 +27,8 @@ public class PingHistoryTask implements Runnable {
 
     @Override
     public void run() {
+        JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO, "Update all pings - data: {0}"
+                , playerHistory);
         playerHistory.entrySet().forEach((entry) -> {
             Player player = entry.getKey();
             int ping = getPing(player);
@@ -39,10 +44,17 @@ public class PingHistoryTask implements Runnable {
 
     public void addPlayer(Player player) {
         int reflectionPing = getPing(player);
+
+        JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO, "Get ping for new player {0} - {1}ms",
+                 new Object[]{player.getName(), reflectionPing});
         playerHistory.put(player, new RollingOverHistory(SAMPLE_SIZE, reflectionPing));
+        JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO,
+                 "Schedule ping update for player {0} - playerhistory: {1}",
+                 new Object[]{player.getName(), playerHistory});
     }
 
     public void removePlayer(Player player) {
+        JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO, "Remove player {0}", player.getName());
         playerHistory.remove(player);
     }
 

@@ -33,8 +33,8 @@ import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.collect.Maps;
-import java.io.File;
 
+import java.io.File;
 import java.net.ProxySelector;
 import java.sql.SQLException;
 import java.util.List;
@@ -105,6 +105,8 @@ public class LagMonitor extends JavaPlugin {
         }
 
         //register listeners
+        getLogger().info("Register ping listener");
+
         getServer().getPluginManager().registerEvents(new PlayerPingListener(this), this);
         //add the player to the list in the case the plugin is loaded at runtime
         Bukkit.getOnlinePlayers().forEach(pingHistoryTask::addPlayer);
