@@ -31,6 +31,10 @@ public class PingCommand implements CommandExecutor {
             displayPingOther(sender, command, args);
         } else if (sender instanceof Player) {
             RollingOverHistory sampleHistory = plugin.getPingHistoryTask().getHistory((Player) sender);
+            if (sampleHistory == null) {
+                sender.sendMessage(ChatColor.DARK_RED + "Sorry there is currently no data available");
+                return true;
+            }
 
             int lastPing = (int) sampleHistory.getLastSample();
             sender.sendMessage(PRIMARY_COLOR + "Your ping is: " + ChatColor.DARK_GREEN + lastPing + "ms");
@@ -50,6 +54,11 @@ public class PingCommand implements CommandExecutor {
             Player targetPlayer = Bukkit.getPlayer(playerName);
             if (targetPlayer != null) {
                 RollingOverHistory sampleHistory = plugin.getPingHistoryTask().getHistory(targetPlayer);
+                if (sampleHistory == null) {
+                    sender.sendMessage(ChatColor.DARK_RED + "Sorry there is currently no data available");
+                    return;
+                }
+
                 int lastPing = (int) sampleHistory.getLastSample();
 
                 sender.sendMessage(ChatColor.WHITE + playerName + PRIMARY_COLOR + "'s ping is: "
