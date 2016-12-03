@@ -21,6 +21,7 @@ import com.github.games647.lagmonitor.inject.CommandInjector;
 import com.github.games647.lagmonitor.inject.ListenerInjector;
 import com.github.games647.lagmonitor.inject.TaskInjector;
 import com.github.games647.lagmonitor.listeners.BlockingConnectionSelector;
+import com.github.games647.lagmonitor.listeners.GraphListener;
 import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.storage.MonitorSaveTask;
@@ -159,6 +160,7 @@ public class LagMonitor extends JavaPlugin {
         }
 
         registerCommands();
+        getServer().getPluginManager().registerEvents(new GraphListener(), this);
     }
 
     @Override

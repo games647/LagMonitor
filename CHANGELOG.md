@@ -1,5 +1,23 @@
 # Changelog
 
+##1.11.4
+
+
+##1.11.3
+
+* Fix detecting socket connections (socket-block-detection) if the default proxy is null
+
+##1.11.2
+
+* Optimize plugin violations handling
+* Fix security manager spams if enabled
+* Fix log caused methods only once even if it's disabled
+
+##1.11.1
+
+* Add missing uri to the connection selector
+* Fix plugin name detection and thread-safety (Fixes #17)
+
 ##1.11
 
 * Added sigar as fallback when Oracle API isn't available (com.sun.management.OperatingSystemMXBean)

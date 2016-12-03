@@ -19,7 +19,6 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import sun.net.spi.DefaultProxySelector;
 
 public class BlockingConnectionSelector extends ProxySelector {
 
