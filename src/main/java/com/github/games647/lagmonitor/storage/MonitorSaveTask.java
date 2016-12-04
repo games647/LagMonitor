@@ -72,7 +72,7 @@ public class MonitorSaveTask implements Runnable {
                             worldRowId = worldData.getRowId();
                         }
 
-                        int lastPing = (int) plugin.getPingHistoryTask().getHistory(player).getLastSample();
+                        int lastPing = (int) plugin.getPingHistoryTask().getHistory(player.getName()).getLastSample();
                         String playerName = player.getName();
                         UUID playerId = player.getUniqueId();
                         playerData.add(new PlayerData(worldRowId, playerId, playerName, lastPing));

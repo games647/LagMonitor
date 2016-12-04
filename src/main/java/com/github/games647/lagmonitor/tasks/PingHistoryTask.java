@@ -20,7 +20,7 @@ public class PingHistoryTask implements Runnable {
 
     private static final int SAMPLE_SIZE = 5;
 
-    private final Map<Player, RollingOverHistory> playerHistory = Maps.newHashMap();
+    private final Map<String, RollingOverHistory> playerHistory = Maps.newHashMap();
 
     private Method getHandleMethod;
     private Field pingField;
@@ -30,7 +30,8 @@ public class PingHistoryTask implements Runnable {
         JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO, "Update all pings - data: {0}"
                 , playerHistory);
         playerHistory.entrySet().forEach((entry) -> {
-            Player player = entry.getKey();
+            String playerName = entry.getKey();
+            Player player = Bukkit.getPlayerExact(playerName);
             int ping = getPing(player);
 
             RollingOverHistory history = entry.getValue();
@@ -38,8 +39,8 @@ public class PingHistoryTask implements Runnable {
         });
     }
 
-    public RollingOverHistory getHistory(Player player) {
-        return playerHistory.get(player);
+    public RollingOverHistory getHistory(String playerName) {
+        return playerHistory.get(playerName);
     }
 
     public void addPlayer(Player player) {
@@ -47,7 +48,7 @@ public class PingHistoryTask implements Runnable {
 
         JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO, "Get ping for new player {0} - {1}ms",
                  new Object[]{player.getName(), reflectionPing});
-        playerHistory.put(player, new RollingOverHistory(SAMPLE_SIZE, reflectionPing));
+        playerHistory.put(player.getName(), new RollingOverHistory(SAMPLE_SIZE, reflectionPing));
         JavaPlugin.getPlugin(LagMonitor.class).getLogger().log(Level.INFO,
                  "Schedule ping update for player {0} - playerhistory: {1}",
                  new Object[]{player.getName(), playerHistory});
