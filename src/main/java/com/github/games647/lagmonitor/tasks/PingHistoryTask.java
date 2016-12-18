@@ -27,10 +27,12 @@ public class PingHistoryTask implements Runnable {
         playerHistory.entrySet().forEach(entry -> {
             String playerName = entry.getKey();
             Player player = Bukkit.getPlayerExact(playerName);
-            int ping = getPing(player);
+            if (player != null) {
+                int ping = getPing(player);
 
-            RollingOverHistory history = entry.getValue();
-            history.add(ping);
+                RollingOverHistory history = entry.getValue();
+                history.add(ping);
+            }
         });
     }
 
@@ -44,7 +46,7 @@ public class PingHistoryTask implements Runnable {
     }
 
     public void removePlayer(Player player) {
-        playerHistory.remove(player);
+        playerHistory.remove(player.getName());
     }
 
     private int getPing(Player player) {
