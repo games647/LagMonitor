@@ -2,8 +2,6 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
 
-import java.util.logging.Level;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,8 +19,6 @@ public class PlayerPingListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent joinEvent) {
         Player player = joinEvent.getPlayer();
-        
-        plugin.getLogger().log(Level.INFO, "Player joined - starting player tracking {0}", player.getName());
         plugin.getPingHistoryTask().addPlayer(player);
     }
 

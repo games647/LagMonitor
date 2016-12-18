@@ -1,5 +1,9 @@
 # Changelog
 
+##1.12
+
+* Added a help page
+
 ##1.11.4
 
 * Fix users don't receive a map on graph command

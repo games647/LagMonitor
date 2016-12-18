@@ -4,6 +4,7 @@ import com.github.games647.lagmonitor.commands.EnvironmentCommand;
 import com.github.games647.lagmonitor.commands.FlightRecorderCommand;
 import com.github.games647.lagmonitor.commands.GraphCommand;
 import com.github.games647.lagmonitor.commands.HeapCommand;
+import com.github.games647.lagmonitor.commands.HelpCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
 import com.github.games647.lagmonitor.commands.NativeCommand;
@@ -149,13 +150,13 @@ public class LagMonitor extends JavaPlugin {
                 localStorage.createTables();
                 this.storage = localStorage;
 
-                getServer().getScheduler().runTaskTimer(this, new TpsSaveTask(this), 20L
-                        , getConfig().getInt("tps-save-interval") * 20L);
+                getServer().getScheduler().runTaskTimer(this, new TpsSaveTask(this), 20L,
+                         getConfig().getInt("tps-save-interval") * 20L);
                 //this can run async because it runs independently from the main thread
-                getServer().getScheduler().runTaskTimerAsynchronously(this, new MonitorSaveTask(this), 20L
-                        , getConfig().getInt("monitor-save-interval") * 20L);
-                getServer().getScheduler().runTaskTimerAsynchronously(this, new NativeSaveTask(this), 20L
-                        , getConfig().getInt("native-save-interval") * 20L);
+                getServer().getScheduler().runTaskTimerAsynchronously(this, new MonitorSaveTask(this), 20L,
+                         getConfig().getInt("monitor-save-interval") * 20L);
+                getServer().getScheduler().runTaskTimerAsynchronously(this, new NativeSaveTask(this), 20L,
+                         getConfig().getInt("native-save-interval") * 20L);
             } catch (SQLException sqlEx) {
                 getLogger().log(Level.SEVERE, "Failed to setup monitoring database", sqlEx);
             }
@@ -262,6 +263,8 @@ public class LagMonitor extends JavaPlugin {
     }
 
     private void registerCommands() {
+        getCommand(getName()).setExecutor(new HelpCommand(this));
+
         getCommand("ping").setExecutor(new PingCommand(this));
         getCommand("stacktrace").setExecutor(new StackTraceCommand(this));
         getCommand("thread").setExecutor(new ThreadCommand(this));

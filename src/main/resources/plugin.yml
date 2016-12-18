@@ -14,6 +14,9 @@ dev-url: ${project.url}
 softdepend: [PacketListenerApi]
 
 commands:
+    lagmonitor:
+        description: 'Gets displays the help page of all lagmonitor commands'
+        permission: ${project.artifactId}.command.help
     ping:
         description: 'Gets the ping of the selected player'
         usage: '/<command> [player]'
