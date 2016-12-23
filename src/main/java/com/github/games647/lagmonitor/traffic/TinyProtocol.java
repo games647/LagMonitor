@@ -12,7 +12,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 
 import java.util.List;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -106,15 +105,9 @@ public abstract class TinyProtocol {
 
         createServerChannelHandler();
 
-        plugin.getLogger().info("CraftServer: " + mcServer);
-        plugin.getLogger().info("ServerConnection: " + serverConnection);
-        plugin.getLogger().info("ServerConnection: " + new ReflectionToStringBuilder(serverConnection));
-
         // Find the correct list, or implicitly throw an exception
         boolean looking = true;
         for (int i = 0; looking; i++) {
-            plugin.getLogger().info("Index: " + i);
-            plugin.getLogger().info("List field: " + Reflection.getField(serverConnection.getClass(), List.class, i));
             List<Object> list = Reflection.getField(serverConnection.getClass(), List.class, i).get(serverConnection);
 
             for (Object item : list) {
