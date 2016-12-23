@@ -43,7 +43,7 @@ public class HelpCommand implements CommandExecutor {
             Map<String, Object> value = entry.getValue();
 
             String description = ' ' + value.getOrDefault("description", "No description").toString();
-            String usage = (String) value.getOrDefault("usage", '/' + commandKey);
+            String usage = ((String) value.getOrDefault("usage", '/' + commandKey)).replace("<command>", commandKey);
 
             TextComponent usageComponent = new TextComponent(usage);
             usageComponent.setColor(ChatColor.DARK_AQUA);
