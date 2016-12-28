@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.graphs.GraphRenderer;
+import com.github.games647.lagmonitor.traffic.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,11 +16,33 @@ import org.bukkit.map.MapView;
 
 public class GraphListener implements Listener {
 
+    private final boolean mainHandSupporterd;
+
+
+    public GraphListener() {
+        boolean mainHandMethodEx = false;
+        try {
+            Reflection.getMethod(PlayerInventory.class, "getItemInMainHand");
+            mainHandMethodEx = true;
+        } catch (IllegalStateException notFoundEx) {
+            //default to false
+        }
+
+        this.mainHandSupporterd = mainHandMethodEx;
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent clickEvent) {
         Player player = clickEvent.getPlayer();
         PlayerInventory inventory = player.getInventory();
-        ItemStack mainHandItem = inventory.getItemInMainHand();
+
+        ItemStack mainHandItem;
+        if (mainHandSupporterd) {
+            mainHandItem = inventory.getItemInMainHand();
+        } else {
+            mainHandItem = inventory.getItemInHand();
+        }
+
         if (isOurGraph(mainHandItem)) {
             inventory.setItemInMainHand(new ItemStack(Material.AIR));
         }
