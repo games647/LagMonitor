@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +20,7 @@ import org.bukkit.util.ChatPaginator;
 
 public class HelpCommand implements CommandExecutor {
 
-    private static final int HOVER_MAX_LENGTH = ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH / 2;
+    private static final int HOVER_MAX_LENGTH = 40;
 
     private final LagMonitor plugin;
 
@@ -47,7 +48,9 @@ public class HelpCommand implements CommandExecutor {
 
             TextComponent usageComponent = new TextComponent(usage);
             usageComponent.setColor(ChatColor.DARK_AQUA);
-
+            
+            
+            
             TextComponent descriptionComponent = new TextComponent(description);
             descriptionComponent.setColor(ChatColor.GOLD);
             int totalLen = usage.length() + description.length();
@@ -61,8 +64,8 @@ public class HelpCommand implements CommandExecutor {
                 descriptionComponent.setText(shortDesc);
 
                 TextComponent hoverComponent = new TextComponent();
-                for (int i = 0; i < description.length(); i += HOVER_MAX_LENGTH) {
-                    String line = description.substring(i, Math.min(i + HOVER_MAX_LENGTH, description.length()));
+                String seperated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
+                for (String line : seperated.split("\n")) {
                     TextComponent textComponent = new TextComponent(line + "\n");
                     textComponent.setColor(ChatColor.GOLD);
                     hoverComponent.addExtra(textComponent);
@@ -76,7 +79,8 @@ public class HelpCommand implements CommandExecutor {
 
             usageComponent.addExtra(descriptionComponent);
             if (sender instanceof Player) {
-                ((Player) sender).spigot().sendMessage(usageComponent);
+                Player player = (Player) sender;
+                player.spigot().sendMessage(usageComponent);
             } else {
                 sender.sendMessage(usageComponent.toLegacyText());
             }
