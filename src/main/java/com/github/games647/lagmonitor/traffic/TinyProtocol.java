@@ -130,7 +130,7 @@ public abstract class TinyProtocol {
             return;
         }
 
-        serverChannels.forEach((serverChannel) -> {
+        serverChannels.forEach(serverChannel -> {
             // Remove channel handler
             ChannelPipeline pipeline = serverChannel.pipeline();
             serverChannel.eventLoop().execute(new CleanUpTask(pipeline, serverChannelHandler));

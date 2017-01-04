@@ -20,8 +20,7 @@ public class PluginUtil {
                     return map.entrySet().iterator().next();
                 }
             } catch (ClassNotFoundException ex) {
-                //this class should be found if it's in the stacktrace
-                throw new RuntimeException(ex);
+                //if this class cannot be loaded then it could be something native so ignore it
             }
         }
 
