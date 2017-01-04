@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -49,8 +49,6 @@ public class HelpCommand implements CommandExecutor {
             TextComponent usageComponent = new TextComponent(usage);
             usageComponent.setColor(ChatColor.DARK_AQUA);
             
-            
-            
             TextComponent descriptionComponent = new TextComponent(description);
             descriptionComponent.setColor(ChatColor.GOLD);
             int totalLen = usage.length() + description.length();
@@ -63,16 +61,16 @@ public class HelpCommand implements CommandExecutor {
                 String shortDesc = description.substring(0, newDescLeng) + "...";
                 descriptionComponent.setText(shortDesc);
 
-                TextComponent hoverComponent = new TextComponent();
+                ComponentBuilder hoverBuilder = new ComponentBuilder("");
+
                 String seperated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
                 for (String line : seperated.split("\n")) {
-                    TextComponent textComponent = new TextComponent(line + "\n");
-                    textComponent.setColor(ChatColor.GOLD);
-                    hoverComponent.addExtra(textComponent);
+                    hoverBuilder.append(line + "\n");
+                    hoverBuilder.color(ChatColor.GOLD);
                 }
 
                 descriptionComponent
-                        .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new BaseComponent[]{hoverComponent}));
+                        .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hoverBuilder.create()));
             } else {
                 descriptionComponent.setText(description);
             }
