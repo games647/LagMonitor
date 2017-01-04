@@ -75,8 +75,11 @@ public class HelpCommand implements CommandExecutor {
             }
 
             usageComponent.addExtra(descriptionComponent);
-
-            sender.sendMessage(usageComponent);
+            if (sender instanceof Player) {
+                ((Player) sender).spigot().sendMessage(usageComponent);
+            } else {
+                sender.sendMessage(usageComponent.toLegacyText());
+            }
         }
 
         return true;
