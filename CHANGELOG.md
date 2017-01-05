@@ -1,8 +1,28 @@
 # Changelog
 
-##1.12
+##1.11.9
+
+* Fix parsing hover event for 1.8 clients
+* Wrap to a new line only after the word
+* Use .spigot() for sendMessage(BaseComponent) for backwards compatibility
+
+##1.11.8
+
+* Fix map listener for older minecraft version (with only one item-hand)
+
+##1.11.7
+
+* Removed old debug code
+* Fix variable replacing in the help command
+
+##1.11.6
+
+* Fixed memory leak for player pings on player quit
+
+##1.11.5
 
 * Added a help page
+* Added new permission lagmonitor.command.help
 
 ##1.11.4
 
