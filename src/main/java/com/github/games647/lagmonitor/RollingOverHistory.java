@@ -5,12 +5,13 @@ public class RollingOverHistory {
     private final float[] samples;
     private float total;
 
-    private int currentPosition = 1;
+    private int currentPosition = 0;
     private int currentSize = 1;
 
     public RollingOverHistory(int size, float firstValue) {
         this.samples = new float[size];
         samples[0] = firstValue;
+        total = firstValue;
     }
 
     public void add(float sample) {
@@ -45,7 +46,7 @@ public class RollingOverHistory {
     }
 
     public float getLastSample() {
-        int lastPos = currentPosition - 1;
+        int lastPos = currentPosition;
         if (lastPos < 0) {
             lastPos = samples.length - 1;
         }
