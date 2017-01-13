@@ -61,6 +61,7 @@ lagmonitor.commands.* - Access to all commands
 
 #### All command permissions
 * lagmonitor.command.ping
+* lagmonitor.command.ping.other
 * lagmonitor.command.stacktrace
 * lagmonitor.command.thread
 * lagmonitor.command.tps
