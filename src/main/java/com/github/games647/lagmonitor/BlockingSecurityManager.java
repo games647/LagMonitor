@@ -89,7 +89,9 @@ public class BlockingSecurityManager extends SecurityManager {
                             , new Object[]{source.getClassName(), source.getMethodName(), source.getLineNumber()});
                 }
             } else {
-                plugin.getLogger().log(Level.WARNING, "", stackTraceCreator);
+                plugin.getLogger().log(Level.WARNING, "The following exception is not an error. " +
+                        "It's a hint for the plugin developer to find the source of the blocking action. " +
+                        plugin.getName() + " doesn't prevent this action. It just warns you", stackTraceCreator);
             }
         }
     }
