@@ -44,12 +44,12 @@ public class BlockingIODetectorTask extends TimerTask {
                 if (isElementEqual(topElement, "java.net.DualStackPlainSocketImpl", "connect0")
                         || isElementEqual(topElement, "java.net.SocketInputStream", "socketRead0")
                         || isElementEqual(topElement, "java.net.SocketOutputStream", "socketWrite0")) {
-                    logWarning("Server is performing socket operations on the main thread. Proparly caused by {0}");
+                    logWarning("Server is performing socket operations on the main thread. Properly caused by {0}");
                 } //File (in) - java.io.FileInputStream.readBytes
                 //File (out) - java.io.FileOutputStream.writeBytes
                 else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes")
                         || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
-                    logWarning("Server is performing file operations on the main thread. Proparly caused by {0}");
+                    logWarning("Server is performing file operations on the main thread. Properly caused by {0}");
                 }
             }
         }

@@ -79,7 +79,7 @@ public class BlockingSecurityManager extends SecurityManager {
             }
 
             plugin.getLogger().log(Level.WARNING, "Plugin {0} is performing a blocking action on the main thread "
-                    + "This could be a performance hit {1}. "
+                    + "This could be a performance hit {1}. Such actions should be handled async from the main thread"
                     + "Report it to the plugin author", new Object[]{violation.getPluginName(), perm});
 
             if (plugin.getConfig().getBoolean("hideStacktrace")) {
