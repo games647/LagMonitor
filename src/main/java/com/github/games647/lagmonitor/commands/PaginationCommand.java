@@ -2,24 +2,22 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
-import java.io.File;
-import java.io.IOException;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-
 import net.md_5.bungee.api.chat.BaseComponent;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
 
 public class PaginationCommand implements CommandExecutor {
 
@@ -106,7 +104,8 @@ public class PaginationCommand implements CommandExecutor {
 
     private void onSave(Pagination pagination, CommandSender sender) {
         String timeSuffix = '-' + dateFormat.format(new Date());
-        File dumpFile = new File(plugin.getDataFolder(), DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
+
+        Path dumpFile = plugin.getDataFolder().toPath().resolve(DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
 
         StringBuilder lineBuilder = new StringBuilder();
         for (BaseComponent[] line : pagination.getAllLines()) {
@@ -118,8 +117,8 @@ public class PaginationCommand implements CommandExecutor {
         }
 
         try {
-            Files.write(lineBuilder.toString(), dumpFile, Charsets.UTF_8);
-            sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getCanonicalPath());
+            Files.write(dumpFile, Lists.newArrayList(lineBuilder.toString()));
+            sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());
         } catch (IOException ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
         }

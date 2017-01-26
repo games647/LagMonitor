@@ -1,21 +1,20 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
 
 public class FlightRecorderCommand implements CommandExecutor {
 
@@ -40,7 +39,7 @@ public class FlightRecorderCommand implements CommandExecutor {
     public FlightRecorderCommand(LagMonitor plugin) {
         this.plugin = plugin;
         this.recordingName = plugin.getName() + "-Record";
-        this.settingsPath = new File(plugin.getDataFolder(), SETTINGS_FILE).getAbsolutePath();
+        this.settingsPath = plugin.getDataFolder().toPath().resolve(SETTINGS_FILE).toAbsolutePath().toString();
     }
 
     @Override
@@ -105,9 +104,9 @@ public class FlightRecorderCommand implements CommandExecutor {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
             String timeSuffix = '-' + dateFormat.format(new Date());
-            File dumpFile = new File(plugin.getDataFolder(), DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
+            Path dumpFile = plugin.getDataFolder().toPath().resolve(DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
             String reply = (String) mBeanServer.invoke(diagnosticObjectName, DUMP_COMMAND
-                    , new Object[]{new String[]{"filename=" + dumpFile.getAbsolutePath()
+                    , new Object[]{new String[]{"filename=" + dumpFile.toAbsolutePath().toString()
                             , "name=" + recordingName, "compress=true"}}
                     , new String[]{String[].class.getName()});
             sender.sendMessage(reply);

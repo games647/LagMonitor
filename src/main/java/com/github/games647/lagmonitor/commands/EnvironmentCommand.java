@@ -2,16 +2,19 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.NativeData;
-
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.text.DecimalFormat;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.util.logging.Level;
 
 public class EnvironmentCommand implements CommandExecutor {
 
@@ -79,12 +82,14 @@ public class EnvironmentCommand implements CommandExecutor {
     }
 
     private void displayDiskSpace(CommandSender sender) {
-        File[] listRoots = File.listRoots();
-        long totalSpace = 0;
         long freeSpace = 0;
-        for (File rootFile : listRoots) {
-            freeSpace += rootFile.getFreeSpace();
-            totalSpace += rootFile.getTotalSpace();
+        long totalSpace = 0;
+        try {
+            FileStore fileStore = Files.getFileStore(Paths.get("."));
+            freeSpace = fileStore.getUsableSpace();
+            totalSpace = fileStore.getUsableSpace();
+        } catch (IOException ioEx) {
+            plugin.getLogger().log(Level.WARNING, "Cannot calculate free/total disk space", ioEx);
         }
 
         //Disk info

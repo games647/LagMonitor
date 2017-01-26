@@ -3,14 +3,6 @@ package com.github.games647.lagmonitor.commands;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -20,6 +12,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class SystemCommand implements CommandExecutor {
 
@@ -111,7 +114,7 @@ public class SystemCommand implements CommandExecutor {
             chunks += world.getLoadedChunks().length;
 
             File worldFolder = Bukkit.getWorld(world.getUID()).getWorldFolder();
-            usedWorldSize += getFolderSize(worldFolder);
+            usedWorldSize += getFolderSize(worldFolder.toPath());
         }
 
         sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
@@ -121,19 +124,14 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize, true));
     }
 
-    private long getFolderSize(File folder) {
-        long size = Stream.of(folder.listFiles())
-                .parallel()
-                .filter(Objects::nonNull)
-                .mapToLong((File file) -> {
-                    if (file.isFile()) {
-                        return file.length();
-                    } else {
-                        return getFolderSize(file);
-                    }
-                }).sum();
+    private long getFolderSize(Path folder) {
+        try {
+            return Files.size(folder);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, "Cannot calculate folder size");
+        }
 
-        return size;
+        return 0;
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {

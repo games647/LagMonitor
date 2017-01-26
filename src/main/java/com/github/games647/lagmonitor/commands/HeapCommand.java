@@ -3,27 +3,24 @@ package com.github.games647.lagmonitor.commands;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.google.common.collect.Lists;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 
-import java.io.File;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
 public class HeapCommand implements CommandExecutor {
 
@@ -97,13 +94,13 @@ public class HeapCommand implements CommandExecutor {
             ObjectName hotspotBean = ObjectName.getInstance(HOTSPOT_DIAGNOSTIC);
 
             String timeSuffix = '-' + dateFormat.format(new Date());
-            File dumpFile = new File(plugin.getDataFolder(), DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
+            Path dumpFile = plugin.getDataFolder().toPath().resolve(DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
             //it needs to be with a system dependent path seperator
             mBeanServer.invoke(hotspotBean, DUMP_COMMAND
-                    , new Object[]{dumpFile.getAbsolutePath(), DUMP_DEAD_OBJECTS}
+                    , new Object[]{dumpFile.toAbsolutePath().toString(), DUMP_DEAD_OBJECTS}
                     , new String[]{String.class.getName(), Boolean.TYPE.getName()});
 
-            sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getCanonicalPath());
+            sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());
             sender.sendMessage(ChatColor.GRAY + "You can analyse it using VisualVM");
         } catch (Exception ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);

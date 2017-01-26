@@ -1,23 +1,6 @@
 package com.github.games647.lagmonitor;
 
-import com.github.games647.lagmonitor.commands.EnvironmentCommand;
-import com.github.games647.lagmonitor.commands.FlightRecorderCommand;
-import com.github.games647.lagmonitor.commands.GraphCommand;
-import com.github.games647.lagmonitor.commands.HeapCommand;
-import com.github.games647.lagmonitor.commands.HelpCommand;
-import com.github.games647.lagmonitor.commands.MbeanCommand;
-import com.github.games647.lagmonitor.commands.MonitorCommand;
-import com.github.games647.lagmonitor.commands.NativeCommand;
-import com.github.games647.lagmonitor.commands.PaginationCommand;
-import com.github.games647.lagmonitor.commands.PaperTimingsCommand;
-import com.github.games647.lagmonitor.commands.PingCommand;
-import com.github.games647.lagmonitor.commands.StackTraceCommand;
-import com.github.games647.lagmonitor.commands.SystemCommand;
-import com.github.games647.lagmonitor.commands.TasksCommand;
-import com.github.games647.lagmonitor.commands.ThreadCommand;
-import com.github.games647.lagmonitor.commands.TimingCommand;
-import com.github.games647.lagmonitor.commands.TpsHistoryCommand;
-import com.github.games647.lagmonitor.commands.VmCommand;
+import com.github.games647.lagmonitor.commands.*;
 import com.github.games647.lagmonitor.inject.CommandInjector;
 import com.github.games647.lagmonitor.inject.ListenerInjector;
 import com.github.games647.lagmonitor.inject.TaskInjector;
@@ -34,15 +17,6 @@ import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.collect.Maps;
-
-import java.io.File;
-import java.net.ProxySelector;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -50,6 +24,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hyperic.sigar.Sigar;
+
+import java.net.ProxySelector;
+import java.nio.file.Files;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.logging.Level;
 
 public class LagMonitor extends JavaPlugin {
 
@@ -80,7 +62,7 @@ public class LagMonitor extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        if (!new File(getDataFolder(), "default.jfc").exists()) {
+        if (!Files.exists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
         }
 
