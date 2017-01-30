@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
+
 import org.bukkit.Bukkit;
 
 public class TpsSaveTask implements Runnable {
@@ -13,7 +14,9 @@ public class TpsSaveTask implements Runnable {
 
     @Override
     public void run() {
-        final float lastSample = plugin.getTpsHistoryTask().getLastSample();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getStorage().saveTps(lastSample));
+        float lastSample = plugin.getTpsHistoryTask().getLastSample();
+        if (lastSample > 0 && lastSample < 50) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getStorage().saveTps(lastSample));
+        }
     }
 }

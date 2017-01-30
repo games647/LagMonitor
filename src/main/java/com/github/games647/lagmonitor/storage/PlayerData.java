@@ -13,6 +13,11 @@ public class PlayerData {
         this.worldId = worldId;
         this.uuid = uuid;
         this.playerName = playerName;
+
+        if (ping < 0) {
+            ping = Integer.MAX_VALUE;
+        }
+
         this.ping = ping;
     }
 

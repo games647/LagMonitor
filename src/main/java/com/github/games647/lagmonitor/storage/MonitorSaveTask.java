@@ -137,8 +137,8 @@ public class MonitorSaveTask implements Runnable {
         }
 
         NativeData nativeData = plugin.getNativeData();
-        float systemUsage = round(nativeData.getCPULoad()* 100, 4);
-        float procUsage = round(nativeData.getProcessCPULoad()* 100, 4);
+        float systemUsage = round(nativeData.getCPULoad() * 100, 4);
+        float procUsage = round(nativeData.getProcessCPULoad() * 100, 4);
 
         int totalOsMemory = byteToMega(nativeData.getTotalMemory());
         int freeOsRam = byteToMega(nativeData.getFreeMemory());
