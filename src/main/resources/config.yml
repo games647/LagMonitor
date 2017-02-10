@@ -21,7 +21,7 @@ socket-block-detection: true
 # Warning: this may override the existing security manager which could be set by your hoster
 securityMangerBlockingCheck: false
 
-# If you see something like: "Server is performing a blocking socket connection ..." and then a long list with "at .."
+# If you see something like: "Server is performing a threading socket connection ..." and then a long list with "at .."
 # It's proparly one of the four features above. The last part is the stacktrace. 
 # This can help developers where their was running in order to find the source.
 # 

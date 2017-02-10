@@ -1,8 +1,8 @@
 package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.PluginUtil;
-import com.github.games647.lagmonitor.PluginViolation;
+import com.github.games647.lagmonitor.threading.PluginUtil;
+import com.github.games647.lagmonitor.threading.PluginViolation;
 import com.google.common.collect.Sets;
 
 import java.lang.Thread.State;

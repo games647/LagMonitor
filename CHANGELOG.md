@@ -1,5 +1,18 @@
 # Changelog
 
+##1.13
+
+* Whitelist vanilla commands for 
+
+##1.12
+
+* Filter invalid ping values
+* Migrate to Java 7 Path API for faster free space and other file system lookups
+
+##1.11.10
+
+* Better block message descriptions
+
 ##1.11.9
 
 * Fix parsing hover event for 1.8 clients

@@ -2,12 +2,6 @@ package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
-import org.hyperic.sigar.FileSystemUsage;
-import org.hyperic.sigar.NetInterfaceStat;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
-
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,6 +9,10 @@ import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
+import org.hyperic.sigar.FileSystemUsage;
+import org.hyperic.sigar.NetInterfaceStat;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 
 public class NativeSaveTask implements Runnable {
 
@@ -70,7 +68,7 @@ public class NativeSaveTask implements Runnable {
         Sigar sigar = plugin.getNativeData().getSigar();
         if (sigar != null) {
             try {
-                String rootFileSystem = File.listRoots()[0].getAbsolutePath();
+                String rootFileSystem = Paths.get(".").getRoot().toAbsolutePath().toString();
                 FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
                 int diskRead = byteToMega(fileSystemUsage.getDiskReadBytes());
                 diskReadDiff = diskRead - lastDiskRead;

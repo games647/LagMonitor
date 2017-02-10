@@ -1,5 +1,7 @@
 package com.github.games647.lagmonitor;
 
+import com.github.games647.lagmonitor.threading.BlockingActionManager;
+import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.commands.*;
 import com.github.games647.lagmonitor.inject.CommandInjector;
 import com.github.games647.lagmonitor.inject.ListenerInjector;
@@ -17,6 +19,7 @@ import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.collect.Maps;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -42,6 +45,7 @@ public class LagMonitor extends JavaPlugin {
 
     private final Map<CommandSender, Pagination> paginations = Maps.newHashMap();
 
+    private BlockingActionManager blockingActionManager;
     private TpsHistoryTask tpsHistoryTask;
     private PingHistoryTask pingHistoryTask;
     private TrafficReader trafficReader;
@@ -61,6 +65,8 @@ public class LagMonitor extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+
+        blockingActionManager = new BlockingActionManager(this);
 
         if (!Files.exists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
@@ -221,6 +227,10 @@ public class LagMonitor extends JavaPlugin {
 
     public NativeData getNativeData() {
         return nativeData;
+    }
+
+    public BlockingActionManager getBlockingActionManager() {
+        return blockingActionManager;
     }
 
     public boolean isAllowed(CommandSender sender, Command cmd) {
