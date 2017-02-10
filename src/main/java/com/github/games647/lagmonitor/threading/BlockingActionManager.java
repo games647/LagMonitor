@@ -35,7 +35,7 @@ public class BlockingActionManager {
         }
     }
 
-    private void logCurrentStack(String format, String eventName) {
+    public void logCurrentStack(String format, String eventName) {
         IllegalAccessException stackTraceCreator = new IllegalAccessException();
         StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
 
