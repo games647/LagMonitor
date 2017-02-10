@@ -2,14 +2,11 @@ package com.github.games647.lagmonitor.threading;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Sets;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 public class BlockingActionManager {
 
@@ -44,12 +41,15 @@ public class BlockingActionManager {
 
         //remove the parts from LagMonitor
         StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
-        Map.Entry<Plugin, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
+        Map.Entry<String, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
 
         PluginViolation violation = new PluginViolation(eventName);
         if (foundPlugin != null) {
-            String pluginName = foundPlugin.getKey().getName();
+            String pluginName = foundPlugin.getKey();
             violation = new PluginViolation(pluginName, foundPlugin.getValue(), eventName);
+            if (pluginName.equals("Vanilla")) {
+                return;
+            }
 
             if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
                 return;

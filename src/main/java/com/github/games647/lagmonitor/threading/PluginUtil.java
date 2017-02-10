@@ -2,7 +2,7 @@ package com.github.games647.lagmonitor.threading;
 
 import com.google.common.collect.Maps;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -10,13 +10,18 @@ import org.bukkit.plugin.Plugin;
 
 public class PluginUtil {
 
-    public static Entry<Plugin, StackTraceElement> findPlugin(StackTraceElement[] stacktrace) {
+    public static Entry<String, StackTraceElement> findPlugin(StackTraceElement[] stacktrace) {
         for (StackTraceElement elem : stacktrace) {
             try {
-                Plugin plugin = getPluginByClass(Class.forName(elem.getClassName()));
+                Class<?> clazz = Class.forName(elem.getClassName());
+                Plugin plugin = getPluginByClass(clazz);
                 if (plugin != null) {
-                    HashMap<Plugin, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
-                    map.put(plugin, elem);
+                    Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
+                    map.put(plugin.getName(), elem);
+                    return map.entrySet().iterator().next();
+                } else if (clazz.getSimpleName().equals("VanillaCommandWrapper")) {
+                    Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
+                    map.put("Vanilla", elem);
                     return map.entrySet().iterator().next();
                 }
             } catch (ClassNotFoundException ex) {
