@@ -68,7 +68,7 @@ public class LagMonitor extends JavaPlugin {
 
         blockingActionManager = new BlockingActionManager(this);
 
-        if (!Files.exists(getDataFolder().toPath().resolve("default.jfc"))) {
+        if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
         }
 
