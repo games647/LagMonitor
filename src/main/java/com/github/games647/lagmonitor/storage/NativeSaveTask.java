@@ -2,6 +2,11 @@ package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import org.hyperic.sigar.FileSystemUsage;
+import org.hyperic.sigar.NetInterfaceStat;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,14 +14,12 @@ import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
-import org.hyperic.sigar.FileSystemUsage;
-import org.hyperic.sigar.NetInterfaceStat;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
 
 public class NativeSaveTask implements Runnable {
 
     private final LagMonitor plugin;
+
+    private long lastCheck = System.currentTimeMillis();
 
     private int lastMcRead = 0;
     private int lastMcWrite = 0;
@@ -31,16 +34,19 @@ public class NativeSaveTask implements Runnable {
 
     @Override
     public void run() {
+        long currentTime = System.currentTimeMillis();
+        int timeDiff = (int) (currentTime - lastCheck) / 1_000;
+
         TrafficReader trafficReader = plugin.getTrafficReader();
         int mcReadDiff = 0;
         int mcWriteDiff = 0;
         if (trafficReader != null) {
             int mcRead = byteToMega(trafficReader.getIncomingBytes().get());
-            mcReadDiff = mcRead - lastMcRead;
+            mcReadDiff = (mcRead - lastMcRead) / timeDiff;
             lastMcRead = mcRead;
 
             int mcWrite = byteToMega(trafficReader.getOutgoingBytes().get());
-            mcWriteDiff = mcWrite - lastMcWrite;
+            mcWriteDiff = (mcWrite - lastMcWrite) / timeDiff;
             lastMcWrite = mcWrite;
         }
 
@@ -71,27 +77,29 @@ public class NativeSaveTask implements Runnable {
                 String rootFileSystem = Paths.get(".").getRoot().toAbsolutePath().toString();
                 FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
                 int diskRead = byteToMega(fileSystemUsage.getDiskReadBytes());
-                diskReadDiff = diskRead - lastDiskRead;
+                diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
                 lastDiskRead = diskRead;
 
                 int diskWrite = byteToMega(fileSystemUsage.getDiskWriteBytes());
-                diskWriteDiff = diskWrite - lastDiskWrite;
+                diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
                 lastDiskWrite = diskRead;
 
                 NetInterfaceStat usedNetInterfaceStat = findNetworkInterface(sigar);
                 if (usedNetInterfaceStat != null) {
                     int netRead = byteToMega(usedNetInterfaceStat.getRxBytes());
-                    netReadDiff = netRead - lastNetRead;
+                    netReadDiff = (netRead - lastNetRead) / timeDiff;
                     lastNetRead = netRead;
 
                     int netWrite = byteToMega(usedNetInterfaceStat.getTxBytes());
-                    netWriteDiff = netWrite - lastNetWrite;
+                    netWriteDiff = (netWrite - lastNetWrite) / timeDiff;
                     lastNetWrite = netWrite;
                 }
             } catch (SigarException ex) {
                 plugin.getLogger().log(Level.SEVERE, "Failed to get the disk read/writer for database monitoring", ex);
             }
         }
+
+        lastCheck = currentTime;
 
         plugin.getStorage().saveNative(mcReadDiff, mcWriteDiff, freeSpace, freeSpacePct, diskReadDiff, diskWriteDiff
                 , netReadDiff, netWriteDiff);
