@@ -7,7 +7,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.hyperic.sigar.*;
 
-import java.nio.file.Paths;
 import java.util.logging.Level;
 
 public class NativeCommand implements CommandExecutor {
@@ -59,16 +58,22 @@ public class NativeCommand implements CommandExecutor {
             printNetworkInfo(sender, sigar);
 
             //disk read write
-            String rootFileSystem = Paths.get(".").getRoot().toString();
-            FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
+            FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage("/home");
             long diskReadBytes = fileSystemUsage.getDiskReadBytes();
             long diskWriteBytes = fileSystemUsage.getDiskWriteBytes();
             sender.sendMessage(PRIMARY_COLOR + "Disk Read: " + SECONDARY_COLOR + Sigar.formatSize(diskReadBytes));
             sender.sendMessage(PRIMARY_COLOR + "Disk Write: " + SECONDARY_COLOR + Sigar.formatSize(diskWriteBytes));
+
+            sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
+            for (FileSystem fileSystem : sigar.getFileSystemList()) {
+                String dirName = fileSystem.getDirName();
+                String typeName = fileSystem.getSysTypeName();
+                sender.sendMessage(PRIMARY_COLOR + dirName + " - " + SECONDARY_COLOR + typeName);
+            }
         } catch (SigarException sigarException) {
             plugin.getLogger().log(Level.SEVERE, null, sigarException);
         }
-        
+
         return true;
     }
 

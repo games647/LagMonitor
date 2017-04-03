@@ -270,7 +270,7 @@ public class LagMonitor extends JavaPlugin {
         getCommand("native").setExecutor(new NativeCommand(this));
         getCommand("vm").setExecutor(new VmCommand(this));
         getCommand("tasks").setExecutor(new TasksCommand(this));
-        getCommand("paper").setExecutor(new PaperTimingsCommand(this));
+        getCommand("paper-timing").setExecutor(new PaperTimingsCommand(this));
         getCommand("heap").setExecutor(new HeapCommand(this));
         getCommand("lagpage").setExecutor(new PaginationCommand(this));
         getCommand("jfr").setExecutor(new FlightRecorderCommand(this));
