@@ -74,9 +74,9 @@ commands:
         aliases: [ram]
         usage: /<command> [dump]
         permission: ${project.artifactId}.command.heap
-    paper:
+    papertiming:
         description: 'Debug command for paper timings parser'
-        aliases: [papertiming, papertimings]
+        aliases: [paper-timing, papertimings]
         permission: ${project.artifactId}.command.paper
     lagpage:
         description: 'Pagination command for the current pagination session'
