@@ -1,127 +1,133 @@
 # Changelog
 
-##1.13
+## 1.14
+
+* Show file system type for the native command
+* Replace the /paper command alias with /paper-timing to 
+prevent overrides by PaperSpigot itself
+
+## 1.13
 
 * Whitelist vanilla commands for 
 
-##1.12
+## 1.12
 
 * Filter invalid ping values
 * Migrate to Java 7 Path API for faster free space and other file system lookups
 
-##1.11.10
+## 1.11.10
 
 * Better block message descriptions
 
-##1.11.9
+## 1.11.9
 
 * Fix parsing hover event for 1.8 clients
 * Wrap to a new line only after the word
 * Use .spigot() for sendMessage(BaseComponent) for backwards compatibility
 
-##1.11.8
+## 1.11.8
 
 * Fix map listener for older minecraft version (with only one item-hand)
 
-##1.11.7
+## 1.11.7
 
 * Removed old debug code
 * Fix variable replacing in the help command
 
-##1.11.6
+## 1.11.6
 
 * Fixed memory leak for player pings on player quit
 
-##1.11.5
+## 1.11.5
 
 * Added a help page
 * Added new permission lagmonitor.command.help
 
-##1.11.4
+## 1.11.4
 
 * Fix users don't receive a map on graph command
 * Display error message for untracked ping players
 * Fail silently if the jfc file already exists
 
-##1.11.3
+## 1.11.3
 
 * Fix detecting socket connections (socket-block-detection) if the default proxy is null
 
-##1.11.2
+## 1.11.2
 
 * Optimize plugin violations handling
 * Fix security manager spams if enabled
 * Fix log caused methods only once even if it's disabled
 
-##1.11.1
+## 1.11.1
 
 * Add missing uri to the connection selector
 * Fix plugin name detection and thread-safety (Fixes #17)
 
-##1.11
+## 1.11
 
 * Added sigar as fallback when Oracle API isn't available (com.sun.management.OperatingSystemMXBean)
 
-##1.10.1
+## 1.10.1
 
 * Fix thread safety check
 
-##1.10
+## 1.10
 
 * Add hideStacktrace config property, which shows only two lines
 * Add oncePerPlugin config property which report it only one time per startup and plugin
 * Add a way to find the plugin source. [Experimental]
 
-##1.9.1
+## 1.9.1
 
 * Allow blocking actions on server startup (Fixes #15)
 * Clarify blocking action message
 * Upgrade to Java 8 (requires now Java 8)
 
-##1.9
+## 1.9
 
 * Add monitor pastes to http://paste.enginehub.org/ - Please support for this awesome service and please do not spam it
 * Fix showing duplicate http blocking messages, because a http connection is also a socket connection
 * Fix showing stacktrace on blocking action
 
-##1.8
+## 1.8
 
 * Add /lagpage < save >  and /lagpage < all >
 
-##1.7.2
+## 1.7.2
 
 * Fix traffic reader storage save
 * Warn users who still use the outdated Java 7 to upgrade to a newer version
 
-##1.7
+## 1.7
 
 * Fail safely on an error for traffic reader
 * Add configurable table prefix
 * Add debug code if the storage insert failed
 
-##1.6
+## 1.6
 
 * Added whitelist for certain commands for specific users
 
-##1.5
+## 1.5
 
 * Added a faster and less error-prone blocking http detection
 
-##1.4
+## 1.4
 
 * Added monitoring to a MySQL database
 * Added a unsupported java vendor hint to heap and thread dumps
 * Speed up the native command by loading the native driver only on plugin load
 
-##1.3.2
+## 1.3.2
 
 * Fix command permission for /ping player
 
-##1.3.1
+## 1.3.1
 
 * Fix class not found in paper spigot timings parser if user is using normal spigot
 
-##1.3
+## 1.3
 
 * Added PaperTimings head data
 * Added percent values to the paper spigot timings
@@ -130,13 +136,13 @@
 * Fixed missing total second head data in spigot timings parser
 * Fixed pagination error from the last page
 
-##1.2
+## 1.2
 
 * Added support for Java Flight Recorder dump
 * Added default configuration file for flight recorder
 * Fixed permission of lagpage command has the paper command permission
 
-##1.1
+## 1.1
 
 * Added thread dump to file option /thread dump
 * Added heap dump to file option /heap dump
