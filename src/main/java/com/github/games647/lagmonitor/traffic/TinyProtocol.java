@@ -29,7 +29,7 @@ public abstract class TinyProtocol {
     // Looking up ServerConnection
     private static final Class<Object> SERVER_CLASS = Reflection.getUntypedClass("{nms}.MinecraftServer");
     private static final Class<Object> CONNECTION_CLASS = Reflection.getUntypedClass("{nms}.ServerConnection");
-    private static final FieldAccessor<Object> GET_SERVER = Reflection.getField("{obc}.CraftServer", SERVER_CLASS, 0);
+    private static final Reflection.MethodInvoker GET_SERVER = Reflection.getMethod("{obc}.CraftServer", "getServer");
     private static final FieldAccessor<Object> GET_CONNECTION = Reflection.getField(SERVER_CLASS, CONNECTION_CLASS, 0);
 
     // Injected channel handlers
@@ -100,7 +100,7 @@ public abstract class TinyProtocol {
 
     @SuppressWarnings("unchecked")
     private void registerChannelHandler() {
-        Object mcServer = GET_SERVER.get(Bukkit.getServer());
+        Object mcServer = GET_SERVER.invoke(Bukkit.getServer());
         Object serverConnection = GET_CONNECTION.get(mcServer);
 
         createServerChannelHandler();
