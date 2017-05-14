@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor.commands;
 
-import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.Timing;
@@ -8,16 +7,13 @@ import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -54,10 +50,11 @@ public class TimingCommand implements CommandExecutor {
         }
 
         //paperspigot moved to class to package co.aikar.timings
-        if (!ClassUtil.isPresent("org.bukkit.command.defaults.TimingsCommand")) {
+        try {
+            Class.forName("org.bukkit.command.defaults.TimingsCommand");
+        } catch (ClassNotFoundException e) {
             sender.sendMessage(ChatColor.DARK_RED + "You're using a new Timings version on your server system");
             sender.sendMessage(ChatColor.DARK_RED + "Please use the experimental command /paper");
-            return true;
         }
 
         //place sampleTime here to be very accurat

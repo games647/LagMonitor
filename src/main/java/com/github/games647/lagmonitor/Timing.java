@@ -1,9 +1,10 @@
 package com.github.games647.lagmonitor;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class Timing implements Comparable<Timing> {
 
@@ -66,10 +67,11 @@ public class Timing implements Comparable<Timing> {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("category", category)
-                .add("totalTime", totalCount)
-                .add("count", totalCount)
+        return new ToStringBuilder(this)
+                .append("category", category)
+                .append("totalTime", totalTime)
+                .append("totalCount", totalCount)
+                .append("subcategories", subcategories)
                 .toString();
     }
 }
