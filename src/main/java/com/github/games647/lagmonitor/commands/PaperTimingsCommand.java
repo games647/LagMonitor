@@ -3,8 +3,6 @@ package com.github.games647.lagmonitor.commands;
 import co.aikar.timings.TimingHistory;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
-
-import com.avaje.ebeaninternal.api.ClassUtil;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.traffic.Reflection;
@@ -12,15 +10,12 @@ import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.ArrayDeque;
-
 import java.util.List;
 import java.util.Map;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -84,7 +79,9 @@ public class PaperTimingsCommand implements CommandExecutor {
             return true;
         }
 
-        if (!ClassUtil.isPresent(EXPORT_CLASS)) {
+        try {
+            Class.forName(EXPORT_CLASS);
+        } catch (ClassNotFoundException e) {
             sender.sendMessage(ChatColor.DARK_RED + "You aren't using PaperSpigot.");
             sender.sendMessage(ChatColor.DARK_RED + "This command is for the new timings (v2) system only");
             sender.sendMessage(ChatColor.DARK_RED + "Please use '/timing' for the old system");
