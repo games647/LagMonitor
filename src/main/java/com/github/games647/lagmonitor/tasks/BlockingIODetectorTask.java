@@ -32,13 +32,13 @@ public class BlockingIODetectorTask extends TimerTask {
                         || isElementEqual(topElement, "java.net.SocketInputStream", "socketRead0")
                         || isElementEqual(topElement, "java.net.SocketOutputStream", "socketWrite0")) {
                     plugin.getBlockingActionManager().logCurrentStack("Server is performing {1} on the main thread. "
-                            + "Properly caused by {0}", "java.net.SocketStream");
+                            + "Properly caused by {0}", "java.net.SocketStream", 2);
                 } //File (in) - java.io.FileInputStream.readBytes
                 //File (out) - java.io.FileOutputStream.writeBytes
                 else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes")
                         || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
                     plugin.getBlockingActionManager().logCurrentStack("Server is performing {1} on the main thread. " +
-                            "Properly caused by {0}", "java.io.FileStream");
+                            "Properly caused by {0}", "java.io.FileStream", 2);
                 }
             }
         }

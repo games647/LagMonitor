@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.14.2
+
+* Fix plugin name detection
+
+## 1.14.1
+
+* Fix 1.12 support
+
 ## 1.14
 
 * Show file system type for the native command

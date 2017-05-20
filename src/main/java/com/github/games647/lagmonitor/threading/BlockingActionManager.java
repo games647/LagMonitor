@@ -38,11 +38,15 @@ public class BlockingActionManager {
     }
 
     private void logCurrentStack(String format, String eventName) {
+        //remove the parts from LagMonitor, namely (this method, one of the above methods, listener)
+        logCurrentStack(format, eventName, 4);
+    }
+
+    public void logCurrentStack(String format, String eventName, int startIndex) {
         IllegalAccessException stackTraceCreator = new IllegalAccessException();
         StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
 
-        //remove the parts from LagMonitor, namely (this method, one of the above methods, listener)
-        StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 4, stackTrace.length);
+        StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, startIndex, stackTrace.length);
         Map.Entry<String, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
 
         PluginViolation violation = new PluginViolation(eventName);
