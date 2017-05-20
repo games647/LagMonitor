@@ -2,10 +2,12 @@ package com.github.games647.lagmonitor.threading;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Sets;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 
 public class BlockingActionManager {
@@ -35,12 +37,12 @@ public class BlockingActionManager {
         }
     }
 
-    public void logCurrentStack(String format, String eventName) {
+    private void logCurrentStack(String format, String eventName) {
         IllegalAccessException stackTraceCreator = new IllegalAccessException();
         StackTraceElement[] stackTrace = stackTraceCreator.getStackTrace();
 
-        //remove the parts from LagMonitor
-        StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
+        //remove the parts from LagMonitor, namely (this method, one of the above methods, listener)
+        StackTraceElement[] copyOfRange = Arrays.copyOfRange(stackTrace, 4, stackTrace.length);
         Map.Entry<String, StackTraceElement> foundPlugin = PluginUtil.findPlugin(copyOfRange);
 
         PluginViolation violation = new PluginViolation(eventName);
