@@ -67,16 +67,10 @@ public class LagMonitor extends JavaPlugin {
         saveDefaultConfig();
 
         blockingActionManager = new BlockingActionManager(this);
+        getServer().getPluginManager().registerEvents(blockingActionManager, this);
 
         if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
-        }
-
-        if (getConfig().getBoolean("securityMangerBlockingCheck")) {
-            Bukkit.getScheduler().runTask(this, () -> {
-                SecurityManager oldSecurityManager = System.getSecurityManager();
-                System.setSecurityManager(new BlockingSecurityManager(this, oldSecurityManager));
-            });
         }
 
         //register schedule tasks
@@ -148,6 +142,13 @@ public class LagMonitor extends JavaPlugin {
             } catch (SQLException sqlEx) {
                 getLogger().log(Level.SEVERE, "Failed to setup monitoring database", sqlEx);
             }
+        }
+
+        if (getConfig().getBoolean("securityMangerBlockingCheck")) {
+            Bukkit.getScheduler().runTask(this, () -> {
+                SecurityManager oldSecurityManager = System.getSecurityManager();
+                System.setSecurityManager(new BlockingSecurityManager(this, oldSecurityManager));
+            });
         }
 
         registerCommands();

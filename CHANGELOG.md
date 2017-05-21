@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.14.3
+
+* Refactor plugin detection. Now it skips the first x entries of LagMonitor until it finds another class loader.
+
 ## 1.14.2
 
 * Fix plugin name detection
