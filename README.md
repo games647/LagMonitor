@@ -32,27 +32,6 @@ server timings and so on.
 * Free
 * Open Source
 
-## Planning
-
-- [X] Traffic (Bandwith) counter of the OS (using Sigar?)
-- [X] Traffic minecraft (can be done by hooking into Netty)
-- [X] Heap usage (object size, instances)
-- [X] Plugin specific profiling with the thread sampler (commands, events, scheduler) - > reduces memory need and can be
-more detailed
-- [X] Pagination for commands bean, monitor and timing in order to optimize readability for ingame-players and console
-- [X] Caching of the timings or running it async
-- [X] Warning alert if the main thread is blocked by I/O operations -> Example: for SQL-/HTTP-/File-Operations
-which should be run async
-- [X] Average TPS and player ping
-- [X] Hardware output (using Sigar?)
-- [X] Output the last samples of a player ping (ping is refreshed every 40 ticks)
-- [X] Add Thread-Safety checks if the plugin tries to access a non thread-safe feature from another thread
-- [ ] Graph for network and file transfer (Example: http://i.imgur.com/sxTfTjB.png)
-- [X] PaperSpigot Timings parser
-- [ ] Textual graphs for consoles
-- [X] Extend paper spigot timings parser
-- [X] World size in bytes
-
 ## Permissions
 
 lagmonitor.* - Access to all LagMonitor features
