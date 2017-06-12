@@ -17,8 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--Possibility to deploy directly to the plugins folder-->
-        <outputDir>${basedir}/target</outputDir>
+        <powermock.version>1.6.6</powermock.version>
     </properties>
 
     <issueManagement>
@@ -120,8 +119,7 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.11-R0.1-SNAPSHOT</version>
-            <!--<version>1.12-pre2-SNAPSHOT</version>-->
+            <version>1.12-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -159,6 +157,19 @@
             <artifactId>jansi</artifactId>
             <version>1.11</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

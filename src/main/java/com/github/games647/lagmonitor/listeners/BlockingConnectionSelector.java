@@ -23,7 +23,7 @@ public class BlockingConnectionSelector extends ProxySelector {
     @Override
     public List<Proxy> select(URI uri) {
         String url = uri.toString().replace("www", "");
-        if (!uri.getScheme().startsWith("http")) {
+        if (uri.getScheme().startsWith("http") || (uri.getPort() != 80 && uri.getPort() != 443)) {
             plugin.getBlockingActionManager().checkBlockingAction("Socket: " + url);
         }
 

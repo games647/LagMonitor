@@ -3,9 +3,11 @@ package com.github.games647.lagmonitor.threading;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,16 +36,17 @@ public class BlockingActionManager implements Listener {
 
     public void checkBlockingAction(String event) {
         if (Bukkit.isPrimaryThread()) {
-            String message = "Plugin {0} is performing a threading action on the main thread "
-                    + "This could be a performance hit {1}. Such actions should be handled async from the main thread";
+            String message = "Plugin {0} is performing a blocking action on the main thread. "
+                    + "This could be a performance hit {1}. " +
+                    "Such actions should be handled async from the main thread. ";
             logCurrentStack(message, event);
         }
     }
 
     public void checkThreadSafety(String eventName) {
         if (!Bukkit.isPrimaryThread()) {
-            String message = "Plugin {0} is performed a async operation for an sync Event "
-                    + "This could be a very dangerous {1}.";
+            String message = "Plugin {0} is performed a async operation for an sync Event. "
+                    + "This could be a very dangerous {1}. ";
             logCurrentStack(message, eventName);
         }
     }
