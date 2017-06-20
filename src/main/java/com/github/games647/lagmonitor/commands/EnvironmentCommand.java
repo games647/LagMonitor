@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
+import org.jsoftbiz.utils.OS;
 
 public class EnvironmentCommand implements CommandExecutor {
 
@@ -38,6 +39,8 @@ public class EnvironmentCommand implements CommandExecutor {
 
         //os general info
         sender.sendMessage(PRIMARY_COLOR + "OS Name: " + SECONDARY_COLOR + osBean.getName());
+        sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + OS.getOs().getPlatformName());
+
         sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
         sender.sendMessage(PRIMARY_COLOR + "OS Arch: " + SECONDARY_COLOR + osBean.getArch());
 

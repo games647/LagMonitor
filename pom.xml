@@ -67,6 +67,7 @@
                         <includes>
                             <!--LOG4J from sigar is already included in Minecraft-->
                             <include>org.fusesource:sigar</include>
+                            <include>org.graylog.repackaged:os-platform-finder</include>
                         </includes>
                     </artifactSet>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -157,6 +158,12 @@
             <artifactId>jansi</artifactId>
             <version>1.11</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.graylog.repackaged</groupId>
+            <artifactId>os-platform-finder</artifactId>
+            <version>1.2.2</version>
         </dependency>
 
         <dependency>
