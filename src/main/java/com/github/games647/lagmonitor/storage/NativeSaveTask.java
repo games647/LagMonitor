@@ -55,7 +55,7 @@ public class NativeSaveTask implements Runnable {
         try {
             FileStore fileStore = Files.getFileStore(Paths.get("."));
             freeSpace = fileStore.getUsableSpace();
-            totalSpace = fileStore.getUsableSpace();
+            totalSpace = fileStore.getTotalSpace();
         } catch (IOException ioEx) {
             plugin.getLogger().log(Level.WARNING, "Cannot calculate free/total disk space", ioEx);
         }

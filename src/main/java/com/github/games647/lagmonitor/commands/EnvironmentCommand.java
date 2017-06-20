@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.NativeData;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
+
 import org.jsoftbiz.utils.OS;
 
 public class EnvironmentCommand implements CommandExecutor {
@@ -90,7 +92,7 @@ public class EnvironmentCommand implements CommandExecutor {
         try {
             FileStore fileStore = Files.getFileStore(Paths.get("."));
             freeSpace = fileStore.getUsableSpace();
-            totalSpace = fileStore.getUsableSpace();
+            totalSpace = fileStore.getTotalSpace();
         } catch (IOException ioEx) {
             plugin.getLogger().log(Level.WARNING, "Cannot calculate free/total disk space", ioEx);
         }
