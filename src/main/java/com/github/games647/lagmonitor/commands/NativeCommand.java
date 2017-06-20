@@ -1,13 +1,19 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.hyperic.sigar.*;
-
-import java.util.logging.Level;
+import org.hyperic.sigar.CpuInfo;
+import org.hyperic.sigar.CpuPerc;
+import org.hyperic.sigar.DiskUsage;
+import org.hyperic.sigar.FileSystem;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.NetInterfaceStat;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 
 public class NativeCommand implements CommandExecutor {
 
@@ -58,11 +64,18 @@ public class NativeCommand implements CommandExecutor {
             printNetworkInfo(sender, sigar);
 
             //disk read write
-            FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage("/home");
-            long diskReadBytes = fileSystemUsage.getDiskReadBytes();
-            long diskWriteBytes = fileSystemUsage.getDiskWriteBytes();
-            sender.sendMessage(PRIMARY_COLOR + "Disk Read: " + SECONDARY_COLOR + Sigar.formatSize(diskReadBytes));
-            sender.sendMessage(PRIMARY_COLOR + "Disk Write: " + SECONDARY_COLOR + Sigar.formatSize(diskWriteBytes));
+            FileSystem homeSystem = sigar.getFileSystemMap().getFileSystem("/home");
+            DiskUsage diskUsage = sigar.getDiskUsage(homeSystem.getDevName());
+
+            long diskReads = diskUsage.getReads();
+            long diskWrites = diskUsage.getWrites();
+            String diskReadBytes = Sigar.formatSize(diskUsage.getReadBytes());
+            String diskWriteBytes = Sigar.formatSize(diskUsage.getWriteBytes());
+            sender.sendMessage(PRIMARY_COLOR + "Disk Reads (phy): " + SECONDARY_COLOR + diskReads);
+            sender.sendMessage(PRIMARY_COLOR + "Disk Writes: " + SECONDARY_COLOR + diskWrites);
+
+            sender.sendMessage(PRIMARY_COLOR + "Disk read bytes: " + SECONDARY_COLOR + diskReadBytes);
+            sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + diskReadBytes);
 
             sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
             for (FileSystem fileSystem : sigar.getFileSystemList()) {
