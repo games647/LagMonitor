@@ -1,7 +1,5 @@
 package com.github.games647.lagmonitor;
 
-import com.github.games647.lagmonitor.threading.BlockingActionManager;
-import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.commands.*;
 import com.github.games647.lagmonitor.inject.CommandInjector;
 import com.github.games647.lagmonitor.inject.ListenerInjector;
@@ -17,16 +15,10 @@ import com.github.games647.lagmonitor.storage.TpsSaveTask;
 import com.github.games647.lagmonitor.tasks.BlockingIODetectorTask;
 import com.github.games647.lagmonitor.tasks.PingHistoryTask;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
+import com.github.games647.lagmonitor.threading.BlockingActionManager;
+import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.collect.Maps;
-
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.hyperic.sigar.Sigar;
 
 import java.net.ProxySelector;
 import java.nio.file.Files;
@@ -35,6 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.hyperic.sigar.Sigar;
 
 public class LagMonitor extends JavaPlugin {
 

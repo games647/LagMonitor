@@ -61,7 +61,7 @@ public class BlockingActionManager implements Listener {
         if (foundPlugin != null) {
             String pluginName = foundPlugin.getKey();
             violation = new PluginViolation(pluginName, foundPlugin.getValue(), eventName);
-            if (pluginName.equals("Vanilla")) {
+            if ("Vanilla".equals(pluginName)) {
                 return;
             }
 
@@ -82,7 +82,7 @@ public class BlockingActionManager implements Listener {
                     , new Object[]{violation.getSourceFile(), violation.getMethodName(), violation.getLineNumber()});
         } else {
             plugin.getLogger().log(Level.WARNING, "The following exception is not an error. " +
-                    "It's a hint for the plugin developer to find the source of the threading action. " +
+                    "It's a hint for the plugin developer to find the source of this action. " +
                     plugin.getName() + " doesn't prevent this action. It just warns you", stackTraceCreator);
         }
     }
@@ -108,7 +108,7 @@ public class BlockingActionManager implements Listener {
                     Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
                     map.put(plugin.getName(), elem);
                     return map.entrySet().iterator().next();
-                } else if (clazz.getSimpleName().equals("VanillaCommandWrapper")) {
+                } else if ("VanillaCommandWrapper".equals(clazz.getSimpleName())) {
                     Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
                     map.put("Vanilla", elem);
                     return map.entrySet().iterator().next();

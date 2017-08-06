@@ -4,7 +4,6 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Lists;
 
 import java.lang.management.ManagementFactory;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -99,7 +98,7 @@ public class MbeanCommand implements TabExecutor {
             }
         }
 
-        Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
+        result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
 }

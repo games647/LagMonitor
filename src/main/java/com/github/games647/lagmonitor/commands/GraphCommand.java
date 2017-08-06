@@ -93,7 +93,7 @@ public class GraphCommand implements TabExecutor {
                 .filter(type -> type.startsWith(lastArg))
                 .collect(Collectors.toList()));
 
-        Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
+        result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
 

@@ -24,13 +24,11 @@ public class PingHistoryTask implements Runnable {
 
     @Override
     public void run() {
-        playerHistory.entrySet().forEach(entry -> {
-            String playerName = entry.getKey();
+        playerHistory.forEach((playerName, history) -> {
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
                 int ping = getPing(player);
 
-                RollingOverHistory history = entry.getValue();
                 history.add(ping);
             }
         });

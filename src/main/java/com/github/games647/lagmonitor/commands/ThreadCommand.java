@@ -4,6 +4,14 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.google.common.collect.Lists;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
+import javax.management.InstanceNotFoundException;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -12,23 +20,9 @@ import net.md_5.bungee.api.chat.HoverEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
-public class ThreadCommand implements CommandExecutor {
+public class ThreadCommand extends DumpCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
@@ -36,14 +30,9 @@ public class ThreadCommand implements CommandExecutor {
     //https://docs.oracle.com/javase/8/docs/jre/api/management/extension/com/sun/management/DiagnosticCommandMBean.html
     private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
     private static final String DUMP_COMMAND = "threadPrint";
-    private static final String DUMP_FILE_NAME = "thread";
-    private static final String DUMP_FILE_ENDING = ".tdump";
-
-    private final LagMonitor plugin;
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
     public ThreadCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin, "thread", "tdump");
     }
 
     @Override
@@ -95,15 +84,10 @@ public class ThreadCommand implements CommandExecutor {
 
     private void onDump(CommandSender sender) {
         try {
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            ObjectName diagnosticBean = ObjectName.getInstance(DIAGNOSTIC_COMMAND);
-
-            String timeSuffix = '-' + dateFormat.format(new Date());
-            Path dumpFile = plugin.getDataFolder().toPath().resolve(DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
-            //it needs to be with a system dependent path seperator
-            String result = (String) mBeanServer.invoke(diagnosticBean, DUMP_COMMAND
+            String result = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, DUMP_COMMAND
                     , new Object[]{ArrayUtils.EMPTY_STRING_ARRAY}, new String[]{String[].class.getName()});
 
+            Path dumpFile = getNewDumpFile();
             Files.write(dumpFile, Lists.newArrayList(result));
 
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());

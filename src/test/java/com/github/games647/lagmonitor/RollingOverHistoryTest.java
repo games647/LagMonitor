@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor;
 
 import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 

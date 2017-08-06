@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +105,7 @@ public class StackTraceCommand implements TabExecutor {
             }
         }
 
-        Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
+        result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
 }

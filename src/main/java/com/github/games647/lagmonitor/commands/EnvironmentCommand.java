@@ -3,11 +3,6 @@ package com.github.games647.lagmonitor.commands;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.NativeData;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -17,6 +12,10 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.jsoftbiz.utils.OS;
 
 public class EnvironmentCommand implements CommandExecutor {

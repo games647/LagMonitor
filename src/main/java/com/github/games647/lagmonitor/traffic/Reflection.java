@@ -334,7 +334,7 @@ public final class Reflection {
      * @throws IllegalArgumentException If the class doesn't exist.
      */
     public static Class<?> getMinecraftClass(String name) {
-        return getCanonicalClass(NMS_PREFIX + "." + name);
+        return getCanonicalClass(NMS_PREFIX + '.' + name);
     }
 
     /**
@@ -344,7 +344,7 @@ public final class Reflection {
      * @throws IllegalArgumentException If the class doesn't exist.
      */
     public static Class<?> getCraftBukkitClass(String name) {
-        return getCanonicalClass(OBC_PREFIX + "." + name);
+        return getCanonicalClass(OBC_PREFIX + '.' + name);
     }
 
     /**
@@ -373,7 +373,7 @@ public final class Reflection {
 
         while (matcher.find()) {
             String variable = matcher.group(1);
-            String replacement = "";
+            String replacement;
 
             // Expand all detected variables
             if ("nms".equalsIgnoreCase(variable)) {
@@ -387,7 +387,7 @@ public final class Reflection {
             }
 
             // Assume the expanded variables are all packages, and append a dot
-            if (replacement.length() > 0 && matcher.end() < name.length() && name.charAt(matcher.end()) != '.') {
+            if (!replacement.isEmpty() && matcher.end() < name.length() && name.charAt(matcher.end()) != '.') {
                 replacement += ".";
             }
             matcher.appendReplacement(output, Matcher.quoteReplacement(replacement));

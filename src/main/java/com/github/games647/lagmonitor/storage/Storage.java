@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Level;
 
 public class Storage {
@@ -57,7 +56,7 @@ public class Storage {
                     + "tps_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
                     + "tps FLOAT UNSIGNED NOT NULL, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-                    + ")");
+                    + ')');
 
             createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + MONITOR_TABLE + " ("
                     + "monitor_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
@@ -69,7 +68,7 @@ public class Storage {
                     + "os_free_ram_pct FLOAT UNSIGNED NOT NULL, "
                     + "load_avg FLOAT UNSIGNED NOT NULL, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-                    + ")");
+                    + ')');
 
             createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + WORLDS_TABLE + " ("
                     + "world_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
@@ -80,7 +79,7 @@ public class Storage {
                     + "world_size SMALLINT UNSIGNED NOT NULL, "
                     + "entities INT UNSIGNED NOT NULL, "
                     + "FOREIGN KEY (monitor_id) REFERENCES " + tablePrefix + MONITOR_TABLE + "(monitor_id) "
-                    + ")");
+                    + ')');
 
             createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + PLAYERS_TABLE + " ("
                     + "world_id INTEGER UNSIGNED, "
@@ -89,7 +88,7 @@ public class Storage {
                     + "ping SMALLINT UNSIGNED NOT NULL, "
                     + "PRIMARY KEY (world_id, uuid), "
                     + "FOREIGN KEY (world_id) REFERENCES " + tablePrefix + WORLDS_TABLE + "(world_id) "
-                    + ")");
+                    + ')');
             
             createTpsStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + NATIVE_TABLE + " ("
                     + "native_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
@@ -102,7 +101,7 @@ public class Storage {
                     + "net_read SMALLINT UNSIGNED, "
                     + "net_write SMALLINT UNSIGNED, "
                     + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-                    + ")");
+                    + ')');
         } finally {
             closeQuietly(createTpsStmt);
             closeQuietly(con);
@@ -192,7 +191,7 @@ public class Storage {
         return false;
     }
 
-    public boolean savePlayers(int monitorId, List<PlayerData> playerData) {
+    public boolean savePlayers(int monitorId, Collection<PlayerData> playerData) {
         if (playerData.isEmpty()) {
             return false;
         }
@@ -281,6 +280,7 @@ public class Storage {
     }
 
     private Connection getConnection() throws SQLException {
+
         return DriverManager.getConnection(jdbcUrl, username, password);
     }
 

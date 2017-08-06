@@ -1,7 +1,8 @@
 package com.github.games647.lagmonitor;
 
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 import net.md_5.bungee.api.ChatColor;
@@ -39,7 +40,7 @@ public class Pagination {
         return text;
     }
 
-    private final String date = DateFormat.getDateTimeInstance().format(new Date());
+    private final String date = LocalTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
     private final String title;
 
     private final List<BaseComponent[]> lines;

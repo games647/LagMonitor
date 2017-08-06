@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.graphs.GraphRenderer;
 import com.github.games647.lagmonitor.traffic.Reflection;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -57,13 +58,13 @@ public class GraphListener implements Listener {
     }
 
     private boolean isOurGraph(ItemStack mapItem) {
-        if (mapItem != null && mapItem.getType() != Material.MAP) {
+        if (mapItem == null || mapItem.getType() != Material.MAP) {
             return false;
         }
 
         short mapId = mapItem.getDurability();
         MapView map = Bukkit.getMap(mapId);
         return map != null && map.getRenderers().stream()
-                .anyMatch(renderer -> renderer instanceof GraphRenderer);
+                .anyMatch(GraphRenderer.class::isInstance);
     }
 }

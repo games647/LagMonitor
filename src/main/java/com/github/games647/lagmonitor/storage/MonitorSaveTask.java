@@ -4,10 +4,6 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.NativeData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +21,11 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 public class MonitorSaveTask implements Runnable {
 

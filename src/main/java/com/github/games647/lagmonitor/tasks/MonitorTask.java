@@ -139,9 +139,9 @@ public class MonitorTask extends TimerTask {
 
         StringBuilder builder = new StringBuilder();
         builder.append(threadInfo.getThreadName());
-        builder.append(" ");
+        builder.append(' ');
         builder.append(rootNode.getTotalTime()).append("ms");
-        builder.append("\n");
+        builder.append('\n');
 
         rootNode.writeString(builder, 1);
 

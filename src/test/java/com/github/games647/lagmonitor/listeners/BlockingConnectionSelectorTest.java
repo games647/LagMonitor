@@ -2,9 +2,11 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.threading.BlockingActionManager;
+
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URL;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

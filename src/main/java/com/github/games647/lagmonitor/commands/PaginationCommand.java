@@ -4,32 +4,23 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 
-public class PaginationCommand implements CommandExecutor {
+import net.md_5.bungee.api.chat.BaseComponent;
 
-    private final LagMonitor plugin;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-
-    private static final String DUMP_FILE_NAME = "pagination";
-    private static final String DUMP_FILE_ENDING = ".txt";
+public class PaginationCommand extends DumpCommand {
 
     public PaginationCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin, "pagination", "txt");
     }
 
     @Override
@@ -103,10 +94,6 @@ public class PaginationCommand implements CommandExecutor {
     }
 
     private void onSave(Pagination pagination, CommandSender sender) {
-        String timeSuffix = '-' + dateFormat.format(new Date());
-
-        Path dumpFile = plugin.getDataFolder().toPath().resolve(DUMP_FILE_NAME + timeSuffix + DUMP_FILE_ENDING);
-
         StringBuilder lineBuilder = new StringBuilder();
         for (BaseComponent[] line : pagination.getAllLines()) {
             for (BaseComponent component : line) {
@@ -116,6 +103,7 @@ public class PaginationCommand implements CommandExecutor {
             lineBuilder.append('\n');
         }
 
+        Path dumpFile = getNewDumpFile();
         try {
             Files.write(dumpFile, Lists.newArrayList(lineBuilder.toString()));
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());

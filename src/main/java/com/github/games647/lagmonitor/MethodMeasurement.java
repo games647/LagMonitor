@@ -77,15 +77,15 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     public void writeString(StringBuilder builder, int indent) {
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < indent; i++) {
-            b.append(" ");
+            b.append(' ');
         }
         String padding = b.toString();
 
         for (MethodMeasurement child : getChildInvokes().values()) {
             builder.append(padding).append(child.getId()).append("()");
-            builder.append(" ");
+            builder.append(' ');
             builder.append(child.getTotalTime()).append("ms");
-            builder.append("\n");
+            builder.append('\n');
             child.writeString(builder, indent + 1);
         }
     }
@@ -95,9 +95,9 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, MethodMeasurement> entry : getChildInvokes().entrySet()) {
             builder.append(entry.getKey()).append("()");
-            builder.append(" ");
+            builder.append(' ');
             builder.append(entry.getValue().getTotalTime()).append("ms");
-            builder.append("\n");
+            builder.append('\n');
             entry.getValue().writeString(builder, 1);
         }
 

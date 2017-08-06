@@ -3,19 +3,24 @@ package com.github.games647.lagmonitor.commands;
 import co.aikar.timings.TimingHistory;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
+
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -162,7 +167,7 @@ public class PaperTimingsCommand implements CommandExecutor {
         }
     }
 
-    private void printChilds(Object parent, Object childData, Map<Integer, String> idMap, List<BaseComponent[]> lines) {
+    private void printChilds(Object parent, Object childData, Map<Integer, String> idMap, Collection<BaseComponent[]> lines) {
         int childId = Reflection.getField(DATA_CLASS, "id", Integer.TYPE).get(childData);
 
         String handlerName = idMap.get(childId);
@@ -184,7 +189,7 @@ public class PaperTimingsCommand implements CommandExecutor {
                 .color(PRIMARY_COLOR).create());
     }
 
-    private void printHeadData(TimingHistory lastHistory, List<BaseComponent[]> lines) {
+    private void printHeadData(TimingHistory lastHistory, Collection<BaseComponent[]> lines) {
         // Represents all time spent running the server this history
 
         long totalTime = Reflection.getField(TimingHistory.class, "totalTime", Long.TYPE).get(lastHistory);
@@ -209,7 +214,7 @@ public class PaperTimingsCommand implements CommandExecutor {
         float desiredTicks = 20 * historyIntervall;
         float averageTicks = totalTicks / desiredTicks * 20;
 
-        String format = ChatColor.DARK_AQUA + "%s" + " " + ChatColor.GRAY + "%s";
+        String format = ChatColor.DARK_AQUA + "%s" + ' ' + ChatColor.GRAY + "%s";
 
         //head data
         lines.add(TextComponent.fromLegacyText(String.format(format, "Total (sec):", round(totalSeconds))));

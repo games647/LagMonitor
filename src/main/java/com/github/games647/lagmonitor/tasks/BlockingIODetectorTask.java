@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.LagMonitor;
+
 import java.lang.Thread.State;
 import java.util.TimerTask;
 

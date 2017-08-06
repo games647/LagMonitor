@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.traffic;
 
-import com.google.common.collect.Lists;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
+import com.google.common.collect.Lists;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;

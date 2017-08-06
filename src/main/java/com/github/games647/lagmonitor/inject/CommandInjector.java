@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.command.TabExecutor;
@@ -60,7 +61,7 @@ public class CommandInjector implements TabExecutor {
                 .getField(SimplePluginManager.class, "commandMap", SimpleCommandMap.class).get(pluginManager);
         for (Command command : commandMap.getCommands()) {
             if (command instanceof PluginCommand) {
-                PluginCommand pluginCommand = (PluginCommand) command;
+                PluginIdentifiableCommand pluginCommand = (PluginCommand) command;
                 Plugin plugin = pluginCommand.getPlugin();
                 if (plugin.equals(toInjectPlugin)) {
                     FieldAccessor<CommandExecutor> executorField = Reflection
@@ -99,7 +100,7 @@ public class CommandInjector implements TabExecutor {
                 .getField(SimplePluginManager.class, "commandMap", SimpleCommandMap.class).get(pluginManager);
         for (Command command : commandMap.getCommands()) {
             if (command instanceof PluginCommand) {
-                PluginCommand pluginCommand = (PluginCommand) command;
+                PluginIdentifiableCommand pluginCommand = (PluginCommand) command;
                 Plugin plugin = pluginCommand.getPlugin();
                 if (plugin.equals(toUninject)) {
                     FieldAccessor<CommandExecutor> executorField = Reflection

@@ -7,13 +7,17 @@ import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -155,7 +159,7 @@ public class TimingCommand implements CommandExecutor {
     }
 
     private void printHeadData(long total, long activatedEntityTicks, long numTicks, long entityTicks, long playerTicks
-            , long sampleTime, List<BaseComponent[]> lines, float serverLoad) {
+            , long sampleTime, Collection<BaseComponent[]> lines, float serverLoad) {
         float totalSeconds = (float) total / 1000 / 1000 / 1000;
 
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;
@@ -166,7 +170,7 @@ public class TimingCommand implements CommandExecutor {
         float desiredTicks = (float) sampleTime / 1000 / 1000 / 1000 * 20;
         float averageTicks = numTicks / desiredTicks * 20;
 
-        String format = ChatColor.DARK_AQUA + "%s" + " " + ChatColor.GRAY + "%s";
+        String format = ChatColor.DARK_AQUA + "%s" + ' ' + ChatColor.GRAY + "%s";
 
         //head data
         lines.add(TextComponent.fromLegacyText(String.format(format, "Total (sec):", round(totalSeconds))));
@@ -183,7 +187,7 @@ public class TimingCommand implements CommandExecutor {
         lines.add(TextComponent.fromLegacyText(formatted));
     }
 
-    private void parseTimings(Queue<CustomTimingsHandler> handlers, Map<String, Timing> timings
+    private void parseTimings(Iterable<CustomTimingsHandler> handlers, Map<String, Timing> timings
             , Timing minecraftTiming, Timing breakdownTiming) {
 //        FieldAccessor<CustomTimingsHandler> getParent = Reflection
 //                .getField(CustomTimingsHandler.class, "parent", CustomTimingsHandler.class);
@@ -202,22 +206,14 @@ public class TimingCommand implements CommandExecutor {
                 String pluginName = getProperty(subCategory, "Plugin");
                 subCategory = getProperty(subCategory, "Event");
 
-                Timing pluginReport = timings.get(pluginName);
-                if (pluginReport == null) {
-                    pluginReport = new Timing(pluginName);
-                    timings.put(pluginName, pluginReport);
-                }
+                Timing pluginReport = timings.computeIfAbsent(pluginName, Timing::new);
 
                 active = pluginReport;
             } else if (subCategory.contains("Task: ")) {
                 String pluginName = getProperty(subCategory, "Task");
                 subCategory = getProperty(subCategory, "Runnable");
 
-                Timing pluginReport = timings.get(pluginName);
-                if (pluginReport == null) {
-                    pluginReport = new Timing(pluginName);
-                    timings.put(pluginName, pluginReport);
-                }
+                Timing pluginReport = timings.computeIfAbsent(pluginName, Timing::new);
 
                 active = pluginReport;
             }
@@ -251,7 +247,7 @@ public class TimingCommand implements CommandExecutor {
             prefix = ChatColor.YELLOW;
         }
 
-        return prefix + "" + percent + '%' + ChatColor.GRAY;
+        return prefix + String.valueOf(percent) + '%' + ChatColor.GRAY;
     }
 
     private String getProperty(String line, String propertyName) {
