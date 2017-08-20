@@ -23,6 +23,7 @@ public class BlockingActionManager implements Listener {
     private final Set<String> violatedPlugins = Sets.newConcurrentHashSet();
 
     private final Map<ClassLoader, Plugin> cachedLoaders = Maps.newHashMap();
+    private final ClassLoader thisClassLoader = this.getClass().getClassLoader();
 
     public BlockingActionManager(LagMonitor plugin) {
         this.plugin = plugin;
@@ -88,15 +89,14 @@ public class BlockingActionManager implements Listener {
     }
 
     public Map.Entry<String, StackTraceElement> findPlugin(StackTraceElement[] stacktrace) {
-        ClassLoader classLoader = this.getClass().getClassLoader();
         boolean skipping = true;
         for (StackTraceElement elem : stacktrace) {
             try {
                 Class<?> clazz = Class.forName(elem.getClassName());
                 ClassLoader searchingClazzLoader = clazz.getClassLoader();
                 if (skipping) {
-
-                    if (searchingClazzLoader == classLoader) {
+                    //skip until we find the first different outside of this Java plugin
+                    if (searchingClazzLoader == thisClassLoader) {
                         continue;
                     }
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.15
+
+* Allow the sigar library to be placed in the java library folder
+
+## 1.15
+
+* Better url output for blocking http actions
+* Query the partition and not the filesystem for the reads/writes
+* Add linux distribution info
+* Fix total file system space
+
 ## 1.14.3
 
 * Refactor plugin detection. Now it skips the first x entries of LagMonitor until it finds another class loader.
