@@ -27,7 +27,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * PaperSpigot and Sponge uses a new timings system (v2).
+ * Paper and Sponge uses a new timings system (v2).
  * Missing data:
  * * TicksRecord
  * -> player ticks

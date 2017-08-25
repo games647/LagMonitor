@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.LagMonitor;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +20,8 @@ public class PlayerPingListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent joinEvent) {
         Player player = joinEvent.getPlayer();
-        plugin.getPingHistoryTask().addPlayer(player);
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getPingHistoryTask().addPlayer(player), 2 * 20L);
     }
 
     @EventHandler

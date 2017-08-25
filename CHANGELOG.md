@@ -2,7 +2,8 @@
 
 ## 1.15
 
-* Allow the sigar library to be placed in the java library folder
+* Allow the Sigar library to be placed in the java library folder
+* Delay ping fetching on player join, because the first ping request is very inaccurate.
 
 ## 1.15
 
@@ -26,12 +27,11 @@
 ## 1.14
 
 * Show file system type for the native command
-* Replace the /paper command alias with /paper-timing to 
-prevent overrides by PaperSpigot itself
+* Replace the /paper command alias with /paper-timing to prevent overrides by Paper itself
 
 ## 1.13
 
-* Whitelist vanilla commands for 
+* Whitelist vanilla commands
 
 ## 1.12
 
@@ -180,7 +180,7 @@ prevent overrides by PaperSpigot itself
 * Added tile entities count to the system command
 * Added security manager for more efficient blocking checks
 * Added combined graphs example: /graph cpu heap threads
-* Added check if timings is enabled for PaperSpigot servers
+* Added check if timings is enabled for Paper servers
 * Improved performance of commands by caching them with the pagination
 * Optimize Spigot timings parser
 
@@ -190,7 +190,7 @@ prevent overrides by PaperSpigot itself
 * Added swap to the environment command
 * Added tasks command
 * Added /vm command for class loading, garbage collectors, vm specifications
-* Added basic PaperSpigot timings parser
+* Added basic Paper timings parser
 * Added load average to the environment command
 * Moved Java version to the vm command
 * Optimized thread locking in monitor/profiler for better performance

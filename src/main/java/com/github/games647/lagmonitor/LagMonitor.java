@@ -23,9 +23,7 @@ import com.google.common.collect.Maps;
 import java.io.File;
 import java.net.ProxySelector;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -38,13 +36,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarLoader;
 
 public class LagMonitor extends JavaPlugin {
 
-    //the server is pinging the client every 40 Ticks - so check it then
+    //the server is pinging the client every 40 Ticks (2 sec) - so check it then
     //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
-    private static final int PING_INTERVAL = 40;
+    private static final int PING_INTERVAL = 2 * 20;
     private static final int DETECTION_THRESHOLD = 10;
 
     private final Map<CommandSender, Pagination> paginations = Maps.newHashMap();
@@ -57,6 +54,13 @@ public class LagMonitor extends JavaPlugin {
     private Timer monitorTimer;
     private Storage storage;
     private NativeData nativeData;
+
+    public LagMonitor() {
+        // so you can place the library into the plugins folder
+        String oldPath = System.getProperty("java.library.path");
+        String newPath = oldPath + File.pathSeparator + getDataFolder().getAbsolutePath();
+        System.setProperty("java.library.path", newPath);
+    }
 
     @Override
     public void onEnable() {
@@ -109,16 +113,6 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("native-library")) {
-            String libraryName = SigarLoader.getNativeLibraryName();
-
-            if (!Arrays.stream(System.getProperty("java.library.path", "").split(File.pathSeparator))
-                    .map(libFolder -> Paths.get(libFolder, libraryName))
-                    .anyMatch(Files::exists)) {
-                //setting the location where sigar can find the library
-                //otherwise it would lookup the library path of Java
-                System.setProperty("org.hyperic.sigar.path", getDataFolder().getPath());
-            }
-
             Sigar sigar = new Sigar();
             nativeData = new NativeData(getLogger(), sigar);
         } else {

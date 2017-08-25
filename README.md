@@ -26,7 +26,7 @@ server timings and so on.
 * Blocking operations on the main thread check
 * Information about native OS
 * Compatible 1.8+ servers
-* Test with Spigot, PaperSpigot and TacoSpigot
+* Test with Spigot, Paper
 * Make Heap and Thread dumps
 * Create Java Flight Recorder dump and analyze it later on your own computer
 * Free
