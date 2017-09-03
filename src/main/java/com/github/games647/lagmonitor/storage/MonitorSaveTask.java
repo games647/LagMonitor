@@ -125,7 +125,8 @@ public class MonitorSaveTask implements Runnable {
         Runtime runtime = Runtime.getRuntime();
         int maxMemory = byteToMega(runtime.maxMemory());
         //we need the free ram not the free heap
-        int freeRam = byteToMega(runtime.totalMemory() - maxMemory);
+        int usedRam = byteToMega(runtime.totalMemory() - runtime.freeMemory());
+        int freeRam = maxMemory - usedRam;
 
         float freeRamPct = round((freeRam * 100) / maxMemory, 4);
 

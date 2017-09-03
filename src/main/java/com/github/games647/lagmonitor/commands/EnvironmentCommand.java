@@ -75,14 +75,14 @@ public class EnvironmentCommand implements CommandExecutor {
         //swap
         long totalSwap = nativeData.getTotalSwap();
         long freeSwap = nativeData.getFreeSwap();
-        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + readableByteCount(totalSwap, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + readableByteCount(freeSwap, true));
+        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + readableByteCount(totalSwap));
+        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + readableByteCount(freeSwap));
 
         //RAM
         long totalMemory = nativeData.getTotalMemory();
         long freeMemory = nativeData.getFreeMemory();
-        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory));
     }
 
     private void displayDiskSpace(CommandSender sender) {
@@ -97,19 +97,19 @@ public class EnvironmentCommand implements CommandExecutor {
         }
 
         //Disk info
-        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + readableByteCount(totalSpace, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + readableByteCount(freeSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + readableByteCount(totalSpace));
+        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + readableByteCount(freeSpace));
     }
 
-    private String readableByteCount(long bytes, boolean si) {
+    private String readableByteCount(long bytes) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
-        int unit = si ? 1000 : 1024;
+        int unit = 1024;
         if (bytes < unit) {
             return bytes + " B";
         }
 
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        String pre = "KMGTPE".charAt(exp - 1) + "i";
         return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

@@ -56,13 +56,14 @@ public class SystemCommand implements CommandExecutor {
         long freeMemory = runtime.freeMemory();
         long totalMemory = runtime.totalMemory();
 
-        //runtime specific
+        // runtime specific
         sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
         sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
 
-        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory, true));
-        sender.sendMessage(PRIMARY_COLOR + "Max Heap RAM: " + SECONDARY_COLOR + readableByteCount(maxMemory, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free Heap RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory, true));
+
+        sender.sendMessage(PRIMARY_COLOR + "Max Heap RAM: " + SECONDARY_COLOR + readableByteCount(maxMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Free Heap RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory));
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
     }
@@ -73,8 +74,8 @@ public class SystemCommand implements CommandExecutor {
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
-            String formattedIncoming = readableByteCount(trafficReader.getIncomingBytes().get(), true);
-            String formattedOutgoing = readableByteCount(trafficReader.getOutgoingBytes().get(), true);
+            String formattedIncoming = readableByteCount(trafficReader.getIncomingBytes().get());
+            String formattedOutgoing = readableByteCount(trafficReader.getOutgoingBytes().get());
             sender.sendMessage(PRIMARY_COLOR + "Incoming Traffic: " + SECONDARY_COLOR + formattedIncoming);
             sender.sendMessage(PRIMARY_COLOR + "Outgoing Traffic: " + SECONDARY_COLOR + formattedOutgoing);
         }
@@ -118,7 +119,7 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "Tile Entities: " + SECONDARY_COLOR + tileEntities);
         sender.sendMessage(PRIMARY_COLOR + "Loaded Chunks: " + SECONDARY_COLOR + chunks);
         sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
-        sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize, true));
+        sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize));
     }
 
     private long getFolderSize(File folder) {
@@ -138,15 +139,15 @@ public class SystemCommand implements CommandExecutor {
         return (int) Stream.of(plugins).filter(Plugin::isEnabled).count();
     }
 
-    private String readableByteCount(long bytes, boolean si) {
+    private String readableByteCount(long bytes) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
-        int unit = si ? 1000 : 1024;
+        int unit = 1024;
         if (bytes < unit) {
             return bytes + " B";
         }
 
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        String pre = "kMGTPE".charAt(exp - 1) + "i";
         return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }
