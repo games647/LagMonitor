@@ -40,7 +40,7 @@ public class NativeCommand implements CommandExecutor {
             return true;
         }
 
-        //swap and load is already avaiable in the environment command because MBeans already supports this
+        //swap and load is already available in the environment command because MBeans already supports this
         Sigar sigar = plugin.getNativeData().getSigar();
         try {
             int uptime = (int) sigar.getUptime().getUptime();

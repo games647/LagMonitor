@@ -63,17 +63,17 @@ public class PaperTimingsCommand implements CommandExecutor {
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private final LagMonitor plugin;
-    private int historyIntervall;
+    private int historyInterval;
 
     public PaperTimingsCommand(LagMonitor plugin) {
         this.plugin = plugin;
 
         try {
-            historyIntervall = Reflection.getField("com.destroystokyo.paper.PaperConfig", "config"
+            historyInterval = Reflection.getField("com.destroystokyo.paper.PaperConfig", "config"
             , YamlConfiguration.class).get(null).getInt("timings.history-interval");
         } catch (IllegalArgumentException illegalArgumentException) {
             //cannot find paper spigot
-            historyIntervall = -1;
+            historyInterval = -1;
         }
     }
 
@@ -162,12 +162,12 @@ public class PaperTimingsCommand implements CommandExecutor {
 
             Object[] children = Reflection.getField(HISTORY_ENTRY_CLASS, "children", Object[].class).get(entry);
             for (Object childData : children) {
-                printChilds(parentData, childData, idHandler, lines);
+                printChildren(parentData, childData, idHandler, lines);
             }
         }
     }
 
-    private void printChilds(Object parent, Object childData, Map<Integer, String> idMap, Collection<BaseComponent[]> lines) {
+    private void printChildren(Object parent, Object childData, Map<Integer, String> idMap, Collection<BaseComponent[]> lines) {
         int childId = Reflection.getField(DATA_CLASS, "id", Integer.TYPE).get(childData);
 
         String handlerName = idMap.get(childId);
@@ -211,7 +211,7 @@ public class PaperTimingsCommand implements CommandExecutor {
 
         float averagePlayers = (float) playerTicks / totalTicks;
 
-        float desiredTicks = 20 * historyIntervall;
+        float desiredTicks = 20 * historyInterval;
         float averageTicks = totalTicks / desiredTicks * 20;
 
         String format = ChatColor.DARK_AQUA + "%s" + ' ' + ChatColor.GRAY + "%s";

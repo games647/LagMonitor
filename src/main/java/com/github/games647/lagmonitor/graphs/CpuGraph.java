@@ -27,10 +27,10 @@ public class CpuGraph extends GraphRenderer {
     public int renderGraphTick(MapCanvas canvas, int nextPosX) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             int systemLoad = (int) (nativeData.getCPULoad() * 100);
-            int procsssLoad = (int) (nativeData.getProcessCPULoad() * 100);
+            int processLOad = (int) (nativeData.getProcessCPULoad() * 100);
 
             int localSystemHeight = getHeightScaled(100, systemLoad);
-            int localProcessHeight = getHeightScaled(100, procsssLoad);
+            int localProcessHeight = getHeightScaled(100, processLOad);
 
             //flush updates
             synchronized (lock) {

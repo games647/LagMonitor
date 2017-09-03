@@ -63,7 +63,7 @@ public class EnvironmentCommand implements CommandExecutor {
         double processCpuLoad = nativeData.getProcessCPULoad();
 
         //these numbers are in percent (0.01 -> 1%)
-        //we want to to have four places in a human readable percent value to multiple it wiht 100
+        //we want to to have four places in a human readable percent value to multiple it with 100
         DecimalFormat decimalFormat = new DecimalFormat("###.#### %");
         decimalFormat.setMultiplier(100);
         String systemLoadFormat = decimalFormat.format(systemCpuLoad);
@@ -75,14 +75,14 @@ public class EnvironmentCommand implements CommandExecutor {
         //swap
         long totalSwap = nativeData.getTotalSwap();
         long freeSwap = nativeData.getFreeSwap();
-        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + reabableByteCount(totalSwap, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + reabableByteCount(freeSwap, true));
+        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + readableByteCount(totalSwap, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + readableByteCount(freeSwap, true));
 
         //RAM
         long totalMemory = nativeData.getTotalMemory();
         long freeMemory = nativeData.getFreeMemory();
-        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + reabableByteCount(totalMemory, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + reabableByteCount(freeMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory, true));
     }
 
     private void displayDiskSpace(CommandSender sender) {
@@ -97,11 +97,11 @@ public class EnvironmentCommand implements CommandExecutor {
         }
 
         //Disk info
-        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + reabableByteCount(totalSpace, true));
-        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + reabableByteCount(freeSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + readableByteCount(totalSpace, true));
+        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + readableByteCount(freeSpace, true));
     }
 
-    private String reabableByteCount(long bytes, boolean si) {
+    private String readableByteCount(long bytes, boolean si) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
         int unit = si ? 1000 : 1024;
         if (bytes < unit) {

@@ -23,7 +23,7 @@ import org.bukkit.command.CommandSender;
 
 public class MonitorCommand implements CommandExecutor {
 
-    public static final long SAMPLE_INTERVALL = 100L;
+    public static final long SAMPLE_INTERVAL = 100L;
     public static final long SAMPLE_DELAY = 3 * 1_000L;
 
     private final LagMonitor plugin;
@@ -100,7 +100,7 @@ public class MonitorCommand implements CommandExecutor {
             plugin.setMonitorTimer(timer);
 
             monitorTask = new MonitorTask(plugin, Thread.currentThread().getId());
-            timer.scheduleAtFixedRate(monitorTask, SAMPLE_DELAY, SAMPLE_INTERVALL);
+            timer.scheduleAtFixedRate(monitorTask, SAMPLE_DELAY, SAMPLE_INTERVAL);
 
             sender.sendMessage(ChatColor.DARK_GREEN + "Monitor started");
         } else {
@@ -131,7 +131,7 @@ public class MonitorCommand implements CommandExecutor {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             String reportUrl = monitorTask.paste();
             if (reportUrl == null) {
-                sender.sendMessage(ChatColor.DARK_RED + "Error occured. Please check the console");
+                sender.sendMessage(ChatColor.DARK_RED + "Error occurred. Please check the console");
             } else {
                 sender.sendMessage(ChatColor.DARK_GREEN + "Report url: " + reportUrl + ".profile");
             }

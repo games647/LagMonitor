@@ -64,7 +64,7 @@ public abstract class GraphRenderer extends MapRenderer {
     }
 
     protected void clearMap(MapCanvas canvas, int posX) {
-        //resets the complete y coords on this x in order to free unused
+        //resets the complete y coordinates on this x in order to free unused
         for (int yPos = 0; yPos < MAX_HEIGHT; yPos++) {
             canvas.setPixel(posX, yPos, (byte) 0);
         }

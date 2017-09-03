@@ -59,7 +59,7 @@ public class PaginationCommand extends DumpCommand {
     private void onPageNumber(String subCommand, CommandSender sender, Pagination pagination) {
         Integer page = Ints.tryParse(subCommand);
         if (page == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Unkown subcommand or not a valid page number");
+            sender.sendMessage(ChatColor.DARK_RED + "Unknown subcommand or not a valid page number");
         } else {
             if (page < 1) {
                 sender.sendMessage(ChatColor.DARK_RED + "Page number is too small");

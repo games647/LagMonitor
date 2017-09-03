@@ -18,7 +18,7 @@ public class BlockingIODetectorTask extends TimerTask {
     @Override
     public void run() {
         //According to this post the thread is still in Runnable although it's waiting for
-        //file/http ressources
+        //file/http resources
         //https://stackoverflow.com/questions/20795295/why-jstack-out-says-thread-state-is-runnable-while-socketread
         if (mainThread.getState() == State.RUNNABLE) {
             //Based on this post we have to check the top element of the stack

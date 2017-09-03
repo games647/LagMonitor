@@ -41,7 +41,7 @@ public class PingCommand implements CommandExecutor {
             float pingAverage = (float) (Math.round(sampleHistory.getAverage() * 100.0) / 100.0);
             sender.sendMessage(PRIMARY_COLOR + "Average: " + ChatColor.DARK_GREEN + pingAverage + "ms");
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "You have to be ingame in order to see your own ping");
+            sender.sendMessage(ChatColor.DARK_RED + "You have to be in game in order to see your own ping");
         }
 
         return true;

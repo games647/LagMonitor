@@ -18,8 +18,8 @@ server timings and so on.
 * Access to Stacktraces of running threads
 * Shows your ticks per second with history
 * Shows system performance usage
-* Visual graphs ingame
-* Ingame timings viewer
+* Visual graphs in-game
+* In-game timings viewer
 * Access to Java environment variables (mbeans)
 * Plugin specific profiles
 * Thread safety checks

@@ -63,8 +63,8 @@ public class HelpCommand implements CommandExecutor {
 
                 ComponentBuilder hoverBuilder = new ComponentBuilder("");
 
-                String seperated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
-                for (String line : seperated.split("\n")) {
+                String separated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
+                for (String line : separated.split("\n")) {
                     hoverBuilder.append(line + '\n');
                     hoverBuilder.color(ChatColor.GOLD);
                 }

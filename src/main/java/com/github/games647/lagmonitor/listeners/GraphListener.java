@@ -17,7 +17,7 @@ import org.bukkit.map.MapView;
 
 public class GraphListener implements Listener {
 
-    private final boolean mainHandSupporterd;
+    private final boolean mainHandSupported;
 
 
     public GraphListener() {
@@ -29,7 +29,7 @@ public class GraphListener implements Listener {
             //default to false
         }
 
-        this.mainHandSupporterd = mainHandMethodEx;
+        this.mainHandSupported = mainHandMethodEx;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -38,7 +38,7 @@ public class GraphListener implements Listener {
         PlayerInventory inventory = player.getInventory();
 
         ItemStack mainHandItem;
-        if (mainHandSupporterd) {
+        if (mainHandSupported) {
             mainHandItem = inventory.getItemInMainHand();
         } else {
             mainHandItem = inventory.getItemInHand();

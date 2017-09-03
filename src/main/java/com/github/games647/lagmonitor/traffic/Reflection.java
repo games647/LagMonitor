@@ -183,7 +183,7 @@ public final class Reflection {
     }
 
     /**
-     * Search for the first publically and privately defined method of the given name and parameter count.
+     * Search for the first publicly and privately defined method of the given name and parameter count.
      *
      * @param className - lookup name of the class, see {@link #getClass(String)}.
      * @param methodName - the method name, or NULL to skip.
@@ -196,7 +196,7 @@ public final class Reflection {
     }
 
     /**
-     * Search for the first publically and privately defined method of the given name and parameter count.
+     * Search for the first publicly and privately defined method of the given name and parameter count.
      *
      * @param clazz - a class to start with.
      * @param methodName - the method name, or NULL to skip.
@@ -209,7 +209,7 @@ public final class Reflection {
     }
 
     /**
-     * Search for the first publically and privately defined method of the given name and parameter count.
+     * Search for the first publicly and privately defined method of the given name and parameter count.
      *
      * @param clazz - a class to start with.
      * @param methodName - the method name, or NULL to skip.
@@ -242,7 +242,7 @@ public final class Reflection {
     }
 
     /**
-     * Search for the first publically and privately defined constructor of the given name and parameter count.
+     * Search for the first publicly and privately defined constructor of the given name and parameter count.
      *
      * @param className - lookup name of the class, see {@link #getClass(String)}.
      * @param params - the expected parameters.
@@ -254,7 +254,7 @@ public final class Reflection {
     }
 
     /**
-     * Search for the first publically and privately defined constructor of the given name and parameter count.
+     * Search for the first publicly and privately defined constructor of the given name and parameter count.
      *
      * @param clazz - a class to start with.
      * @param params - the expected parameters.
@@ -311,7 +311,7 @@ public final class Reflection {
      * </tr>
      * <tr>
      * <td>{obc}</td>
-     * <td>Actual pacakge name of org.bukkit.craftbukkit.VERSION</td>
+     * <td>Actual package name of org.bukkit.craftbukkit.VERSION</td>
      * </tr>
      * <tr>
      * <td>{version}</td>

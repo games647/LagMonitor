@@ -32,7 +32,7 @@ import org.spigotmc.CustomTimingsHandler;
 public class TimingCommand implements CommandExecutor {
 
     //these timings will be in the breakdown report
-    private static final String EXCLUDE_INDENTIFIER = "** ";
+    private static final String EXCLUDE_IDENTIFIER = "** ";
 
     private final LagMonitor plugin;
 
@@ -61,7 +61,7 @@ public class TimingCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.DARK_RED + "Please use the experimental command /paper");
         }
 
-        //place sampleTime here to be very accurat
+        //place sampleTime here to be very accurate
         long sampleTime = System.nanoTime() - TimingsCommand.timingStart;
         Queue<CustomTimingsHandler> handlers = Reflection.getField(CustomTimingsHandler.class, "HANDLERS", Queue.class)
                 .get(null);
@@ -218,12 +218,12 @@ public class TimingCommand implements CommandExecutor {
                 active = pluginReport;
             }
 
-            if (subCategory.startsWith(EXCLUDE_INDENTIFIER)) {
+            if (subCategory.startsWith(EXCLUDE_IDENTIFIER)) {
                 breakdownTiming.addSubcategory(subCategory, totalTime, count);
             } else {
                 active.addSubcategory(subCategory, totalTime, count);
                 if (subCategory.startsWith("Task:")) {
-                    breakdownTiming.addSubcategory(EXCLUDE_INDENTIFIER + "Tasks", totalTime, count);
+                    breakdownTiming.addSubcategory(EXCLUDE_IDENTIFIER + "Tasks", totalTime, count);
                 }
 
                 if (active.getTotalTime() >= 0) {

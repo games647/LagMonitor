@@ -70,7 +70,7 @@ public class MonitorTask extends TimerTask {
                     rootNode = new MethodMeasurement(id, rootClass, rootMethod);
                 }
 
-                rootNode.onMeasurement(stackTrace, 0, MonitorCommand.SAMPLE_INTERVALL);
+                rootNode.onMeasurement(stackTrace, 0, MonitorCommand.SAMPLE_INTERVAL);
             }
         }
     }

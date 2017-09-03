@@ -34,7 +34,7 @@ public class Pagination {
             text = text.replace("org.bukkit.craftbukkit", "OBC");
         }
 
-        //IDEA: if it's a player we need to shortener the text more aggressivly
+        //IDEA: if it's a player we need to shorten the text more aggressively
         //maybe replacing the package with the plugin name
         //by getting the package name from the plugin.yml?
         return text;

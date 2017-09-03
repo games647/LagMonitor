@@ -6,26 +6,26 @@
 # or other issues.
 thread-safety-check: true
 
-# Check peridically if a server (especially a plugin) is doing block I/O operations on the main Thread.
-# Operations like SQL-, HTTP-Request, File or Scoket-Connections should be performed in a seperate Thread.
+# Check periodically if a server (especially a plugin) is doing block I/O operations on the main Thread.
+# Operations like SQL-, HTTP-Request, File or Socket-Connections should be performed in a separate Thread.
 # If this is not the case, the server will wait for the response and therefore causes lags.
 thread-block-detection: false
 
-# This does the same as the option above, but is more performant by as a proxy. This means it can only check for
+# This does the same as the option above, but it proves better performance. This means it can only check for
 # Socket connections -> HTTP, SQL, but not for file operations
 socket-block-detection: true
 
 # This is a more efficient system as the method above (thread-block detection)
 # By setting a new security manager we can receive the operations above as events and don't have
-# to check it peridically.
+# to check it periodically.
 # Warning: this may override the existing security manager which could be set by your hoster
 securityMangerBlockingCheck: false
 
 # If you see something like: "Server is performing a threading socket connection ..." and then a long list with "at .."
-# It's proparly one of the four features above. The last part is the stacktrace. 
+# It's properly one of the four features above. The last part is the stacktrace.
 # This can help developers where their was running in order to find the source.
 # 
-# If the developer is unreachable and it's too spamy for you can deactivite it here. Then you still get the warning
+# If the developer is unreachable and it's too much for you, can deactivate it here. Then you still get the warning
 # but you don't see the stacktrace.
 hideStacktrace: false
 
@@ -45,7 +45,7 @@ traffic-counter: true
 # * RAM cache
 # * CPU i/o wait percentage
 #
-# This makes it possible to use graphs also for these infos. Similar to the Ubuntu util:
+# This makes it possible to use graphs also for these data. Similar to the Ubuntu util:
 # System load indicator: http://i.imgur.com/sxTfTjB.png
 #
 # Download it from here: https://support.hyperic.com/display/SIGAR/Home#Home-download
@@ -56,13 +56,13 @@ traffic-counter: true
 # invoke /hardware - This plugin will show which driver it exactly want.
 native-library: false
 
-# If you enable this, it will save some monitoring data peridically into a MySQL database
+# If you enable this, it will save some monitoring data periodically into a MySQL database
 # There you can find lag sources with a history
-# And you could create a webinterface for monitoring your server
+# And you could create a web interface for monitoring your server
 monitor-database: false
 
 # Database configuration
-# Recommened is the use of MariaDB (a better version of MySQL)
+# Recommended is the use of MariaDB (a better version of MySQL)
 host: localhost
 port: 3306
 database: lagmonitor
