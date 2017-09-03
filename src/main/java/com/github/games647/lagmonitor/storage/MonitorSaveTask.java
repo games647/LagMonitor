@@ -6,21 +6,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -116,7 +115,7 @@ public class MonitorSaveTask implements Runnable {
             UUID worldId = entry.getKey();
             WorldData worldData = entry.getValue();
             File worldFolder = Bukkit.getWorld(worldId).getWorldFolder();
-            worldData.setWorldSize(byteToMega(getFolderSize(worldFolder.toPath())));
+            worldData.setWorldSize(byteToMega(getFolderSize(worldFolder)));
         }
         
         return worldsData;
@@ -148,14 +147,17 @@ public class MonitorSaveTask implements Runnable {
         return storage.saveMonitor(procUsage, systemUsage, freeRam, freeRamPct, freeOsRam, freeOsRamPct, loadAvg);
     }
 
-    private long getFolderSize(Path folder) {
-        try {
-            return Files.size(folder);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Cannot calculate folder size");
-        }
-
-        return 0;
+    private long getFolderSize(File folder) {
+        return Stream.of(folder.listFiles())
+                .parallel()
+                .filter(Objects::nonNull)
+                .mapToLong((File file) -> {
+                    if (file.isFile()) {
+                        return file.length();
+                    } else {
+                        return getFolderSize(file);
+                    }
+                }).sum();
     }
 
     private int byteToMega(long bytes) {

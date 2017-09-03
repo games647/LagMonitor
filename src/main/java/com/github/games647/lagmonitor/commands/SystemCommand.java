@@ -4,14 +4,11 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
@@ -114,7 +111,7 @@ public class SystemCommand implements CommandExecutor {
             chunks += world.getLoadedChunks().length;
 
             File worldFolder = Bukkit.getWorld(world.getUID()).getWorldFolder();
-            usedWorldSize += getFolderSize(worldFolder.toPath());
+            usedWorldSize += getFolderSize(worldFolder);
         }
 
         sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
@@ -124,14 +121,17 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize, true));
     }
 
-    private long getFolderSize(Path folder) {
-        try {
-            return Files.size(folder);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Cannot calculate folder size");
-        }
-
-        return 0;
+    private long getFolderSize(File folder) {
+        return Stream.of(folder.listFiles())
+                .parallel()
+                .filter(Objects::nonNull)
+                .mapToLong((File file) -> {
+                    if (file.isFile()) {
+                        return file.length();
+                    } else {
+                        return getFolderSize(file);
+                    }
+                }).sum();
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {
