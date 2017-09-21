@@ -20,17 +20,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
-public class MbeanCommand implements TabExecutor {
-
-    private final LagMonitor plugin;
+public class MbeanCommand extends LagCommand implements TabExecutor {
 
     public MbeanCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -46,7 +44,7 @@ public class MbeanCommand implements TabExecutor {
                 } else {
                     MBeanAttributeInfo[] attributes = mBeanServer.getMBeanInfo(beanObject).getAttributes();
                     for (MBeanAttributeInfo attribute : attributes) {
-                        if (attribute.getName().equals("ObjectName")) {
+                        if ("ObjectName".equals(attribute.getName())) {
                             //ignore the object name - it's already known if the user invoke the command
                             continue;
                         }
@@ -59,9 +57,10 @@ public class MbeanCommand implements TabExecutor {
             }
         } else {
             Set<ObjectInstance> allBeans = mBeanServer.queryMBeans(null, null);
-            allBeans.forEach((mbean) -> {
-                sender.sendMessage(ChatColor.DARK_AQUA + mbean.getObjectName().getCanonicalName());
-            });
+            allBeans.stream()
+                    .map(ObjectInstance::getObjectName)
+                    .map(ObjectName::getCanonicalName)
+                    .forEach(bean -> sender.sendMessage(ChatColor.DARK_AQUA + bean));
         }
 
         return true;
@@ -84,7 +83,7 @@ public class MbeanCommand implements TabExecutor {
                 ObjectName beanObject = ObjectName.getInstance(args[0]);
                 MBeanAttributeInfo[] attributes = mBeanServer.getMBeanInfo(beanObject).getAttributes();
                 for (MBeanAttributeInfo attribute : attributes) {
-                    if (attribute.getName().equals("ObjectName")) {
+                    if ("ObjectName".equals(attribute.getName())) {
                         //ignore the object name - it's already known if the user invoke the command
                         continue;
                     }

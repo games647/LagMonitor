@@ -6,7 +6,6 @@ import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
@@ -17,20 +16,18 @@ import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 
-public class NativeCommand implements CommandExecutor {
+public class NativeCommand extends LagCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
-    private final LagMonitor plugin;
-
     public NativeCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -77,7 +74,7 @@ public class NativeCommand implements CommandExecutor {
             sender.sendMessage(PRIMARY_COLOR + "Disk Writes: " + SECONDARY_COLOR + diskWrites);
 
             sender.sendMessage(PRIMARY_COLOR + "Disk read bytes: " + SECONDARY_COLOR + diskReadBytes);
-            sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + diskReadBytes);
+            sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + diskWriteBytes);
 
             sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
             for (FileSystem fileSystem : sigar.getFileSystemList()) {

@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.LagUtils;
 import com.github.games647.lagmonitor.NativeData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -8,23 +9,21 @@ import com.google.common.collect.Maps;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import static com.github.games647.lagmonitor.LagUtils.round;
 
 public class MonitorSaveTask implements Runnable {
 
@@ -51,7 +50,7 @@ public class MonitorSaveTask implements Runnable {
             }
 
             List<PlayerData> playerData = getPlayerData(worldsData);
-            storage.savePlayers(monitorId, playerData);
+            storage.savePlayers(playerData);
         } catch (ExecutionException | InterruptedException ex) {
             plugin.getLogger().log(Level.SEVERE, "Error saving monitoring data", ex);
         }
@@ -115,7 +114,7 @@ public class MonitorSaveTask implements Runnable {
             UUID worldId = entry.getKey();
             WorldData worldData = entry.getValue();
             File worldFolder = Bukkit.getWorld(worldId).getWorldFolder();
-            worldData.setWorldSize(byteToMega(getFolderSize(worldFolder)));
+            worldData.setWorldSize(LagUtils.byteToMega(LagUtils.getFolderSize(worldFolder)));
         }
         
         return worldsData;
@@ -123,9 +122,9 @@ public class MonitorSaveTask implements Runnable {
 
     private int onMonitorSave(Storage storage) {
         Runtime runtime = Runtime.getRuntime();
-        int maxMemory = byteToMega(runtime.maxMemory());
+        int maxMemory = LagUtils.byteToMega(runtime.maxMemory());
         //we need the free ram not the free heap
-        int usedRam = byteToMega(runtime.totalMemory() - runtime.freeMemory());
+        int usedRam = LagUtils.byteToMega(runtime.totalMemory() - runtime.freeMemory());
         int freeRam = maxMemory - usedRam;
 
         float freeRamPct = round((freeRam * 100) / maxMemory, 4);
@@ -141,33 +140,10 @@ public class MonitorSaveTask implements Runnable {
         float systemUsage = round(nativeData.getCPULoad() * 100, 4);
         float procUsage = round(nativeData.getProcessCPULoad() * 100, 4);
 
-        int totalOsMemory = byteToMega(nativeData.getTotalMemory());
-        int freeOsRam = byteToMega(nativeData.getFreeMemory());
+        int totalOsMemory = LagUtils.byteToMega(nativeData.getTotalMemory());
+        int freeOsRam = LagUtils.byteToMega(nativeData.getFreeMemory());
 
         float freeOsRamPct = round((freeOsRam * 100) / totalOsMemory, 4);
         return storage.saveMonitor(procUsage, systemUsage, freeRam, freeRamPct, freeOsRam, freeOsRamPct, loadAvg);
-    }
-
-    private long getFolderSize(File folder) {
-        return Stream.of(folder.listFiles())
-                .parallel()
-                .filter(Objects::nonNull)
-                .mapToLong((File file) -> {
-                    if (file.isFile()) {
-                        return file.length();
-                    } else {
-                        return getFolderSize(file);
-                    }
-                }).sum();
-    }
-
-    private int byteToMega(long bytes) {
-        return (int) (bytes / (1024 * 1024));
-    }
-
-    private float round(double value, int places) {
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.floatValue();
     }
 }

@@ -13,8 +13,8 @@ public class CpuGraph extends GraphRenderer {
 
     private final Object lock = new Object();
 
-    private int systemHeight = 0;
-    private int processHeight = 0;
+    private int systemHeight;
+    private int processHeight;
 
     public CpuGraph(Plugin plugin, NativeData nativeData) {
         super("CPU Usage");

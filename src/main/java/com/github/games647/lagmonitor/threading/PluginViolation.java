@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor.threading;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 public class PluginViolation {
 
@@ -51,7 +51,7 @@ public class PluginViolation {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(pluginName, sourceFile, methodName);
+        return Objects.hash(pluginName, sourceFile, methodName);
     }
 
     @Override
@@ -61,8 +61,8 @@ public class PluginViolation {
         }
 
         PluginViolation other = (PluginViolation) obj;
-        return Objects.equal(pluginName, other.pluginName)
-                && Objects.equal(sourceFile, other.sourceFile)
-                && Objects.equal(methodName, other.methodName);
+        return Objects.equals(pluginName, other.pluginName)
+                && Objects.equals(sourceFile, other.sourceFile)
+                && Objects.equals(methodName, other.methodName);
     }
 }

@@ -26,15 +26,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
 
-public class GraphCommand implements TabExecutor {
+public class GraphCommand extends LagCommand implements TabExecutor {
 
     private static final int MAX_COMBINED = 4;
 
-    private final LagMonitor plugin;
     private final Map<String, GraphRenderer> graphTypes = Maps.newHashMap();
 
     public GraphCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
 
         graphTypes.put("classes", new ClassesGraph());
         graphTypes.put("cpu", new CpuGraph(plugin, plugin.getNativeData()));
@@ -44,7 +43,7 @@ public class GraphCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }

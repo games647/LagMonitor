@@ -46,8 +46,8 @@ public class BlockingActionManager implements Listener {
 
     public void checkThreadSafety(String eventName) {
         if (!Bukkit.isPrimaryThread()) {
-            String message = "Plugin {0} is performed a async operation for an sync Event. "
-                    + "This could be a very dangerous {1}. ";
+            String message = "Plugin {0} did a async operation for an sync Event {1}. "
+                    + "This could be cause server stability issues. ";
             logCurrentStack(message, eventName);
         }
     }
@@ -83,8 +83,8 @@ public class BlockingActionManager implements Listener {
                     , new Object[]{violation.getSourceFile(), violation.getMethodName(), violation.getLineNumber()});
         } else {
             plugin.getLogger().log(Level.WARNING, "The following exception is not an error. " +
-                    "It's a hint for the plugin developer to find the source of this action. " +
-                    plugin.getName() + " doesn't prevent this action. It just warns you", stackTraceCreator);
+                    "It's a hint for the plugin developer to find the source. " +
+                    plugin.getName() + " doesn't prevent this action. It just warns you about it", stackTraceCreator);
         }
     }
 

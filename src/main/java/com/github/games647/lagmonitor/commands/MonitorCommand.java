@@ -18,25 +18,22 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class MonitorCommand implements CommandExecutor {
+public class MonitorCommand extends LagCommand {
 
     public static final long SAMPLE_INTERVAL = 100L;
     public static final long SAMPLE_DELAY = 3 * 1_000L;
 
-    private final LagMonitor plugin;
-
     private MonitorTask monitorTask;
 
     public MonitorCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }

@@ -2,6 +2,10 @@
 
 ## 1.15
 
+* Use MEDIUMINT for os with > 64GB of ram (Related #33)
+* Fix folder size
+* Fix free ram calculation (Fixes #33)
+* Fix typos
 * Allow the Sigar library to be placed in the java library folder
 * Delay ping fetching on player join, because the first ping request is very inaccurate.
 
@@ -109,7 +113,7 @@
 
 ## 1.9
 
-* Add monitor pastes to http://paste.enginehub.org/ - Please support for this awesome service and please do not spam it
+* Add monitor pastes to https://paste.enginehub.org/ - Please support for this awesome service and please do not spam it
 * Fix showing duplicate http blocking messages, because a http connection is also a socket connection
 * Fix showing stacktrace on blocking action
 

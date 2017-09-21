@@ -5,9 +5,6 @@ import com.google.common.collect.Maps;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -60,52 +57,16 @@ public class PingHistoryTask implements Runnable {
             }
 
             Object entityPlayer = getHandleMethod.invoke(player);
-
             if (pingField == null) {
-                if (isModdedServer()) {
-                    //MCPC has a remapper, but it doesn't work if we get the class dynamic
-                    setMCPCPing(entityPlayer);
-                } else {
-                    pingField = entityPlayer.getClass().getDeclaredField("ping");
-                    //disable java security check. This will speed it a little
-                    pingField.setAccessible(true);
-                }
+                pingField = entityPlayer.getClass().getDeclaredField("ping");
+                //disable java security check. This will speed it a little
+                pingField.setAccessible(true);
             }
 
             //returns the found int value
             return pingField.getInt(entityPlayer);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
-        }
-    }
-
-    private boolean isModdedServer() {
-        //aggressive checking for modded servers
-        List<String> versionNames = Arrays.asList(Bukkit.getVersion(), Bukkit.getName(), Bukkit.getServer().toString());
-        return versionNames.stream().anyMatch((version) -> (version.contains("MCPC") || version.contains("Cauldron")));
-    }
-
-    private void setMCPCPing(Object entityPlayer) {
-        //this isn't secure, because it detects the ping variable by the order of the fields
-        Class<?> lastType = null;
-        Field lastIntField = null;
-        for (Field field : entityPlayer.getClass().getDeclaredFields()) {
-            if (field.getType() == Integer.TYPE
-                    && Modifier.isPublic(field.getModifiers())
-                    && lastType == Boolean.TYPE) {
-                lastIntField = field;
-                continue;
-            }
-
-            if (field.getType() == Boolean.TYPE && lastIntField != null) {
-                pingField = lastIntField;
-                //disable java security check. This will speed it a little
-                pingField.setAccessible(true);
-                break;
-            }
-
-            lastIntField = null;
-            lastType = field.getType();
         }
     }
 }

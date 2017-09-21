@@ -9,12 +9,11 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-public class TpsHistoryCommand implements CommandExecutor {
+public class TpsHistoryCommand extends LagCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
@@ -28,15 +27,13 @@ public class TpsHistoryCommand implements CommandExecutor {
     private static final int GRAPH_WIDTH = 60 / 2;
     private static final int GRAPH_LINES = ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT - 3;
 
-    private final LagMonitor plugin;
-
     public TpsHistoryCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -95,16 +92,16 @@ public class TpsHistoryCommand implements CommandExecutor {
         if (sampleSecond > 19.5F) {
             lines = GRAPH_LINES;
             color = ChatColor.DARK_GREEN;
-        } else if (sampleSecond > 18F) {
+        } else if (sampleSecond > 18.0F) {
             lines = GRAPH_LINES - 1;
             color = ChatColor.GREEN;
-        } else if (sampleSecond > 17F) {
+        } else if (sampleSecond > 17.0F) {
             lines = GRAPH_LINES - 2;
             color = ChatColor.YELLOW;
-        } else if (sampleSecond > 15F) {
+        } else if (sampleSecond > 15.0F) {
             lines = GRAPH_LINES - 3;
             color = ChatColor.GOLD;
-        } else if (sampleSecond > 12F) {
+        } else if (sampleSecond > 12.0F) {
             lines = GRAPH_LINES - 4;
             color = ChatColor.RED;
         }

@@ -27,28 +27,26 @@ public class TrafficReader extends TinyProtocol {
     }
 
     @Override
-    public void onChannelRead(ChannelHandlerContext handlerContext, Object object) throws Exception {
-        if (object instanceof ByteBuf) {
-            int readableBytes = ((ByteBuf) object).readableBytes();
-//            System.out.println("IN-BYTE: " + readableBytes);
-            incomingBytes.getAndAdd(readableBytes);
-        } else if (object instanceof ByteBufHolder) {
-            int readableBytes = ((ByteBufHolder) object).content().readableBytes();
-//            System.out.println("IN-HOLDER: " + readableBytes);
-            incomingBytes.getAndAdd(readableBytes);
-        }
+    public void onChannelRead(ChannelHandlerContext handlerContext, Object object) {
+        onChannel(object, true);
     }
 
     @Override
-    public void onChannelWrite(ChannelHandlerContext handlerContext, Object object, ChannelPromise promise)
-            throws Exception {
+    public void onChannelWrite(ChannelHandlerContext handlerContext, Object object, ChannelPromise promise) {
+        onChannel(object, false);
+    }
+
+    private void onChannel(Object object, boolean incoming) {
+        int readableBytes = 0;
         if (object instanceof ByteBuf) {
-            int readableBytes = ((ByteBuf) object).readableBytes();
-//            System.out.println("OUT-BYTE: " + readableBytes);
-            outgoingBytes.getAndAdd(readableBytes);
-        } else if (object instanceof ByteBufHolder) {
-            int readableBytes = ((ByteBufHolder) object).content().readableBytes();
-//            System.out.println("OUT-HOLDER: " + readableBytes);
+            readableBytes = ((ByteBuf) object).readableBytes();
+        } else if (object instanceof  ByteBufHolder) {
+            readableBytes = ((ByteBufHolder) object).content().readableBytes();
+        }
+
+        if (incoming) {
+            incomingBytes.getAndAdd(readableBytes);
+        } else {
             outgoingBytes.getAndAdd(readableBytes);
         }
     }

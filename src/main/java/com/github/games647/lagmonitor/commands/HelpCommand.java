@@ -13,19 +13,16 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-public class HelpCommand implements CommandExecutor {
+public class HelpCommand extends LagCommand {
 
     private static final int HOVER_MAX_LENGTH = 40;
 
-    private final LagMonitor plugin;
-
     public HelpCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override

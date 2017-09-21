@@ -52,7 +52,7 @@ public class RollingOverHistoryTest {
         RollingOverHistory history = new RollingOverHistory(1, 1);
 
         history.add(2);
-        float[] expected = new float[]{2.0F};
+        float[] expected = {2.0F};
         Assert.assertArrayEquals(expected, history.getSamples(), 0.1F);
     }
 }

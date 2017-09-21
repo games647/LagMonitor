@@ -4,7 +4,6 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
 import com.google.common.base.Charsets;
-import com.google.common.io.Closer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -75,38 +74,26 @@ public class MonitorTask extends TimerTask {
         }
     }
 
-//    public void resume() {
-//
-//    }
-//
-//    public void pause() {
-//
-//    }
     public String paste() {
-        Closer closer = Closer.create();
         try {
             HttpURLConnection httpConnection = (HttpURLConnection) new URL(PASTE_URL).openConnection();
             httpConnection.setRequestMethod("POST");
             httpConnection.setDoOutput(true);
             httpConnection.setDoInput(true);
 
-            OutputStream outputStream = closer.register(httpConnection.getOutputStream());
-            OutputStreamWriter streamWriter = closer.register(new OutputStreamWriter(outputStream, Charsets.UTF_8));
-            BufferedWriter writer = closer.register(new BufferedWriter(streamWriter));
-
-            writer.write("content=" + URLEncoder.encode(toString(), Charsets.UTF_8.name()));
-            writer.write("&from=" + URLEncoder.encode(plugin.getName(), Charsets.UTF_8.name()));
-            writer.flush();
-
-            BufferedReader reader = closer
-                    .register(new BufferedReader(closer
-                            .register(new InputStreamReader(closer
-                                    .register(httpConnection.getInputStream())))));
+            try (OutputStream outputStream = httpConnection.getOutputStream();
+                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, Charsets.UTF_8))) {
+                writer.write("content=" + URLEncoder.encode(toString(), Charsets.UTF_8.name()));
+                writer.write("&from=" + URLEncoder.encode(plugin.getName(), Charsets.UTF_8.name()));
+                writer.flush();
+            }
 
             StringBuilder inputBuilder = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
-                inputBuilder.append(line);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()))) {
+                while ((line = reader.readLine()) != null) {
+                    inputBuilder.append(line);
+                }
             }
 
             String input = inputBuilder.toString();
@@ -122,12 +109,6 @@ public class MonitorTask extends TimerTask {
             plugin.getLogger().info("Failed to parse url");
         } catch (IOException ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                closer.close();
-            } catch (IOException ex) {
-                plugin.getLogger().log(Level.SEVERE, null, ex);
-            }
         }
 
         return null;

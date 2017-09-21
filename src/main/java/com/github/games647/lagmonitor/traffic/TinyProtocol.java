@@ -93,10 +93,9 @@ public abstract class TinyProtocol {
         };
     }
 
-    public abstract void onChannelRead(ChannelHandlerContext handlerContext, Object object) throws Exception;
+    public abstract void onChannelRead(ChannelHandlerContext handlerContext, Object object);
 
-    public abstract void onChannelWrite(ChannelHandlerContext handlerContext, Object object, ChannelPromise promise)
-            throws Exception;
+    public abstract void onChannelWrite(ChannelHandlerContext handlerContext, Object object, ChannelPromise promise);
 
     @SuppressWarnings("unchecked")
     private void registerChannelHandler() {

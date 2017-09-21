@@ -14,11 +14,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
-import org.bukkit.command.CommandExecutor;
-
-public abstract class DumpCommand implements CommandExecutor {
-
-    protected final LagMonitor plugin;
+public abstract class DumpCommand extends LagCommand {
 
     private final String filePrefix;
     private final String fileExt;
@@ -26,7 +22,7 @@ public abstract class DumpCommand implements CommandExecutor {
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
 
     public DumpCommand(LagMonitor plugin, String filePrefix, String fileExt) {
-        this.plugin = plugin;
+        super(plugin);
 
         this.filePrefix = filePrefix;
         this.fileExt = '.' + fileExt;

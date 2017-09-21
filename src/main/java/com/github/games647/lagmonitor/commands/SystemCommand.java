@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.LagUtils;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
 import java.io.File;
@@ -8,7 +9,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
@@ -16,25 +16,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-public class SystemCommand implements CommandExecutor {
+import static com.github.games647.lagmonitor.LagUtils.readableByteCount;
+
+public class SystemCommand extends LagCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
-    private final LagMonitor plugin;
-
     public SystemCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -112,7 +111,7 @@ public class SystemCommand implements CommandExecutor {
             chunks += world.getLoadedChunks().length;
 
             File worldFolder = Bukkit.getWorld(world.getUID()).getWorldFolder();
-            usedWorldSize += getFolderSize(worldFolder);
+            usedWorldSize += LagUtils.getFolderSize(worldFolder);
         }
 
         sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
@@ -122,32 +121,7 @@ public class SystemCommand implements CommandExecutor {
         sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize));
     }
 
-    private long getFolderSize(File folder) {
-        return Stream.of(folder.listFiles())
-                .parallel()
-                .filter(Objects::nonNull)
-                .mapToLong((File file) -> {
-                    if (file.isFile()) {
-                        return file.length();
-                    } else {
-                        return getFolderSize(file);
-                    }
-                }).sum();
-    }
-
     private int getEnabledPlugins(Plugin[] plugins) {
         return (int) Stream.of(plugins).filter(Plugin::isEnabled).count();
-    }
-
-    private String readableByteCount(long bytes) {
-        //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
-        int unit = 1024;
-        if (bytes < unit) {
-            return bytes + " B";
-        }
-
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = "kMGTPE".charAt(exp - 1) + "i";
-        return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

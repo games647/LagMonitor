@@ -5,7 +5,7 @@ public class RollingOverHistory {
     private final float[] samples;
     private float total;
 
-    private int currentPosition = 0;
+    private int currentPosition;
     private int currentSize = 1;
 
     public RollingOverHistory(int size, float firstValue) {

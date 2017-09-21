@@ -13,7 +13,7 @@ public class Timing implements Comparable<Timing> {
     private long totalTime;
     private long totalCount;
 
-    private Map<String, Timing> subcategories = null;
+    private Map<String, Timing> subcategories;
 
     public Timing(String category) {
         this.category = category;

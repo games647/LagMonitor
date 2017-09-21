@@ -20,29 +20,28 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.TimingsCommand;
 import org.spigotmc.CustomTimingsHandler;
+
+import static com.github.games647.lagmonitor.LagUtils.round;
 
 /**
  * Parsed from the PHP project by aikar
  * https://github.com/aikar/timings
  */
-public class TimingCommand implements CommandExecutor {
+public class TimingCommand extends LagCommand {
 
     //these timings will be in the breakdown report
     private static final String EXCLUDE_IDENTIFIER = "** ";
 
-    private final LagMonitor plugin;
-
     public TimingCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -76,7 +75,7 @@ public class TimingCommand implements CommandExecutor {
         return true;
     }
 
-    private void sendParsedOutput(Queue<CustomTimingsHandler> handlers, List<BaseComponent[]> lines, long sampleTime) {
+    private void sendParsedOutput(Iterable<CustomTimingsHandler> handlers, Collection<BaseComponent[]> lines, long sampleTime) {
         Map<String, Timing> timings = Maps.newHashMap();
         Timing breakdownTiming = new Timing("Breakdown", -1, -1);
         Timing minecraftTiming = new Timing("Minecraft");
@@ -141,7 +140,7 @@ public class TimingCommand implements CommandExecutor {
                     //->ms
                     avg = avg / 1000 / 1000;
                     float pctTotal = (float) subValue.getTotalTime() / sampleTime * 100;
-                    if (event.equalsIgnoreCase("Full Server Tick")) {
+                    if ("Full Server Tick".equalsIgnoreCase(event)) {
                         serverLoad = pctTick;
                     }
 
@@ -206,16 +205,12 @@ public class TimingCommand implements CommandExecutor {
                 String pluginName = getProperty(subCategory, "Plugin");
                 subCategory = getProperty(subCategory, "Event");
 
-                Timing pluginReport = timings.computeIfAbsent(pluginName, Timing::new);
-
-                active = pluginReport;
+                active = timings.computeIfAbsent(pluginName, Timing::new);
             } else if (subCategory.contains("Task: ")) {
                 String pluginName = getProperty(subCategory, "Task");
                 subCategory = getProperty(subCategory, "Runnable");
 
-                Timing pluginReport = timings.computeIfAbsent(pluginName, Timing::new);
-
-                active = pluginReport;
+                active = timings.computeIfAbsent(pluginName, Timing::new);
             }
 
             if (subCategory.startsWith(EXCLUDE_IDENTIFIER)) {
@@ -231,10 +226,6 @@ public class TimingCommand implements CommandExecutor {
                 }
             }
         }
-    }
-
-    private float round(float number) {
-        return (float) (Math.round(number * 100.0) / 100.0);
     }
 
     private String highlightPct(float percent, int low, int med, int high) {

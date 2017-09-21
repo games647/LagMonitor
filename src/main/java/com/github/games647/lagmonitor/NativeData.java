@@ -1,7 +1,11 @@
 package com.github.games647.lagmonitor;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -135,6 +139,30 @@ public class NativeData {
         }
 
         return -1;
+    }
+
+    public long getFreeSpace() {
+        long freeSpace = 0;
+        try {
+            FileStore fileStore = Files.getFileStore(Paths.get("."));
+            freeSpace = fileStore.getUsableSpace();
+        } catch (IOException ioEx) {
+            logger.log(Level.WARNING, "Cannot calculate free/total disk space", ioEx);
+        }
+
+        return freeSpace;
+    }
+
+    public long getTotalSpace() {
+        long totalSpace = 0;
+        try {
+            FileStore fileStore = Files.getFileStore(Paths.get("."));
+            totalSpace = fileStore.getTotalSpace();
+        } catch (IOException ioEx) {
+            logger.log(Level.WARNING, "Cannot calculate free disk space", ioEx);
+        }
+
+        return totalSpace;
     }
 
     public void close() {

@@ -22,9 +22,10 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import static com.github.games647.lagmonitor.LagUtils.round;
 
 /**
  * Paper and Sponge uses a new timings system (v2).
@@ -49,7 +50,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * => This concludes to the fact that the big benefits from Timings v2 isn't available. For example you cannot
  * scroll through your history
  */
-public class PaperTimingsCommand implements CommandExecutor {
+public class PaperTimingsCommand extends LagCommand {
 
     private static final String TIMINGS_PACKAGE = "co.aikar.timings";
 
@@ -62,11 +63,10 @@ public class PaperTimingsCommand implements CommandExecutor {
     private static final ChatColor HEADER_COLOR = ChatColor.YELLOW;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
-    private final LagMonitor plugin;
     private int historyInterval;
 
     public PaperTimingsCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
 
         try {
             historyInterval = Reflection.getField("com.destroystokyo.paper.PaperConfig", "config"
@@ -79,7 +79,7 @@ public class PaperTimingsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -126,7 +126,7 @@ public class PaperTimingsCommand implements CommandExecutor {
         Map<?, ?> groups = Reflection.getField(TIMINGS_PACKAGE + ".TimingIdentifier", "GROUP_MAP", Map.class).get(null);
         for (Object group : groups.values()) {
             String groupName = Reflection.getField(group.getClass(), "name", String.class).get(group);
-            ArrayDeque<?> handlers = Reflection.getField(group.getClass(), "handlers", ArrayDeque.class).get(group);
+            Iterable<?> handlers = Reflection.getField(group.getClass(), "handlers", ArrayDeque.class).get(group);
             for (Object handler : handlers) {
                 int id = Reflection.getField(HANDLER_CLASS, "id", Integer.TYPE).get(handler);
                 String name = Reflection.getField(HANDLER_CLASS, "name", String.class).get(handler);
@@ -225,9 +225,5 @@ public class PaperTimingsCommand implements CommandExecutor {
 
         lines.add(TextComponent.fromLegacyText(String.format(format, "Activated Entities:", round(activatedAvgEntities))
                 + " / " + round(totalAvgEntities)));
-    }
-
-    private float round(float number) {
-        return (float) (Math.round(number * 100.0) / 100.0);
     }
 }

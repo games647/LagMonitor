@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.google.common.base.StandardSystemProperty;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.GarbageCollectorMXBean;
@@ -10,23 +11,20 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class VmCommand implements CommandExecutor {
+public class VmCommand extends LagCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
-    private final LagMonitor plugin;
-
     public VmCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -35,7 +33,7 @@ public class VmCommand implements CommandExecutor {
 
         //java info
         sender.sendMessage(PRIMARY_COLOR + "Java VM: " + SECONDARY_COLOR + runtimeBean.getVmName());
-        sender.sendMessage(PRIMARY_COLOR + "Java Version: " + SECONDARY_COLOR + System.getProperty("java.version"));
+        sender.sendMessage(PRIMARY_COLOR + "Java Version: " + SECONDARY_COLOR + StandardSystemProperty.JAVA_VERSION.value());
         sender.sendMessage(PRIMARY_COLOR + "Java Vendor: " + SECONDARY_COLOR
                 + runtimeBean.getVmVendor() + ' ' + runtimeBean.getVmVersion());
 

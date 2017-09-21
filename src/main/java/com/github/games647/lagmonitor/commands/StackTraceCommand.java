@@ -17,19 +17,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
-public class StackTraceCommand implements TabExecutor {
+public class StackTraceCommand extends LagCommand implements TabExecutor {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
 
-    private final LagMonitor plugin;
-
     public StackTraceCommand(LagMonitor plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }

@@ -6,6 +6,7 @@ import com.github.games647.lagmonitor.inject.ListenerInjector;
 import com.github.games647.lagmonitor.inject.TaskInjector;
 import com.github.games647.lagmonitor.listeners.BlockingConnectionSelector;
 import com.github.games647.lagmonitor.listeners.GraphListener;
+import com.github.games647.lagmonitor.listeners.PaginationListener;
 import com.github.games647.lagmonitor.listeners.PlayerPingListener;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.storage.MonitorSaveTask;
@@ -18,21 +19,19 @@ import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.github.games647.lagmonitor.threading.BlockingActionManager;
 import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.Maps;
 
 import java.io.File;
 import java.net.ProxySelector;
 import java.nio.file.Files;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hyperic.sigar.Sigar;
@@ -57,7 +56,7 @@ public class LagMonitor extends JavaPlugin {
 
     public LagMonitor() {
         // so you can place the library into the plugins folder
-        String oldPath = System.getProperty("java.library.path");
+        String oldPath = StandardSystemProperty.JAVA_LIBRARY_PATH.value();
         String newPath = oldPath + File.pathSeparator + getDataFolder().getAbsolutePath();
         System.setProperty("java.library.path", newPath);
     }
@@ -91,6 +90,7 @@ public class LagMonitor extends JavaPlugin {
         getLogger().info("Register ping listener");
 
         getServer().getPluginManager().registerEvents(new PlayerPingListener(this), this);
+        getServer().getPluginManager().registerEvents(new PaginationListener(this), this);
         //add the player to the list in the case the plugin is loaded at runtime
         Bukkit.getOnlinePlayers().forEach(pingHistoryTask::addPlayer);
 
@@ -107,9 +107,9 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("socket-block-detection")) {
-            Bukkit.getScheduler().runTask(this, () -> {
-                ProxySelector.setDefault(new BlockingConnectionSelector(this, ProxySelector.getDefault()));
-            });
+            ProxySelector defaultSelector = ProxySelector.getDefault();
+            BlockingConnectionSelector selector = new BlockingConnectionSelector(this, defaultSelector);
+            Bukkit.getScheduler().runTask(this, () -> ProxySelector.setDefault(selector));
         }
 
         if (getConfig().getBoolean("native-library")) {
@@ -146,8 +146,7 @@ public class LagMonitor extends JavaPlugin {
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
             Bukkit.getScheduler().runTask(this, () -> {
-                SecurityManager oldSecurityManager = System.getSecurityManager();
-                System.setSecurityManager(new BlockingSecurityManager(this, oldSecurityManager));
+                System.setSecurityManager(new BlockingSecurityManager(this));
             });
         }
 
@@ -186,7 +185,7 @@ public class LagMonitor extends JavaPlugin {
         }
 
         ProxySelector proxySelector = ProxySelector.getDefault();
-        if (proxySelector != null && proxySelector instanceof BlockingConnectionSelector) {
+        if (proxySelector instanceof BlockingConnectionSelector) {
             ProxySelector oldProxySelector = ((BlockingConnectionSelector) proxySelector).getOldProxySelector();
             ProxySelector.setDefault(oldProxySelector);
         }
@@ -232,27 +231,6 @@ public class LagMonitor extends JavaPlugin {
 
     public BlockingActionManager getBlockingActionManager() {
         return blockingActionManager;
-    }
-
-    public boolean isAllowed(CommandSender sender, Command cmd) {
-        if (!(sender instanceof Player)) {
-            return true;
-        }
-
-        List<String> commandWhitelist = getConfig().getStringList("whitelist-" + cmd.getName());
-        if (commandWhitelist != null && !commandWhitelist.isEmpty()) {
-            return commandWhitelist.contains(sender.getName());
-        }
-
-        for (String alias : cmd.getAliases()) {
-            List<String> aliasWhitelist = getConfig().getStringList("whitelist-" + alias);
-            if (aliasWhitelist != null && !aliasWhitelist.isEmpty()) {
-                return aliasWhitelist.contains(sender.getName());
-            }
-        }
-
-        //whitelist doesn't exist
-        return true;
     }
 
     private void registerCommands() {

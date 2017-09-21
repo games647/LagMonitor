@@ -4,7 +4,6 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.FilePermission;
-import java.net.SocketPermission;
 import java.security.Permission;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ public class BlockingSecurityManager extends SecurityManager {
     }
 
     public BlockingSecurityManager(LagMonitor plugin) {
-        this(plugin, null);
+        this(plugin, System.getSecurityManager());
     }
 
     public SecurityManager getOldSecurityManager() {
@@ -57,15 +56,9 @@ public class BlockingSecurityManager extends SecurityManager {
         String actions = permission.getActions();
 
         if (permission instanceof FilePermission) {
-            //commented out, because also operations like .createNewFile() is also a write permission
-            //which could executed by the main thread, doesn't it`?
 //            ignore jar files because the java runtime load and unload classes at runtime
             return actions.contains("read")
                     && fileWhitelist.stream().noneMatch(ignored -> permission.getName().contains(ignored));
-            //read write
-        } else if (permission instanceof SocketPermission) {
-            //already handled with connection selector
-//            return actions.contains("connect");
         }
 
         return false;

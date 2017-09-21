@@ -31,7 +31,7 @@ public class FlightRecorderCommand extends DumpCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!plugin.isAllowed(sender, command)) {
+        if (!isAllowed(sender, command)) {
             sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
@@ -82,7 +82,7 @@ public class FlightRecorderCommand extends DumpCommand {
     private void onDumpCommand(CommandSender sender) {
         try {
             Path dumpFile = getNewDumpFile();
-            String reply = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, STOP_COMMAND
+            String reply = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, DUMP_COMMAND
                     , new Object[]{new String[]{"filename=" + dumpFile.toAbsolutePath().toString()
                             , "name=" + recordingName, "compress=true"}}
                     , new String[]{String[].class.getName()});

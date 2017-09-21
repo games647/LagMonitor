@@ -6,9 +6,9 @@ public class TpsHistoryTask implements Runnable {
 
     private static final int ONE_MINUTE = 60;
 
-    private final RollingOverHistory minuteSample = new RollingOverHistory(ONE_MINUTE, 20F);
-    private final RollingOverHistory quarterSample = new RollingOverHistory(ONE_MINUTE * 15, 20F);
-    private final RollingOverHistory halfHourSample = new RollingOverHistory(ONE_MINUTE * 30, 20F);
+    private final RollingOverHistory minuteSample = new RollingOverHistory(ONE_MINUTE, 20.0F);
+    private final RollingOverHistory quarterSample = new RollingOverHistory(ONE_MINUTE * 15, 20.0F);
+    private final RollingOverHistory halfHourSample = new RollingOverHistory(ONE_MINUTE * 30, 20.0F);
 
     //the last time we updated the ticks
     private long lastCheck = System.nanoTime();
