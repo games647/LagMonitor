@@ -4,6 +4,10 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Lists;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,17 +27,16 @@ public class Storage {
     private final MysqlDataSource dataSource;
 
     private final LagMonitor plugin;
-    private final String tablePrefix;
+    private final String prefix;
 
-    public Storage(LagMonitor plugin, String host, int port, String database, String username, String password
-            , String tablePrefix) {
+    public Storage(LagMonitor plugin, String host, int port, String database, String user, String pass, String prefix) {
         this.plugin = plugin;
 
-        this.tablePrefix = tablePrefix;
+        this.prefix = prefix;
 
         this.dataSource = new MysqlDataSource();
-        this.dataSource.setUser(username);
-        this.dataSource.setPassword(password);
+        this.dataSource.setUser(user);
+        this.dataSource.setPassword(pass);
 
         this.dataSource.setServerName(host);
         this.dataSource.setPort(port);
@@ -41,64 +44,32 @@ public class Storage {
     }
 
     public void createTables() throws SQLException {
-        try (Connection con = dataSource.getConnection(); Statement tableStmt = con.createStatement()) {
-            tableStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + TPS_TABLE + " ("
-                    + "tps_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "tps FLOAT UNSIGNED NOT NULL, "
-                    + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-                    + ')');
+        try (InputStream in = getClass().getResourceAsStream("/create.sql");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+             Connection con = dataSource.getConnection();
+             Statement stmt = con.createStatement()) {
+            StringBuilder builder = new StringBuilder();
 
-            tableStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + MONITOR_TABLE + " ("
-                    + "monitor_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "process_usage FLOAT UNSIGNED NOT NULL, "
-                    + "os_usage FLOAT UNSIGNED NOT NULL, "
-                    + "free_ram MEDIUMINT UNSIGNED NOT NULL, "
-                    + "free_ram_pct FLOAT UNSIGNED NOT NULL, "
-                    + "os_free_ram MEDIUMINT UNSIGNED NOT NULL, "
-                    + "os_free_ram_pct FLOAT UNSIGNED NOT NULL, "
-                    + "load_avg FLOAT UNSIGNED NOT NULL, "
-                    + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-                    + ')');
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("#")) continue;
 
-            tableStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + WORLDS_TABLE + " ("
-                    + "world_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "monitor_id INTEGER UNSIGNED NOT NULL, "
-                    + "world_name VARCHAR(255) NOT NULL, "
-                    + "chunks_loaded SMALLINT UNSIGNED NOT NULL, "
-                    + "tile_entities SMALLINT UNSIGNED NOT NULL, "
-                    + "world_size SMALLINT UNSIGNED NOT NULL, "
-                    + "entities INT UNSIGNED NOT NULL, "
-                    + "FOREIGN KEY (monitor_id) REFERENCES " + tablePrefix + MONITOR_TABLE + "(monitor_id) "
-                    + ')');
+                builder.append(line);
+                if (line.endsWith(";")) {
+                    stmt.addBatch(builder.toString().replace("{prefix}", prefix));
+                }
+            }
 
-            tableStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + PLAYERS_TABLE + " ("
-                    + "world_id INTEGER UNSIGNED, "
-                    + "uuid CHAR(40) NOT NULL, "
-                    + "name VARCHAR(16) NOT NULL, "
-                    + "ping SMALLINT UNSIGNED NOT NULL, "
-                    + "PRIMARY KEY (world_id, uuid), "
-                    + "FOREIGN KEY (world_id) REFERENCES " + tablePrefix + WORLDS_TABLE + "(world_id) "
-                    + ')');
-
-            tableStmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + NATIVE_TABLE + " ("
-                    + "native_id INTEGER UNSIGNED PRIMARY KEY AUTO_INCREMENT, "
-                    + "mc_read SMALLINT UNSIGNED , "
-                    + "mc_write SMALLINT UNSIGNED, "
-                    + "free_space INT UNSIGNED, "
-                    + "free_space_pct FLOAT UNSIGNED, "
-                    + "disk_read SMALLINT UNSIGNED, "
-                    + "disk_write SMALLINT UNSIGNED, "
-                    + "net_read SMALLINT UNSIGNED, "
-                    + "net_write SMALLINT UNSIGNED, "
-                    + "updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
-                    + ')');
+            stmt.executeBatch();
+        } catch (IOException ioEx) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to load migration file", ioEx);
         }
     }
 
     public int saveMonitor(float procUsage, float osUsage, int freeRam, float freeRamPct, int osRam, float osRamPct
             , float loadAvg) {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + tablePrefix + MONITOR_TABLE
+             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + prefix + MONITOR_TABLE
                      + " (process_usage, os_usage, free_ram, free_ram_pct, os_free_ram, os_free_ram_pct, load_avg)"
                      + " VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setFloat(1, procUsage);
@@ -130,7 +101,7 @@ public class Storage {
         }
 
         try (Connection con = dataSource.getConnection();
-             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + tablePrefix + WORLDS_TABLE
+             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + prefix + WORLDS_TABLE
                      + " (monitor_id, world_name, chunks_loaded, tile_entities, entities, world_size)"
                      + " VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             for (WorldData worldData : worldsData) {
@@ -168,9 +139,9 @@ public class Storage {
         }
 
         try (Connection con = dataSource.getConnection();
-            PreparedStatement stmt = con.prepareStatement("INSERT INTO " + tablePrefix + PLAYERS_TABLE
-                    + " (world_id, uuid, name, ping) "
-                    + "VALUES (?, ?, ?, ?)")) {
+             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + prefix + PLAYERS_TABLE
+                     + " (world_id, uuid, name, ping) "
+                     + "VALUES (?, ?, ?, ?)")) {
             for (PlayerData data : playerData) {
                 stmt.setInt(1, data.getWorldId());
                 stmt.setString(2, data.getUuid().toString());
@@ -192,9 +163,9 @@ public class Storage {
     public void saveNative(int mcRead, int mcWrite, long freeSpace, float freePct, int diskRead, int diskWrite
             , int netRead, int netWrite) {
         try (Connection con = dataSource.getConnection();
-            PreparedStatement stmt = con.prepareStatement("INSERT INTO " + tablePrefix + NATIVE_TABLE
-                    + " (mc_read, mc_write, free_space, free_space_pct, disk_read, disk_write, net_read, net_write)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + prefix + NATIVE_TABLE
+                     + " (mc_read, mc_write, free_space, free_space_pct, disk_read, disk_write, net_read, net_write)"
+                     + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
             stmt.setInt(1, mcRead);
             stmt.setInt(2, mcWrite);
 
@@ -217,13 +188,13 @@ public class Storage {
 
     public void saveTps(float tps) {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + tablePrefix
+             PreparedStatement stmt = con.prepareStatement("INSERT INTO " + prefix
                      + TPS_TABLE + " (tps) VALUES (?)")) {
             stmt.setFloat(1, tps);
             stmt.execute();
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving tps to database", sqlEx);
-            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", new Object[] {tps});
+            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", new Object[]{tps});
         }
     }
 }

@@ -46,7 +46,7 @@ public class TimingCommand extends LagCommand {
             return true;
         }
 
-        if (!Bukkit.getServer().getPluginManager().useTimings()) {
+        if (!Bukkit.getPluginManager().useTimings()) {
             sender.sendMessage(ChatColor.DARK_RED + "The server deactivated timing reports");
             sender.sendMessage(ChatColor.DARK_RED + "Go to bukkit.yml and activate plugin-profiling");
             return true;
