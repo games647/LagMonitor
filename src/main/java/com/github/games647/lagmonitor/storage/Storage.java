@@ -57,6 +57,7 @@ public class Storage {
                 builder.append(line);
                 if (line.endsWith(";")) {
                     stmt.addBatch(builder.toString().replace("{prefix}", prefix));
+                    builder = new StringBuilder();
                 }
             }
 
