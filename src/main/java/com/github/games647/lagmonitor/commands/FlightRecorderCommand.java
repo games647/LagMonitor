@@ -83,7 +83,7 @@ public class FlightRecorderCommand extends DumpCommand {
         try {
             Path dumpFile = getNewDumpFile();
             String reply = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, DUMP_COMMAND
-                    , new Object[]{new String[]{"filename=" + dumpFile.toAbsolutePath().toString()
+                    , new Object[]{new String[]{"filename=" + dumpFile.toAbsolutePath()
                             , "name=" + recordingName, "compress=true"}}
                     , new String[]{String[].class.getName()});
 

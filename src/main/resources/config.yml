@@ -46,7 +46,7 @@ traffic-counter: true
 # * CPU i/o wait percentage
 #
 # This makes it possible to use graphs also for these data. Similar to the Ubuntu util:
-# System load indicator: http://i.imgur.com/sxTfTjB.png
+# System load indicator: https://i.imgur.com/sxTfTjB.png
 #
 # Download it from here: https://support.hyperic.com/display/SIGAR/Home#Home-download
 # Then place the driver for your OS into the plugin folder where this config is located.
@@ -63,7 +63,7 @@ monitor-database: false
 
 # Database configuration
 # Recommended is the use of MariaDB (a better version of MySQL)
-host: localhost
+host: 127.0.0.1
 port: 3306
 database: lagmonitor
 username: myUser

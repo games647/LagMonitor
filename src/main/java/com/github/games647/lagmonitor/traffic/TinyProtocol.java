@@ -68,7 +68,7 @@ public abstract class TinyProtocol {
         serverChannelHandler = new ChannelInboundHandlerAdapter() {
 
             @Override
-            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            public void channelRead(ChannelHandlerContext ctx, Object msg) {
                 Channel channel = (Channel) msg;
 
                 channel.pipeline().addLast(new ChannelDuplexHandler() {

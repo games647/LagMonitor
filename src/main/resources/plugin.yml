@@ -75,7 +75,7 @@ commands:
         usage: /<command> [dump]
         permission: ${project.artifactId}.command.heap
     papertiming:
-        description: 'Debug command for paper timings parser'
+        description: 'Debug command for Paper timings parser'
         aliases: [paper-timing, papertimings]
         permission: ${project.artifactId}.command.paper
     lagpage:

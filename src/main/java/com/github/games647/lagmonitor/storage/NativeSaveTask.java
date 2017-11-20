@@ -4,13 +4,17 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.LagUtils;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.logging.Level;
 
 import org.hyperic.sigar.FileSystemUsage;
 import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.SigarProxy;
 
 import static com.github.games647.lagmonitor.LagUtils.round;
 
@@ -18,7 +22,7 @@ public class NativeSaveTask implements Runnable {
 
     private final LagMonitor plugin;
 
-    private long lastCheck = System.currentTimeMillis();
+    private Instant lastCheck = Instant.now();
 
     private int lastMcRead;
     private int lastMcWrite;
@@ -33,8 +37,8 @@ public class NativeSaveTask implements Runnable {
 
     @Override
     public void run() {
-        long currentTime = System.currentTimeMillis();
-        int timeDiff = (int) (currentTime - lastCheck) / 1_000;
+        Instant currentTime = Instant.now();
+        int timeDiff = (int) Duration.between(lastCheck, currentTime).getSeconds();
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         int mcReadDiff = 0;
@@ -63,15 +67,18 @@ public class NativeSaveTask implements Runnable {
         Sigar sigar = plugin.getNativeData().getSigar();
         if (sigar != null) {
             try {
-                String rootFileSystem = Paths.get(".").getRoot().toAbsolutePath().toString();
-                FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
-                int diskRead = LagUtils.byteToMega(fileSystemUsage.getDiskReadBytes());
-                diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
-                lastDiskRead = diskRead;
+                Path root = Paths.get(".").getRoot();
+                if (root != null) {
+                    String rootFileSystem = root.toAbsolutePath().toString();
+                    FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
+                    int diskRead = LagUtils.byteToMega(fileSystemUsage.getDiskReadBytes());
+                    diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
+                    lastDiskRead = diskRead;
 
-                int diskWrite = LagUtils.byteToMega(fileSystemUsage.getDiskWriteBytes());
-                diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
-                lastDiskWrite = diskRead;
+                    int diskWrite = LagUtils.byteToMega(fileSystemUsage.getDiskWriteBytes());
+                    diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
+                    lastDiskWrite = diskRead;
+                }
 
                 NetInterfaceStat usedNetInterfaceStat = findNetworkInterface(sigar);
                 if (usedNetInterfaceStat != null) {
@@ -94,7 +101,7 @@ public class NativeSaveTask implements Runnable {
                 , netReadDiff, netWriteDiff);
     }
 
-    private NetInterfaceStat findNetworkInterface(Sigar sigar) throws SigarException {
+    private NetInterfaceStat findNetworkInterface(SigarProxy sigar) throws SigarException {
         NetInterfaceStat usedNetInterfaceStat = null;
         String[] netInterfaceList = sigar.getNetInterfaceList();
         for (String interfaceName : netInterfaceList) {

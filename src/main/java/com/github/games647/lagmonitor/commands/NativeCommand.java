@@ -15,6 +15,7 @@ import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.SigarProxy;
 
 public class NativeCommand extends LagCommand {
 
@@ -89,7 +90,7 @@ public class NativeCommand extends LagCommand {
         return true;
     }
 
-    private void printNetworkInfo(CommandSender sender, Sigar sigar) throws SigarException {
+    private void printNetworkInfo(CommandSender sender, SigarProxy sigar) throws SigarException {
         //net upload download
         NetInterfaceStat usedNetInterfaceStat = null;
         String[] netInterfaceList = sigar.getNetInterfaceList();

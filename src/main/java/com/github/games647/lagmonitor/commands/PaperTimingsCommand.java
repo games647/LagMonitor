@@ -118,7 +118,7 @@ public class PaperTimingsCommand extends LagCommand {
         return true;
     }
 
-    public void printTimings(List<BaseComponent[]> lines, TimingHistory lastHistory) {
+    public void printTimings(Collection<BaseComponent[]> lines, TimingHistory lastHistory) {
         printHeadData(lastHistory, lines);
 
         Map<Integer, String> idHandler = Maps.newHashMap();

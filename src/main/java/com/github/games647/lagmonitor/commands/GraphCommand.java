@@ -73,7 +73,6 @@ public class GraphCommand extends LagCommand implements TabExecutor {
             giveMap(player, mapView);
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "Not implemented for the console");
-            //todo: add a textual graph view for the console
         }
 
         return true;

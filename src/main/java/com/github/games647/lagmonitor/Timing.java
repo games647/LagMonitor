@@ -3,6 +3,7 @@ package com.github.games647.lagmonitor;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -58,6 +59,22 @@ public class Timing implements Comparable<Timing> {
         Timing timing = subcategories.computeIfAbsent(name, key -> new Timing(key, totalTime, count));
         timing.addTotal(totalTime);
         timing.addCount(totalTime);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Timing timing = (Timing) o;
+        return totalTime == timing.totalTime &&
+                totalCount == timing.totalCount &&
+                Objects.equals(category, timing.category) &&
+                Objects.equals(subcategories, timing.subcategories);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(category, totalTime, totalCount, subcategories);
     }
 
     @Override

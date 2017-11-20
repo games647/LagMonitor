@@ -37,17 +37,20 @@ public class TrafficReader extends TinyProtocol {
     }
 
     private void onChannel(Object object, boolean incoming) {
-        int readableBytes = 0;
+        ByteBuf bytes = null;
         if (object instanceof ByteBuf) {
-            readableBytes = ((ByteBuf) object).readableBytes();
-        } else if (object instanceof  ByteBufHolder) {
-            readableBytes = ((ByteBufHolder) object).content().readableBytes();
+            bytes = ((ByteBuf) object);
+        } else if (object instanceof ByteBufHolder) {
+            bytes = ((ByteBufHolder) object).content();
         }
 
-        if (incoming) {
-            incomingBytes.getAndAdd(readableBytes);
-        } else {
-            outgoingBytes.getAndAdd(readableBytes);
+        if (bytes != null) {
+            int readableBytes = bytes.readableBytes();
+            if (incoming) {
+                incomingBytes.getAndAdd(readableBytes);
+            } else {
+                outgoingBytes.getAndAdd(readableBytes);
+            }
         }
     }
 }

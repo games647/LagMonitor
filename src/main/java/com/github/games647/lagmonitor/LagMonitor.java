@@ -45,7 +45,7 @@ public class LagMonitor extends JavaPlugin {
 
     private final Map<CommandSender, Pagination> paginations = Maps.newHashMap();
 
-    private BlockingActionManager blockingActionManager;
+    private BlockingActionManager blockActionManager;
     private TpsHistoryTask tpsHistoryTask;
     private PingHistoryTask pingHistoryTask;
     private TrafficReader trafficReader;
@@ -65,8 +65,8 @@ public class LagMonitor extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        blockingActionManager = new BlockingActionManager(this);
-        getServer().getPluginManager().registerEvents(blockingActionManager, this);
+        blockActionManager = new BlockingActionManager(this);
+        getServer().getPluginManager().registerEvents(blockActionManager, this);
 
         if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
@@ -108,7 +108,7 @@ public class LagMonitor extends JavaPlugin {
 
         if (getConfig().getBoolean("socket-block-detection")) {
             ProxySelector defaultSelector = ProxySelector.getDefault();
-            BlockingConnectionSelector selector = new BlockingConnectionSelector(this, defaultSelector);
+            BlockingConnectionSelector selector = new BlockingConnectionSelector(blockActionManager, defaultSelector);
             Bukkit.getScheduler().runTask(this, () -> ProxySelector.setDefault(selector));
         }
 
@@ -145,9 +145,7 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
-            Bukkit.getScheduler().runTask(this, () -> {
-                System.setSecurityManager(new BlockingSecurityManager(this));
-            });
+            Bukkit.getScheduler().runTask(this, () -> System.setSecurityManager(new BlockingSecurityManager(this)));
         }
 
         registerCommands();
@@ -229,8 +227,8 @@ public class LagMonitor extends JavaPlugin {
         return nativeData;
     }
 
-    public BlockingActionManager getBlockingActionManager() {
-        return blockingActionManager;
+    public BlockingActionManager getBlockActionManager() {
+        return blockActionManager;
     }
 
     private void registerCommands() {

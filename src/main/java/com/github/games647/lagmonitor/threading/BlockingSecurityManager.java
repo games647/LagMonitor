@@ -48,19 +48,16 @@ public class BlockingSecurityManager extends SecurityManager {
 
     private void checkMainThreadOperation(Permission perm) {
         if (isBlockingAction(perm)) {
-            plugin.getBlockingActionManager().checkBlockingAction("Permission: " + perm.getName());
+            plugin.getBlockActionManager().checkBlockingAction("Permission: " + perm.getName());
         }
     }
 
     private boolean isBlockingAction(Permission permission) {
         String actions = permission.getActions();
 
-        if (permission instanceof FilePermission) {
-//            ignore jar files because the java runtime load and unload classes at runtime
-            return actions.contains("read")
-                    && fileWhitelist.stream().noneMatch(ignored -> permission.getName().contains(ignored));
-        }
+        return permission instanceof FilePermission
+                && actions.contains("read")
+                && fileWhitelist.stream().noneMatch(ignored -> permission.getName().contains(ignored));
 
-        return false;
     }
 }

@@ -129,7 +129,7 @@ public class ThreadSafetyListener implements Listener {
         //async executing of sync event
         String eventName = eventType.getEventName();
         if (!eventType.isAsynchronous()) {
-            plugin.getBlockingActionManager().checkThreadSafety(eventName);
+            plugin.getBlockActionManager().checkThreadSafety(eventName);
         }
     }
 }

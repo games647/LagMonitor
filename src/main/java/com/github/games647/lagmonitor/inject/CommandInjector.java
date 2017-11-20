@@ -110,12 +110,12 @@ public class CommandInjector implements TabExecutor {
 
                     CommandExecutor executor = executorField.get(pluginCommand);
                     if (executor instanceof CommandInjector) {
-                        executorField.set(pluginCommand, ((CommandInjector) executor).getOriginalExecutor());
+                        executorField.set(pluginCommand, ((CommandInjector) executor).originalExecutor);
                     }
 
                     TabCompleter completer = completerField.get(pluginCommand);
                     if (completer instanceof CommandInjector) {
-                        completerField.set(pluginCommand, ((CommandInjector) completer).getOriginalCompleter());
+                        completerField.set(pluginCommand, ((CommandInjector) completer).originalCompleter);
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
@@ -20,10 +20,7 @@ public class Pagination {
 
     private static final int PAGINATION_LINES = 2;
 
-    private static final int CONSOLE_WIDTH = 120;
     private static final int CONSOLE_HEIGHT = 40 - PAGINATION_LINES;
-
-    private static final int PLAYER_WIDTH = ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH;
     private static final int PLAYER_HEIGHT = ChatPaginator.OPEN_CHAT_PAGE_HEIGHT - PAGINATION_LINES;
 
     public static String filterPackageNames(String packageName) {
@@ -40,7 +37,7 @@ public class Pagination {
         return text;
     }
 
-    private final String date = LocalTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
+    private final String date = LocalDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
     private final String title;
 
     private final List<BaseComponent[]> lines;

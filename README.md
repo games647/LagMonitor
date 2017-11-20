@@ -12,7 +12,7 @@ server timings and so on.
 ## Features
 
 * Player ping
-* Log the server performance into a MySQL database
+* Log the server performance into a MySQL/MariaDB database
 * Sample CPU usage
 * Analyze RAM usage
 * Access to Stacktraces of running threads
@@ -76,7 +76,7 @@ lagmonitor.commands.* - Access to all commands
     /native - Gives you some native os information
     /vm - Outputs vm specific information like garbage collector, class loading or vm specification
     /tasks - Information about running and pending tasks
-    /paper - Outputs paper spigot timings
+    /paper - Outputs Paper timings
     /heap - Heap dump about your current memory
     /lagpage <next/prev/pageNumber/save/all> - Pagination command for the current pagination session
     /jfr <start/stop/dump> - Manages the Java Flight Recordings of the native Java VM. It gives you much more detailed

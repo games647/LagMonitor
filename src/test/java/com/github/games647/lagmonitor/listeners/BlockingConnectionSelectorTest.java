@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor.listeners;
 
-import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.threading.BlockingActionManager;
 
 import java.net.ProxySelector;
@@ -9,26 +8,25 @@ import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BlockingConnectionSelectorTest {
 
-    private BlockingConnectionSelector selector;
+    @Mock
     private BlockingActionManager actionManager;
+    private BlockingConnectionSelector selector;
 
     @Before
     public void setUp() throws Exception {
-        LagMonitor plugin = mock(LagMonitor.class);
-
-        this.actionManager = mock(BlockingActionManager.class);
-        doReturn(actionManager).when(plugin).getBlockingActionManager();
-
-        this.selector = new BlockingConnectionSelector(plugin, ProxySelector.getDefault());
+        this.selector = new BlockingConnectionSelector(actionManager, ProxySelector.getDefault());
     }
 
     @Test

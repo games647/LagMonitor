@@ -63,7 +63,7 @@ public class TaskInjector implements Runnable {
 
                 Runnable task = taskField.get(pendingTask);
                 if (task instanceof TaskInjector) {
-                    taskField.set(pendingTask, ((TaskInjector) task).getOriginalTask());
+                    taskField.set(pendingTask, ((TaskInjector) task).originalTask);
                 }
             }
         }

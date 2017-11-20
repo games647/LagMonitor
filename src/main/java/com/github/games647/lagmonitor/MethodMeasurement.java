@@ -3,8 +3,8 @@ package com.github.games647.lagmonitor;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
@@ -12,7 +12,7 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     private final String className;
     private final String method;
 
-    private Map<String, MethodMeasurement> childInvokes;
+    private final Map<String, MethodMeasurement> childInvokes = Maps.newHashMap();
     private long totalTime;
 
     public MethodMeasurement(String id, String className, String method) {
@@ -39,10 +39,6 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     }
 
     public Map<String, MethodMeasurement> getChildInvokes() {
-        if (childInvokes == null) {
-            return Collections.emptyMap();
-        }
-
         return ImmutableMap.copyOf(childInvokes);
     }
 
@@ -57,11 +53,6 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
         if (skipElements >= stackTrace.length) {
             //we reached the end
             return;
-        }
-
-        if (childInvokes == null) {
-            //lazy loading
-            childInvokes = Maps.newHashMap();
         }
 
         StackTraceElement nextChildElement = stackTrace[stackTrace.length - skipElements - 1];
@@ -82,9 +73,9 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
         String padding = b.toString();
 
         for (MethodMeasurement child : getChildInvokes().values()) {
-            builder.append(padding).append(child.getId()).append("()");
+            builder.append(padding).append(child.id).append("()");
             builder.append(' ');
-            builder.append(child.getTotalTime()).append("ms");
+            builder.append(child.totalTime).append("ms");
             builder.append('\n');
             child.writeString(builder, indent + 1);
         }
@@ -96,12 +87,30 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
         for (Map.Entry<String, MethodMeasurement> entry : getChildInvokes().entrySet()) {
             builder.append(entry.getKey()).append("()");
             builder.append(' ');
-            builder.append(entry.getValue().getTotalTime()).append("ms");
+            builder.append(entry.getValue().totalTime).append("ms");
             builder.append('\n');
             entry.getValue().writeString(builder, 1);
         }
 
         return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MethodMeasurement that = (MethodMeasurement) o;
+
+        return totalTime == that.totalTime &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(className, that.className) &&
+                Objects.equals(method, that.method) &&
+                Objects.equals(childInvokes, that.childInvokes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, className, method, childInvokes, totalTime);
     }
 
     @Override

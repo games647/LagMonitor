@@ -9,7 +9,7 @@
 
     <name>LagMonitor</name>
     <version>1.16</version>
-    <inceptionYear>2016</inceptionYear>
+
     <url>https://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
         Monitors your Minecraft server for Lags

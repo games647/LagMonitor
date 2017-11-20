@@ -3,25 +3,24 @@ package com.github.games647.lagmonitor.tasks;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
-import com.google.common.base.Charsets;
+import com.google.common.net.UrlEscapers;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
 import java.util.TimerTask;
 import java.util.logging.Level;
-
-import org.json.simple.JSONValue;
 
 /**
  * Based on the project https://github.com/sk89q/WarmRoast by sk89q
@@ -29,7 +28,6 @@ import org.json.simple.JSONValue;
 public class MonitorTask extends TimerTask {
 
     private static final String PASTE_URL = "https://paste.enginehub.org/paste";
-
     private static final int MAX_DEPTH = 25;
 
     private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
@@ -81,29 +79,22 @@ public class MonitorTask extends TimerTask {
             httpConnection.setDoOutput(true);
             httpConnection.setDoInput(true);
 
-            try (OutputStream outputStream = httpConnection.getOutputStream();
-                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, Charsets.UTF_8))) {
-                writer.write("content=" + URLEncoder.encode(toString(), Charsets.UTF_8.name()));
-                writer.write("&from=" + URLEncoder.encode(plugin.getName(), Charsets.UTF_8.name()));
-                writer.flush();
+            try (BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(httpConnection.getOutputStream(), StandardCharsets.UTF_8))
+            ) {
+                writer.write("content=" + UrlEscapers.urlPathSegmentEscaper().escape(toString()));
+                writer.write("&from=" + plugin.getName());
             }
 
-            StringBuilder inputBuilder = new StringBuilder();
-            String line;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()))) {
-                while ((line = reader.readLine()) != null) {
-                    inputBuilder.append(line);
-                }
+            JsonObject object;
+            try (Reader reader = new BufferedReader(
+                    new InputStreamReader(httpConnection.getInputStream(), StandardCharsets.UTF_8))
+            ) {
+                object = new Gson().fromJson(reader, JsonObject.class);
             }
 
-            String input = inputBuilder.toString();
-            plugin.getLogger().log(Level.FINE, input);
-
-            Object object = JSONValue.parse(input);
-            if (object instanceof Map) {
-                @SuppressWarnings("unchecked")
-                String urlString = String.valueOf(((Map<Object, Object>) object).get("url"));
-                return urlString;
+            if (object.has("url")) {
+                return object.get("url").getAsString();
             }
 
             plugin.getLogger().info("Failed to parse url");

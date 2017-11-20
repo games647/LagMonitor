@@ -64,7 +64,7 @@ public class ListenerInjector implements EventExecutor {
 
             EventExecutor executor = executorField.get(listener);
             if (executor instanceof ListenerInjector) {
-                executorField.set(listener, ((ListenerInjector) executor).getOriginalExecutor());
+                executorField.set(listener, ((ListenerInjector) executor).originalExecutor);
             }
         }
     }

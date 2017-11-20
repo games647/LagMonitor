@@ -9,13 +9,12 @@ import java.text.DecimalFormat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jsoftbiz.utils.OS;
 
 import static com.github.games647.lagmonitor.LagUtils.readableByteCount;
 
-public class EnvironmentCommand extends LagCommand implements CommandExecutor {
+public class EnvironmentCommand extends LagCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;

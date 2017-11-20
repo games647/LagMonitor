@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor.listeners;
 
-import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.threading.BlockingActionManager;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
@@ -12,11 +12,11 @@ import java.util.List;
 
 public class BlockingConnectionSelector extends ProxySelector {
 
-    private final LagMonitor plugin;
+    private final BlockingActionManager actionManager;
     private final ProxySelector oldProxySelector;
 
-    public BlockingConnectionSelector(LagMonitor plugin, ProxySelector oldProxySelector) {
-        this.plugin = plugin;
+    public BlockingConnectionSelector(BlockingActionManager actionManager, ProxySelector oldProxySelector) {
+        this.actionManager = actionManager;
         this.oldProxySelector = oldProxySelector;
     }
 
@@ -24,7 +24,7 @@ public class BlockingConnectionSelector extends ProxySelector {
     public List<Proxy> select(URI uri) {
         String url = uri.toString().replace("www", "");
         if (uri.getScheme().startsWith("http") || (uri.getPort() != 80 && uri.getPort() != 443)) {
-            plugin.getBlockingActionManager().checkBlockingAction("Socket: " + url);
+            actionManager.checkBlockingAction("Socket: " + url);
         }
 
         return oldProxySelector == null ? Lists.newArrayList(Proxy.NO_PROXY) : oldProxySelector.select(uri);

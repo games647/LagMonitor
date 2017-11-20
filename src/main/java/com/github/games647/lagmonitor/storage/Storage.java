@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,7 +46,7 @@ public class Storage {
 
     public void createTables() throws SQLException {
         try (InputStream in = getClass().getResourceAsStream("/create.sql");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
              Connection con = dataSource.getConnection();
              Statement stmt = con.createStatement()) {
             StringBuilder builder = new StringBuilder();
@@ -134,9 +135,9 @@ public class Storage {
         return false;
     }
 
-    public boolean savePlayers(Collection<PlayerData> playerData) {
+    public void savePlayers(Collection<PlayerData> playerData) {
         if (playerData.isEmpty()) {
-            return false;
+            return;
         }
 
         try (Connection con = dataSource.getConnection();
@@ -152,13 +153,11 @@ public class Storage {
             }
 
             stmt.executeBatch();
-            return true;
         } catch (SQLException sqlEx) {
             plugin.getLogger().log(Level.SEVERE, "Error saving player data to database", sqlEx);
             plugin.getLogger().log(Level.SEVERE, "Using this data {0}", playerData);
         }
 
-        return false;
     }
 
     public void saveNative(int mcRead, int mcWrite, long freeSpace, float freePct, int diskRead, int diskWrite

@@ -2,6 +2,7 @@
 
 ## 1.15
 
+* Use migration file creating MySQL table
 * Remove duplicated code and clean up project
 * Use MEDIUMINT for os with > 64GB of ram (Related #33)
 * Fix folder size

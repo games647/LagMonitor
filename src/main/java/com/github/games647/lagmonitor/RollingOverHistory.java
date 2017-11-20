@@ -1,5 +1,7 @@
 package com.github.games647.lagmonitor;
 
+import java.util.Arrays;
+
 public class RollingOverHistory {
 
     private final float[] samples;
@@ -55,6 +57,6 @@ public class RollingOverHistory {
     }
 
     public float[] getSamples() {
-        return samples;
+        return Arrays.copyOf(samples, samples.length);
     }
 }
