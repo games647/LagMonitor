@@ -2,7 +2,12 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -64,15 +69,23 @@ public class NativeCommand extends LagCommand {
             printNetworkInfo(sender, sigar);
 
             //disk read write
-            FileSystem homeSystem = sigar.getFileSystemMap().getFileSystem("/home");
-            DiskUsage diskUsage = sigar.getDiskUsage(homeSystem.getDevName());
+            List<String> diskNames = Arrays.stream(sigar.getFileSystemList())
+                    .map(FileSystem::getDevName)
+                    .filter(name -> name.startsWith("/dev/sd"))
+                    .distinct()
+                    .collect(Collectors.toList());
 
-            long diskReads = diskUsage.getReads();
-            long diskWrites = diskUsage.getWrites();
-            String diskReadBytes = Sigar.formatSize(diskUsage.getReadBytes());
-            String diskWriteBytes = Sigar.formatSize(diskUsage.getWriteBytes());
-            sender.sendMessage(PRIMARY_COLOR + "Disk Reads (phy): " + SECONDARY_COLOR + diskReads);
-            sender.sendMessage(PRIMARY_COLOR + "Disk Writes: " + SECONDARY_COLOR + diskWrites);
+            Collection<DiskUsage> diskUsages = new ArrayList<>();
+            for (String diskName : diskNames) {
+                diskUsages.add(sigar.getDiskUsage(diskName));
+            }
+
+            long diskReads = diskUsages.stream().mapToLong(DiskUsage::getReadBytes).sum();
+            long diskWrites = diskUsages.stream().mapToLong(DiskUsage::getWriteBytes).sum();
+
+
+            String diskReadBytes = Sigar.formatSize(diskReads);
+            String diskWriteBytes = Sigar.formatSize(diskWrites);
 
             sender.sendMessage(PRIMARY_COLOR + "Disk read bytes: " + SECONDARY_COLOR + diskReadBytes);
             sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + diskWriteBytes);

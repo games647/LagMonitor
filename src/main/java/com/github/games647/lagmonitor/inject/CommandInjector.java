@@ -61,7 +61,7 @@ public class CommandInjector implements TabExecutor {
                 .getField(SimplePluginManager.class, "commandMap", SimpleCommandMap.class).get(pluginManager);
         for (Command command : commandMap.getCommands()) {
             if (command instanceof PluginCommand) {
-                PluginIdentifiableCommand pluginCommand = (PluginCommand) command;
+                PluginIdentifiableCommand pluginCommand = (PluginIdentifiableCommand) command;
                 Plugin plugin = pluginCommand.getPlugin();
                 if (plugin.equals(toInjectPlugin)) {
                     FieldAccessor<CommandExecutor> executorField = Reflection
@@ -100,7 +100,7 @@ public class CommandInjector implements TabExecutor {
                 .getField(SimplePluginManager.class, "commandMap", SimpleCommandMap.class).get(pluginManager);
         for (Command command : commandMap.getCommands()) {
             if (command instanceof PluginCommand) {
-                PluginIdentifiableCommand pluginCommand = (PluginCommand) command;
+                PluginIdentifiableCommand pluginCommand = (PluginIdentifiableCommand) command;
                 Plugin plugin = pluginCommand.getPlugin();
                 if (plugin.equals(toUninject)) {
                     FieldAccessor<CommandExecutor> executorField = Reflection
