@@ -9,6 +9,8 @@ import org.bukkit.map.MinecraftFont;
 
 public abstract class GraphRenderer extends MapRenderer {
 
+    protected static final int TEXT_HEIGHT = MinecraftFont.Font.getHeight();
+
     //max height and width = 128 (index from 0-127)
     protected static final int MAX_WIDTH = 128;
     protected static final int MAX_HEIGHT = 128;
@@ -45,12 +47,13 @@ public abstract class GraphRenderer extends MapRenderer {
             int maxValue = renderGraphTick(canvas, nextPosX);
 
             //override the color
-            canvas.drawText(0, 0, MinecraftFont.Font, title);
+            drawText(canvas, MAX_WIDTH / 2, MAX_HEIGHT / 2, title);
 
             //count indicators
-            canvas.drawText(110, 0, MinecraftFont.Font, Integer.toString(maxValue));
-            canvas.drawText(110, MAX_HEIGHT / 2, MinecraftFont.Font, Integer.toString(maxValue / 2));
-            canvas.drawText(MAX_WIDTH - MinecraftFont.Font.getWidth("0"), 120, MinecraftFont.Font, "0");
+            drawText(canvas, MAX_WIDTH, TEXT_HEIGHT, Integer.toString(maxValue));
+            drawText(canvas, MAX_WIDTH, MAX_HEIGHT / 2, Integer.toString(maxValue / 2));
+            drawText(canvas, MAX_WIDTH, MAX_HEIGHT, Integer.toString(0));
+
             nextPosX++;
         }
 
@@ -76,5 +79,10 @@ public abstract class GraphRenderer extends MapRenderer {
                 canvas.setPixel(xPos, yPos, (byte) 0);
             }
         }
+    }
+
+    protected void drawText(MapCanvas canvas, int midX, int midY, String text) {
+        int textWidth = MinecraftFont.Font.getWidth(text);
+        canvas.drawText(midX - (textWidth / 2), midY - (TEXT_HEIGHT / 2), MinecraftFont.Font, text);
     }
 }
