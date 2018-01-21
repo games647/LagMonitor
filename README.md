@@ -72,7 +72,7 @@ lagmonitor.commands.* - Access to all commands
     /env - Gives you some general information (OS related)
     /timing - Outputs your server timings ingame
     /monitor [start/stop/paste] - Monitors the CPU usage of methods
-    /graph [heap/cpu/thread/classes] - Gives you visual graph about your server (currently only the heap usage)
+    /graph [heap/cpu/threads/classes] - Gives you visual graph about your server (currently only the heap usage)
     /native - Gives you some native os information
     /vm - Outputs vm specific information like garbage collector, class loading or vm specification
     /tasks - Information about running and pending tasks
