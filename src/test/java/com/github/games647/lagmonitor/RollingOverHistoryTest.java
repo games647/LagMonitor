@@ -2,8 +2,12 @@ package com.github.games647.lagmonitor;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.everyItem;
+import static org.hamcrest.CoreMatchers.is;
+
+import static org.junit.Assert.assertThat;
 
 public class RollingOverHistoryTest {
 
@@ -11,40 +15,39 @@ public class RollingOverHistoryTest {
     public void testGetAverage() {
         RollingOverHistory history = new RollingOverHistory(4, 1);
 
-        Assert.assertEquals(1, history.getAverage(), 0.1);
+        assertThat(history.getAverage(), is(1.0F));
         history.add(3);
-        Assert.assertEquals(2, history.getAverage(), 0.1);
+        assertThat(history.getAverage(), is(2.0F));
         history.add(2);
-        Assert.assertEquals(2, history.getAverage(), 0.1);
+        assertThat(history.getAverage(), is(2.0F));
         history.add(3);
-        Assert.assertEquals(2.25, history.getAverage(), 0.1);
+        assertThat(history.getAverage(), is(2.25F));
     }
 
     @Test
     public void testGetCurrentPosition() {
         RollingOverHistory history = new RollingOverHistory(2, 1);
 
-        Assert.assertEquals(0, history.getCurrentPosition());
+        assertThat(history.getCurrentPosition(), is(0));
         history.add(2);
 
-        Assert.assertEquals(1, history.getCurrentPosition());
+        assertThat(history.getCurrentPosition(), is(1));
         history.add(2);
         //reached the max size
-        Assert.assertEquals(0, history.getCurrentPosition());
+        assertThat(history.getCurrentPosition(), is(0));
     }
 
     @Test
     public void testGetLastSample() {
         RollingOverHistory history = new RollingOverHistory(3, 1);
 
-        Assert.assertEquals(1, history.getLastSample(), 0.1);
+        assertThat(history.getLastSample(), is(1.0F));
         history.add(2);
-        System.out.println(Arrays.toString(history.getSamples()));
-        Assert.assertEquals(2, history.getLastSample(), 0.1);
+        assertThat(history.getLastSample(), is(2.0F));
         history.add(3);
-        Assert.assertEquals(3, history.getLastSample(), 0.1);
+        assertThat(history.getLastSample(), is(3.0F));
         history.add(2);
-        Assert.assertEquals(2, history.getLastSample(), 0.1);
+        assertThat(history.getLastSample(), is(2.0F));
     }
 
     @Test
@@ -53,6 +56,6 @@ public class RollingOverHistoryTest {
 
         history.add(2);
         float[] expected = {2.0F};
-        Assert.assertArrayEquals(expected, history.getSamples(), 0.1F);
+        assertThat(Arrays.asList(history.getSamples()), everyItem(is(expected)));
     }
 }
