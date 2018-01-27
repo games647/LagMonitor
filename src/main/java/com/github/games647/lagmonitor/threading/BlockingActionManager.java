@@ -108,7 +108,9 @@ public class BlockingActionManager implements Listener {
                     Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
                     map.put(plugin.getName(), elem);
                     return map.entrySet().iterator().next();
-                } else if ("VanillaCommandWrapper".equals(clazz.getSimpleName())) {
+                } else if (clazz.getName().endsWith("VanillaCommandWrapper")) {
+                    //explicit use getName instead of SimpleName because getSimpleBinaryName causes a
+                    //StringIndexOutOfBoundsException for obfuscated plugins
                     Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
                     map.put("Vanilla", elem);
                     return map.entrySet().iterator().next();
