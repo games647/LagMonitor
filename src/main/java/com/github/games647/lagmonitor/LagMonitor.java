@@ -20,12 +20,12 @@ import com.github.games647.lagmonitor.threading.BlockingActionManager;
 import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 import com.google.common.base.StandardSystemProperty;
-import com.google.common.collect.Maps;
 
 import java.io.File;
 import java.net.ProxySelector;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Level;
@@ -43,7 +43,7 @@ public class LagMonitor extends JavaPlugin {
     private static final int PING_INTERVAL = 2 * 20;
     private static final int DETECTION_THRESHOLD = 10;
 
-    private final Map<CommandSender, Pagination> paginations = Maps.newHashMap();
+    private final Map<CommandSender, Pagination> paginations = new HashMap<>();
 
     private BlockingActionManager blockActionManager;
     private TpsHistoryTask tpsHistoryTask;

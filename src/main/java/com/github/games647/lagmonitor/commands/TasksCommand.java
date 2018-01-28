@@ -2,9 +2,9 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.google.common.collect.Lists;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.md_5.bungee.api.ChatColor;
@@ -33,7 +33,7 @@ public class TasksCommand extends LagCommand {
             return true;
         }
 
-        List<BaseComponent[]> lines = Lists.newArrayList();
+        List<BaseComponent[]> lines = new ArrayList<>();
 
         List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
         for (BukkitTask pendingTask : pendingTasks) {

@@ -7,10 +7,10 @@ import com.github.games647.lagmonitor.graphs.CpuGraph;
 import com.github.games647.lagmonitor.graphs.GraphRenderer;
 import com.github.games647.lagmonitor.graphs.HeapGraph;
 import com.github.games647.lagmonitor.graphs.ThreadsGraph;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
 
     private static final int MAX_COMBINED = 4;
 
-    private final Map<String, GraphRenderer> graphTypes = Maps.newHashMap();
+    private final Map<String, GraphRenderer> graphTypes = new HashMap<>();
 
     public GraphCommand(LagMonitor plugin) {
         super(plugin);
@@ -80,7 +80,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> result = Lists.newArrayListWithExpectedSize(4);
+        List<String> result = new ArrayList<>();
 
         if (args.length != 1) {
             return Collections.emptyList();
@@ -96,7 +96,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
     }
 
     private void buildCombinedGraph(Player player, String[] args) {
-        List<GraphRenderer> renderers = Lists.newArrayList();
+        List<GraphRenderer> renderers = new ArrayList<>();
         for (String arg : args) {
             GraphRenderer renderer = graphTypes.get(arg);
             if (renderer == null) {

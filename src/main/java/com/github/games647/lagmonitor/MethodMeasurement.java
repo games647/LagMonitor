@@ -1,8 +1,8 @@
 package com.github.games647.lagmonitor;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -12,7 +12,7 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     private final String className;
     private final String method;
 
-    private final Map<String, MethodMeasurement> childInvokes = Maps.newHashMap();
+    private final Map<String, MethodMeasurement> childInvokes = new HashMap<>();
     private long totalTime;
 
     public MethodMeasurement(String id, String className, String method) {

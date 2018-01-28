@@ -1,9 +1,9 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.google.common.collect.Lists;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -68,7 +68,7 @@ public class MbeanCommand extends LagCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> result = Lists.newArrayList();
+        List<String> result = new ArrayList<>();
         String lastArg = args[args.length - 1];
 
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();

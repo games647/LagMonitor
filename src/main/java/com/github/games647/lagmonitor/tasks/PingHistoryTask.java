@@ -1,10 +1,10 @@
 package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.RollingOverHistory;
-import com.google.common.collect.Maps;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -14,7 +14,7 @@ public class PingHistoryTask implements Runnable {
 
     private static final int SAMPLE_SIZE = 5;
 
-    private final Map<String, RollingOverHistory> playerHistory = Maps.newHashMap();
+    private final Map<String, RollingOverHistory> playerHistory = new HashMap<>();
 
     private Method getHandleMethod;
     private Field pingField;

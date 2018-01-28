@@ -8,10 +8,10 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +108,7 @@ public class PaperTimingsCommand extends LagCommand {
             return true;
         }
 
-        List<BaseComponent[]> lines = Lists.newArrayList();
+        List<BaseComponent[]> lines = new ArrayList<>();
         printTimings(lines, lastHistory);
 
         Pagination pagination = new Pagination("Paper Timings", lines);

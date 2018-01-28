@@ -1,7 +1,6 @@
 package com.github.games647.lagmonitor.traffic;
 
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
-import com.google.common.collect.Lists;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -11,6 +10,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -33,7 +33,7 @@ public abstract class TinyProtocol {
     private static final FieldAccessor<Object> GET_CONNECTION = Reflection.getField(SERVER_CLASS, CONNECTION_CLASS, 0);
 
     // Injected channel handlers
-    private final List<Channel> serverChannels = Lists.newArrayList();
+    private final List<Channel> serverChannels = new ArrayList<>();
     private ChannelInboundHandlerAdapter serverChannelHandler;
 
     private volatile boolean closed;

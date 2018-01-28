@@ -2,10 +2,10 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.google.common.collect.Lists;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +54,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
     }
 
     private void printStackTrace(CommandSender sender, StackTraceElement[] stackTrace) {
-        List<BaseComponent[]> lines = Lists.newArrayList();
+        List<BaseComponent[]> lines = new ArrayList<>();
 
         //begin from the top
         for (int i = stackTrace.length - 1; i >= 0; i--) {
@@ -87,7 +87,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> result = Lists.newArrayList();
+        List<String> result = new ArrayList<>();
 
         StringBuilder builder = new StringBuilder();
         for (String arg : args) {

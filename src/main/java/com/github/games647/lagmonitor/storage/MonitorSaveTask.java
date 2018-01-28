@@ -6,9 +6,9 @@ import com.github.games647.lagmonitor.NativeData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -113,8 +113,8 @@ public class MonitorSaveTask implements Runnable {
         for (Entry<UUID, WorldData> entry : worldsData.entrySet()) {
             UUID worldId = entry.getKey();
             WorldData worldData = entry.getValue();
-            File worldFolder = Bukkit.getWorld(worldId).getWorldFolder();
-            worldData.setWorldSize(LagUtils.byteToMega(LagUtils.getFolderSize(worldFolder)));
+            Path worldFolder = Bukkit.getWorld(worldId).getWorldFolder().toPath();
+            worldData.setWorldSize(LagUtils.byteToMega(LagUtils.getFolderSize(plugin.getLogger(), worldFolder)));
         }
         
         return worldsData;

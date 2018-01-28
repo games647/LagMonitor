@@ -2,10 +2,11 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.google.common.collect.Lists;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -53,7 +54,7 @@ public class ThreadCommand extends DumpCommand {
             return true;
         }
 
-        List<BaseComponent[]> lines = Lists.newArrayList();
+        List<BaseComponent[]> lines = new ArrayList<>();
 
         Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
         for (Thread thread : allStackTraces.keySet()) {
@@ -88,7 +89,7 @@ public class ThreadCommand extends DumpCommand {
                     , new Object[]{ArrayUtils.EMPTY_STRING_ARRAY}, new String[]{String[].class.getName()});
 
             Path dumpFile = getNewDumpFile();
-            Files.write(dumpFile, Lists.newArrayList(result));
+            Files.write(dumpFile, Collections.singletonList(result));
 
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());
             sender.sendMessage(ChatColor.GRAY + "You can analyse it using VisualVM");

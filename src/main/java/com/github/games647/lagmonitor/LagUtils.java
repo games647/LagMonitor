@@ -1,10 +1,13 @@
 package com.github.games647.lagmonitor;
 
-import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LagUtils {
 
@@ -34,21 +37,21 @@ public class LagUtils {
         return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
-    public static long getFolderSize(File folder) {
-        File[] files = folder.listFiles();
-        if (files == null) {
-            return -1;
+    public static long getFolderSize(Logger logger, Path folder) {
+        try {
+            return Files.walk(folder, 3, FileVisitOption.FOLLOW_LINKS)
+                    .parallel()
+                    .mapToLong(path -> {
+                        try {
+                            return Files.size(path);
+                        } catch (IOException e) {
+                            return 0;
+                        }
+                    }).sum();
+        } catch (IOException ioEx) {
+            logger.log(Level.INFO, "Cannot walk file tree", ioEx);
         }
 
-        return Stream.of(files)
-                .parallel()
-                .filter(Objects::nonNull)
-                .mapToLong((File file) -> {
-                    if (file.isFile()) {
-                        return file.length();
-                    } else {
-                        return getFolderSize(file);
-                    }
-                }).sum();
+        return -1;
     }
 }

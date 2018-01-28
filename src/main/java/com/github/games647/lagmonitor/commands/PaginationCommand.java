@@ -2,12 +2,12 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.logging.Level;
 
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -105,7 +105,7 @@ public class PaginationCommand extends DumpCommand {
 
         Path dumpFile = getNewDumpFile();
         try {
-            Files.write(dumpFile, Lists.newArrayList(lineBuilder.toString()));
+            Files.write(dumpFile, Collections.singletonList(lineBuilder.toString()));
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());
         } catch (IOException ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);

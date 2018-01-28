@@ -4,8 +4,8 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
 import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.tasks.MonitorTask;
-import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +52,7 @@ public class MonitorCommand extends LagCommand {
         } else if (monitorTask == null) {
             sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
         } else {
-            List<BaseComponent[]> lines = Lists.newArrayList();
+            List<BaseComponent[]> lines = new ArrayList<>();
             synchronized (monitorTask) {
                 MethodMeasurement rootSample = monitorTask.getRootSample();
                 printTrace(lines, 0, rootSample, 0);
@@ -84,7 +84,7 @@ public class MonitorCommand extends LagCommand {
                 .create());
 
         Collection<MethodMeasurement> childInvokes = current.getChildInvokes().values();
-        List<MethodMeasurement> sortedList = Lists.newArrayList(childInvokes);
+        List<MethodMeasurement> sortedList = new ArrayList<>(childInvokes);
         Collections.sort(sortedList);
 
         sortedList.forEach((child) -> printTrace(lines, currentTime, child, depth + 1));

@@ -2,10 +2,10 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.google.common.collect.Lists;
 
 import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -55,7 +55,7 @@ public class HeapCommand extends DumpCommand {
             return true;
         }
 
-        List<BaseComponent[]> paginatedLines = Lists.newArrayList();
+        List<BaseComponent[]> paginatedLines = new ArrayList<>();
         try {
             ObjectName diagnosticObjectName = ObjectName.getInstance(DIAGNOSTIC_COMMAND);
 

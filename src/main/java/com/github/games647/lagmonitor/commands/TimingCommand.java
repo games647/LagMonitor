@@ -5,10 +5,10 @@ import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.Timing;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -65,7 +65,7 @@ public class TimingCommand extends LagCommand {
         Queue<CustomTimingsHandler> handlers = Reflection.getField(CustomTimingsHandler.class, "HANDLERS", Queue.class)
                 .get(null);
 
-        List<BaseComponent[]> lines = Lists.newArrayList();
+        List<BaseComponent[]> lines = new ArrayList<>();
         sendParsedOutput(handlers, lines, sampleTime);
 
         Pagination pagination = new Pagination("Paper Timings", lines);
@@ -76,7 +76,7 @@ public class TimingCommand extends LagCommand {
     }
 
     private void sendParsedOutput(Iterable<CustomTimingsHandler> handlers, Collection<BaseComponent[]> lines, long sampleTime) {
-        Map<String, Timing> timings = Maps.newHashMap();
+        Map<String, Timing> timings = new HashMap<>();
         Timing breakdownTiming = new Timing("Breakdown", -1, -1);
         Timing minecraftTiming = new Timing("Minecraft");
         timings.put("Minecraft", minecraftTiming);

@@ -111,7 +111,7 @@ public class SystemCommand extends LagCommand {
             chunks += world.getLoadedChunks().length;
 
             File worldFolder = Bukkit.getWorld(world.getUID()).getWorldFolder();
-            usedWorldSize += LagUtils.getFolderSize(worldFolder);
+            usedWorldSize += LagUtils.getFolderSize(plugin.getLogger(), worldFolder.toPath());
         }
 
         sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);

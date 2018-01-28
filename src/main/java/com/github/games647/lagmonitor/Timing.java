@@ -1,7 +1,6 @@
 package com.github.games647.lagmonitor;
 
-import com.google.common.collect.Maps;
-
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -53,7 +52,7 @@ public class Timing implements Comparable<Timing> {
     public void addSubcategory(String name, long totalTime, long count) {
         if (subcategories == null) {
             //lazy creating
-            subcategories = Maps.newHashMap();
+            subcategories = new HashMap<>();
         }
 
         Timing timing = subcategories.computeIfAbsent(name, key -> new Timing(key, totalTime, count));
