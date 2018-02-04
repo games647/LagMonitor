@@ -1,7 +1,12 @@
 # Changelog
 
-## 1.15
+## 1.16
 
+* Fix checking vanilla command class check if we found an obfuscated plugin
+* Dynamically adjust text padding for graphs
+* Fix invalid threads graph name
+* Count the read/write of all disks
+* Minor styling improvements
 * Use migration file creating MySQL table
 * Remove duplicated code and clean up project
 * Use MEDIUMINT for os with > 64GB of ram (Related #33)

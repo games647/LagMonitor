@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +24,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
+
+import static java.util.stream.Collectors.toList;
 
 public class GraphCommand extends LagCommand implements TabExecutor {
 
@@ -89,7 +90,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
         String lastArg = args[args.length - 1];
         result.addAll(graphTypes.keySet().stream()
                 .filter(type -> type.startsWith(lastArg))
-                .collect(Collectors.toList()));
+                .collect(toList()));
 
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;

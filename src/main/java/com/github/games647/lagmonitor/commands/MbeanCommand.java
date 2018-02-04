@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServer;
@@ -19,6 +18,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+
+import static java.util.stream.Collectors.toList;
 
 public class MbeanCommand extends LagCommand implements TabExecutor {
 
@@ -77,7 +78,7 @@ public class MbeanCommand extends LagCommand implements TabExecutor {
             result.addAll(mbeans.stream()
                     .filter(mbean -> mbean.getCanonicalName().startsWith(lastArg))
                     .map(ObjectName::getCanonicalName)
-                    .collect(Collectors.toList()));
+                    .collect(toList()));
         } else if (args.length == 2) {
             try {
                 ObjectName beanObject = ObjectName.getInstance(args[0]);

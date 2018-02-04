@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,6 +20,8 @@ import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.SigarProxy;
+
+import static java.util.stream.Collectors.toList;
 
 public class NativeCommand extends LagCommand {
 
@@ -73,7 +74,7 @@ public class NativeCommand extends LagCommand {
                     .map(FileSystem::getDevName)
                     .filter(name -> name.startsWith("/dev/sd"))
                     .distinct()
-                    .collect(Collectors.toList());
+                    .collect(toList());
 
             Collection<DiskUsage> diskUsages = new ArrayList<>();
             for (String diskName : diskNames) {
