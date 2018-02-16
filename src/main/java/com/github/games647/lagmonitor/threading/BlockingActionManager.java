@@ -9,11 +9,9 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class BlockingActionManager implements Listener {
 
@@ -22,17 +20,10 @@ public class BlockingActionManager implements Listener {
     private final Set<PluginViolation> violations = Sets.newConcurrentHashSet();
     private final Set<String> violatedPlugins = Sets.newConcurrentHashSet();
 
-    private final Map<ClassLoader, Plugin> cachedLoaders = Maps.newHashMap();
     private final ClassLoader thisClassLoader = this.getClass().getClassLoader();
 
     public BlockingActionManager(LagMonitor plugin) {
         this.plugin = plugin;
-
-        synchronized (Bukkit.getPluginManager()) {
-            for (Plugin pl : Bukkit.getPluginManager().getPlugins()) {
-                cachedLoaders.put(pl.getClass().getClassLoader(), pl);
-            }
-        }
     }
 
     public void checkBlockingAction(String event) {
@@ -47,7 +38,7 @@ public class BlockingActionManager implements Listener {
     public void checkThreadSafety(String eventName) {
         if (!Bukkit.isPrimaryThread()) {
             String message = "Plugin {0} did a async operation for an sync Event {1}. "
-                    + "This could be cause server stability issues. ";
+                    + "This could cause server stability issues. ";
             logCurrentStack(message, eventName);
         }
     }
@@ -62,10 +53,6 @@ public class BlockingActionManager implements Listener {
         if (foundPlugin != null) {
             String pluginName = foundPlugin.getKey();
             violation = new PluginViolation(pluginName, foundPlugin.getValue(), eventName);
-            if ("Vanilla".equals(pluginName)) {
-                return;
-            }
-
             if (!violatedPlugins.add(violation.getPluginName()) && plugin.getConfig().getBoolean("oncePerPlugin")) {
                 return;
             }
@@ -93,27 +80,22 @@ public class BlockingActionManager implements Listener {
         for (StackTraceElement elem : stacktrace) {
             try {
                 Class<?> clazz = Class.forName(elem.getClassName());
-                ClassLoader searchingClazzLoader = clazz.getClassLoader();
-                if (skipping) {
-                    //skip until we find the first different outside of this Java plugin
-                    if (searchingClazzLoader == thisClassLoader) {
+                if (clazz.getName().endsWith("VanillaCommandWrapper")) {
+                    //explicit use getName instead of SimpleName because getSimpleBinaryName causes a
+                    //StringIndexOutOfBoundsException for obfuscated plugins
+                    return Maps.immutableEntry("Vanilla", elem);
+                }
+
+                Plugin plugin;
+                try {
+                    plugin = JavaPlugin.getProvidingPlugin(clazz);
+                    if (plugin == this.plugin) {
                         continue;
                     }
 
-                    skipping = false;
-                }
-
-                Plugin plugin = cachedLoaders.get(searchingClazzLoader);
-                if (plugin != null) {
-                    Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
-                    map.put(plugin.getName(), elem);
-                    return map.entrySet().iterator().next();
-                } else if (clazz.getName().endsWith("VanillaCommandWrapper")) {
-                    //explicit use getName instead of SimpleName because getSimpleBinaryName causes a
-                    //StringIndexOutOfBoundsException for obfuscated plugins
-                    Map<String, StackTraceElement> map = Maps.newHashMapWithExpectedSize(1);
-                    map.put("Vanilla", elem);
-                    return map.entrySet().iterator().next();
+                    return Maps.immutableEntry(plugin.getName(), elem);
+                } catch (IllegalArgumentException illegalArgumentEx) {
+                    //ignore
                 }
             } catch (ClassNotFoundException ex) {
                 //if this class cannot be loaded then it could be something native so we ignore it
@@ -121,16 +103,5 @@ public class BlockingActionManager implements Listener {
         }
 
         return null;
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPluginEnable(PluginEnableEvent event) {
-        cachedLoaders.remove(event.getPlugin().getClass().getClassLoader());
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPluginDisable(PluginDisableEvent event) {
-        Plugin plugin = event.getPlugin();
-        cachedLoaders.put(plugin.getClass().getClassLoader(), plugin);
     }
 }

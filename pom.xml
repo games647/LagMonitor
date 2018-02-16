@@ -34,13 +34,6 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <artifactSet>
-                        <includes>
-                            <!--LOG4J from sigar is already included in Minecraft-->
-                            <include>org.fusesource:sigar</include>
-                            <include>org.graylog.repackaged:os-platform-finder</include>
-                        </includes>
-                    </artifactSet>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <!--Remove the unneeded for running sigar as a standalone-->
                     <minimizeJar>true</minimizeJar>
@@ -120,6 +113,12 @@
             <groupId>org.fusesource</groupId>
             <artifactId>sigar</artifactId>
             <version>1.6.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
