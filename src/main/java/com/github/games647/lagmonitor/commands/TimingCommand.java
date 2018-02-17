@@ -62,6 +62,11 @@ public class TimingCommand extends LagCommand {
 
         //place sampleTime here to be very accurate
         long sampleTime = System.nanoTime() - TimingsCommand.timingStart;
+        if (sampleTime <= 1_000 * 1_000 * 1_000) {
+            sender.sendMessage(ChatColor.DARK_RED + "Sampling time is too low");
+            return true;
+        }
+
         Queue<CustomTimingsHandler> handlers = Reflection.getField(CustomTimingsHandler.class, "HANDLERS", Queue.class)
                 .get(null);
 
@@ -102,7 +107,7 @@ public class TimingCommand extends LagCommand {
             }
         }
 
-        float serverLoad = 0;
+        double serverLoad = 0;
 
         for (Map.Entry<String, Timing> entry : timings.entrySet()) {
             String category = entry.getKey();
@@ -129,24 +134,25 @@ public class TimingCommand extends LagCommand {
 
                     Timing subValue = subEntry.getValue();
 
-                    float avg = (float) subValue.getTotalTime() / subValue.getTotalCount();
-                    float timesPerTick = (float) subValue.getTotalCount() / numTicks;
+                    double avg = subValue.calculateAverage();
+                    double timesPerTick = (double) subValue.getTotalCount() / numTicks;
                     if (timesPerTick > 1) {
                         avg *= timesPerTick;
                     }
 
-                    float pctTick = avg / 1000 / 1000 / 50 * 100;
+                    double pctTick = avg / 1000 / 1000 / 50 * 100;
 //                    float count = (float) subValue.getTotalCount() / 1000;
                     //->ms
                     avg = avg / 1000 / 1000;
-                    float pctTotal = (float) subValue.getTotalTime() / sampleTime * 100;
+                    double pctTotal = (double) subValue.getTotalTime() / sampleTime * 100;
                     if ("Full Server Tick".equalsIgnoreCase(event)) {
                         serverLoad = pctTick;
                     }
 
                     lines.add(TextComponent.fromLegacyText(ChatColor.DARK_AQUA + event + ' '
                             + highlightPct(round(pctTotal), 10, 20, 50)
-                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40) + " AVG: " + round(avg) + "ms"));
+                            + " Tick: " + highlightPct(round(pctTick), 3, 15, 40)
+                            + " AVG: " + round(avg) + "ms"));
                 }
             }
         }
@@ -158,7 +164,7 @@ public class TimingCommand extends LagCommand {
     }
 
     private void printHeadData(long total, long activatedEntityTicks, long numTicks, long entityTicks, long playerTicks
-            , long sampleTime, Collection<BaseComponent[]> lines, float serverLoad) {
+            , long sampleTime, Collection<BaseComponent[]> lines, double serverLoad) {
         float totalSeconds = (float) total / 1000 / 1000 / 1000;
 
         float activatedAvgEntities = (float) activatedEntityTicks / numTicks;

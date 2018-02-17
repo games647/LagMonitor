@@ -45,6 +45,14 @@ public class Timing implements Comparable<Timing> {
         this.totalCount += count;
     }
 
+    public double calculateAverage() {
+        if (totalCount == 0) {
+            return 0;
+        }
+
+        return (double) totalTime / totalCount;
+    }
+
     public Map<String, Timing> getSubCategories() {
         return subcategories;
     }

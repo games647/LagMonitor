@@ -49,7 +49,7 @@ public class LagUtils {
                         }
                     }).sum();
         } catch (IOException ioEx) {
-            logger.log(Level.INFO, "Cannot walk file tree", ioEx);
+            logger.log(Level.INFO, "Cannot walk file tree to calculate folder size", ioEx);
         }
 
         return -1;

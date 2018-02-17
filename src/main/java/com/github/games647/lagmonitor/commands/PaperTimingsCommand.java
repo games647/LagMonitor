@@ -182,7 +182,7 @@ public class PaperTimingsCommand extends LagCommand {
         long childTime = Reflection.getField(DATA_CLASS, "totalTime", Long.TYPE).get(childData);
 
         long parentTime = Reflection.getField(DATA_CLASS, "totalTime", Long.TYPE).get(parent);
-        float percent = (float) childTime / parentTime;
+        double percent = (double) childTime / parentTime;
 
         lines.add(new ComponentBuilder("    " + childName + " Count: " + childCount + " Time: " + childTime
                 + ' ' + round(percent) + '%')
@@ -199,20 +199,20 @@ public class PaperTimingsCommand extends LagCommand {
         lines.add(new ComponentBuilder("Cost: ").color(PRIMARY_COLOR)
                 .append(Long.toString(cost)).color(SECONDARY_COLOR).create());
 
-        float totalSeconds = (float) totalTime / 1000 / 1000;
+        double totalSeconds = (double) totalTime / 1000 / 1000;
 
         long playerTicks = TimingHistory.playerTicks;
         long tileEntityTicks = TimingHistory.tileEntityTicks;
         long activatedEntityTicks = TimingHistory.activatedEntityTicks;
         long entityTicks = TimingHistory.entityTicks;
 
-        float activatedAvgEntities = (float) activatedEntityTicks / totalTicks;
-        float totalAvgEntities = (float) entityTicks / totalTicks;
+        double activatedAvgEntities = (double) activatedEntityTicks / totalTicks;
+        double totalAvgEntities = (double) entityTicks / totalTicks;
 
-        float averagePlayers = (float) playerTicks / totalTicks;
+        double averagePlayers = (double) playerTicks / totalTicks;
 
-        float desiredTicks = 20 * historyInterval;
-        float averageTicks = totalTicks / desiredTicks * 20;
+        double desiredTicks = 20 * historyInterval;
+        double averageTicks = totalTicks / desiredTicks * 20;
 
         String format = ChatColor.DARK_AQUA + "%s" + ' ' + ChatColor.GRAY + "%s";
 
