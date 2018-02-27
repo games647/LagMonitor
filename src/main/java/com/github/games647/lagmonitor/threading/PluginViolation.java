@@ -65,4 +65,15 @@ public class PluginViolation {
                 && Objects.equals(sourceFile, other.sourceFile)
                 && Objects.equals(methodName, other.methodName);
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '{' +
+                "pluginName='" + pluginName + '\'' +
+                ", sourceFile='" + sourceFile + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", lineNumber=" + lineNumber +
+                ", event='" + event + '\'' +
+                '}';
+    }
 }

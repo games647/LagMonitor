@@ -18,6 +18,6 @@ public class PaginationListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent quitEvent) {
         Player player = quitEvent.getPlayer();
-        plugin.getPaginations().remove(player);
+        plugin.getPaginations().remove(player.getName());
     }
 }

@@ -68,7 +68,7 @@ public class SystemCommand extends LagCommand {
     }
 
     private void displayMinecraftInfo(CommandSender sender) {
-        //minecraft specific
+        //Minecraft specific
         sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastSample());
 
         TrafficReader trafficReader = plugin.getTrafficReader();

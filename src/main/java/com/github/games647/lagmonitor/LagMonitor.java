@@ -31,7 +31,6 @@ import java.util.Timer;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.hyperic.sigar.Sigar;
@@ -43,7 +42,7 @@ public class LagMonitor extends JavaPlugin {
     private static final int PING_INTERVAL = 2 * 20;
     private static final int DETECTION_THRESHOLD = 10;
 
-    private final Map<CommandSender, Pagination> paginations = new HashMap<>();
+    private final Map<String, Pagination> paginations = new HashMap<>();
 
     private BlockingActionManager blockActionManager;
     private TpsHistoryTask tpsHistoryTask;
@@ -194,7 +193,7 @@ public class LagMonitor extends JavaPlugin {
         }
     }
 
-    public Map<CommandSender, Pagination> getPaginations() {
+    public Map<String, Pagination> getPaginations() {
         return paginations;
     }
 

@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 public class Timing implements Comparable<Timing> {
 
     private final String category;
@@ -91,11 +89,11 @@ public class Timing implements Comparable<Timing> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("category", category)
-                .append("totalTime", totalTime)
-                .append("totalCount", totalCount)
-                .append("subcategories", subcategories)
-                .toString();
+        return this.getClass().getSimpleName() + '{' +
+                "category='" + category + '\'' +
+                ", totalTime=" + totalTime +
+                ", totalCount=" + totalCount +
+                ", subcategories=" + subcategories +
+                '}';
     }
 }

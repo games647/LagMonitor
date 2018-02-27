@@ -4,7 +4,6 @@ import com.github.games647.lagmonitor.threading.BlockingActionManager;
 
 import java.net.ProxySelector;
 import java.net.URI;
-import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +30,7 @@ public class BlockingConnectionSelectorTest {
 
     @Test
     public void testHttp() throws Exception {
-        selector.select(new URL("https://spigotmc.org").toURI());
+        selector.select(URI.create("https://spigotmc.org"));
         verify(actionManager, times(1)).checkBlockingAction(anyString());
     }
 

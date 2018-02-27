@@ -39,8 +39,8 @@ public class PlayerData {
 
     @Override
     public String toString() {
-        return "PlayerData{"
-                + "worldId=" + worldId
+        return this.getClass().getSimpleName() + '{' +
+                "worldId=" + worldId
                 + ", uuid=" + uuid
                 + ", playerName=" + playerName
                 + ", ping=" + ping

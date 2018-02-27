@@ -82,7 +82,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
         Pagination pagination = new Pagination("Stacktrace", lines);
         pagination.send(sender);
-        plugin.getPaginations().put(sender, pagination);
+        plugin.getPaginations().put(sender.getName(), pagination);
     }
 
     @Override

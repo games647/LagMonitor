@@ -68,7 +68,7 @@ lagmonitor.commands.* - Access to all commands
     /mbean - List all available mbeans (java environment information, JMX)
     /mbean <beanName> - List all available attributes of this mbean
     /mbean <beanName> <attribute> - Outputs the value of this attribute
-    /system - Gives you some general information (minecraft server related)
+    /system - Gives you some general information (Minecraft server related)
     /env - Gives you some general information (OS related)
     /timing - Outputs your server timings ingame
     /monitor [start/stop/paste] - Monitors the CPU usage of methods

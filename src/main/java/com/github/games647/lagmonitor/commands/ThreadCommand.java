@@ -79,7 +79,7 @@ public class ThreadCommand extends DumpCommand {
 
         Pagination pagination = new Pagination("Threads", lines);
         pagination.send(sender);
-        plugin.getPaginations().put(sender, pagination);
+        plugin.getPaginations().put(sender.getName(), pagination);
         return true;
     }
 

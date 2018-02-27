@@ -40,7 +40,7 @@ commands:
         usage: '/<command> [beanName] [attribute]'
         permission: ${project.artifactId}.command.mbean
     system:
-        description: 'Gives you some general information (minecraft server related)'
+        description: 'Gives you some general information (Minecraft server related)'
         permission: ${project.artifactId}.command.system
     timing:
         description: 'Outputs your server timings ingame'

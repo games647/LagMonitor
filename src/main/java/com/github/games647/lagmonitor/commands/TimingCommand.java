@@ -76,7 +76,7 @@ public class TimingCommand extends LagCommand {
         Pagination pagination = new Pagination("Paper Timings", lines);
         pagination.send(sender);
 
-        this.plugin.getPaginations().put(sender, pagination);
+        this.plugin.getPaginations().put(sender.getName(), pagination);
         return true;
     }
 

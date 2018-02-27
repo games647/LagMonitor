@@ -59,4 +59,14 @@ public class RollingOverHistory {
     public float[] getSamples() {
         return Arrays.copyOf(samples, samples.length);
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '{' +
+                "samples=" + Arrays.toString(samples) +
+                ", total=" + total +
+                ", currentPosition=" + currentPosition +
+                ", currentSize=" + currentSize +
+                '}';
+    }
 }

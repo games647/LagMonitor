@@ -51,8 +51,8 @@ public class WorldData {
 
     @Override
     public String toString() {
-        return "WorldData{" 
-                + "worldName=" + worldName
+        return this.getClass().getSimpleName() + '{' +
+                "worldName=" + worldName
                 + ", loadedChunks=" + loadedChunks
                 + ", tileEntities=" + tileEntities
                 + ", entities=" + entities

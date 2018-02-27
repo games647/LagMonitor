@@ -30,7 +30,7 @@ public class PaginationCommand extends DumpCommand {
             return true;
         }
 
-        Pagination pagination = plugin.getPaginations().get(sender);
+        Pagination pagination = plugin.getPaginations().get(sender.getName());
         if (pagination == null) {
             sender.sendMessage(ChatColor.DARK_RED + "You have no pagination session");
             return true;

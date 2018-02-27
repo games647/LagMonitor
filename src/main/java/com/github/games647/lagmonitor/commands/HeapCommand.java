@@ -69,7 +69,7 @@ public class HeapCommand extends DumpCommand {
 
             Pagination pagination = new Pagination("Heap", paginatedLines);
             pagination.send(sender);
-            plugin.getPaginations().put(sender, pagination);
+            plugin.getPaginations().put(sender.getName(), pagination);
         } catch (InstanceNotFoundException instanceNotFoundException) {
             plugin.getLogger().log(Level.SEVERE, "You are not using Oracle JVM. OpenJDK hasn't implemented it yet"
                     , instanceNotFoundException);
