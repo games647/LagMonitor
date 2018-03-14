@@ -25,7 +25,7 @@ public class LagUtils {
         return bd.floatValue();
     }
 
-    public static String readableByteCount(long bytes) {
+    public static String readableBytes(long bytes) {
         //https://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
         int unit = 1024;
         if (bytes < unit) {

@@ -42,18 +42,6 @@ traffic-counter: true
 # * Network download/upload (per second or since startup)
 # * OS uptime
 # * Network adapter speed
-# * RAM cache
-# * CPU i/o wait percentage
-#
-# This makes it possible to use graphs also for these data. Similar to the Ubuntu util:
-# System load indicator: https://i.imgur.com/sxTfTjB.png
-#
-# Download it from here: https://support.hyperic.com/display/SIGAR/Home#Home-download
-# Then place the driver for your OS into the plugin folder where this config is located.
-# You can find the drivers in the zip file in the folder "hyperic-sigar-1.6.4/sigar-bin/lib"
-#
-# If you don't know which driver you need, you can invoke /env or activate this option and
-# invoke /hardware - This plugin will show which driver it exactly want.
 native-library: false
 
 # If you enable this, it will save some monitoring data periodically into a MySQL database
@@ -87,6 +75,10 @@ native-save-interval: 1200
 #
 # Everything starts with 'whitelist-' and then the command name
 #
+# You can add as many commands as you want to
+# If the command doesn't exist here it won't be whitelisted at all
+# Everyone who has the permission for that command can then use it.
+#
 # Here an example for the native command:
 # whitelist-native:
 #     - PlayerName
@@ -95,6 +87,4 @@ whitelist-commandname:
     - PlayerName
     - Example
 
-# You can add as many commands as you want to
-# If the command doesn't exist here it won't be whitelisted at all
-# Everyone who has the permission for that command can then use it.
+

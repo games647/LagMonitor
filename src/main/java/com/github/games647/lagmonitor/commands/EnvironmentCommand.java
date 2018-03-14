@@ -10,9 +10,9 @@ import java.text.DecimalFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.jsoftbiz.utils.OS;
+import oshi.SystemInfo;
 
-import static com.github.games647.lagmonitor.LagUtils.readableByteCount;
+import static com.github.games647.lagmonitor.LagUtils.readableBytes;
 
 public class EnvironmentCommand extends LagCommand {
 
@@ -34,7 +34,13 @@ public class EnvironmentCommand extends LagCommand {
 
         //os general info
         sender.sendMessage(PRIMARY_COLOR + "OS Name: " + SECONDARY_COLOR + osBean.getName());
-        sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + OS.getOs().getPlatformName());
+
+        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+        if (systemInfo != null) {
+            String codeName = systemInfo.getOperatingSystem().getVersion().getCodeName();
+            System.out.println(systemInfo.getOperatingSystem().getVersion());
+            sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + codeName);
+        }
 
         sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
         sender.sendMessage(PRIMARY_COLOR + "OS Arch: " + SECONDARY_COLOR + osBean.getArch());
@@ -69,14 +75,14 @@ public class EnvironmentCommand extends LagCommand {
         //swap
         long totalSwap = nativeData.getTotalSwap();
         long freeSwap = nativeData.getFreeSwap();
-        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + readableByteCount(totalSwap));
-        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + readableByteCount(freeSwap));
+        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + readableBytes(totalSwap));
+        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + readableBytes(freeSwap));
 
         //RAM
         long totalMemory = nativeData.getTotalMemory();
         long freeMemory = nativeData.getFreeMemory();
-        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory));
-        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + readableBytes(totalMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + readableBytes(freeMemory));
     }
 
     private void displayDiskSpace(CommandSender sender) {
@@ -84,7 +90,7 @@ public class EnvironmentCommand extends LagCommand {
         long totalSpace = plugin.getNativeData().getTotalSpace();
 
         //Disk info
-        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + readableByteCount(totalSpace));
-        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + readableByteCount(freeSpace));
+        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + readableBytes(totalSpace));
+        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + readableBytes(freeSpace));
     }
 }

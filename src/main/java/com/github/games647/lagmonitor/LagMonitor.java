@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.hyperic.sigar.Sigar;
+import oshi.SystemInfo;
 
 public class LagMonitor extends JavaPlugin {
 
@@ -111,8 +111,7 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("native-library")) {
-            Sigar sigar = new Sigar();
-            nativeData = new NativeData(getLogger(), sigar);
+            nativeData = new NativeData(getLogger(), new SystemInfo());
         } else {
             nativeData = new NativeData(getLogger(), null);
         }
@@ -174,10 +173,6 @@ public class LagMonitor extends JavaPlugin {
         if (securityManager instanceof BlockingSecurityManager) {
             SecurityManager oldSecurityManager = ((BlockingSecurityManager) securityManager).getOldSecurityManager();
             System.setSecurityManager(oldSecurityManager);
-        }
-
-        if (nativeData != null) {
-            nativeData.close();
         }
 
         ProxySelector proxySelector = ProxySelector.getDefault();

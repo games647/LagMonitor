@@ -20,7 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
-import static com.github.games647.lagmonitor.LagUtils.readableByteCount;
+import static com.github.games647.lagmonitor.LagUtils.readableBytes;
 
 public class SystemCommand extends LagCommand {
 
@@ -60,9 +60,9 @@ public class SystemCommand extends LagCommand {
         sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
 
 
-        sender.sendMessage(PRIMARY_COLOR + "Max Heap RAM: " + SECONDARY_COLOR + readableByteCount(maxMemory));
-        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableByteCount(totalMemory));
-        sender.sendMessage(PRIMARY_COLOR + "Free Heap RAM: " + SECONDARY_COLOR + readableByteCount(freeMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Max Heap RAM: " + SECONDARY_COLOR + readableBytes(maxMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableBytes(totalMemory));
+        sender.sendMessage(PRIMARY_COLOR + "Free Heap RAM: " + SECONDARY_COLOR + readableBytes(freeMemory));
 
         sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
     }
@@ -73,8 +73,8 @@ public class SystemCommand extends LagCommand {
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
-            String formattedIncoming = readableByteCount(trafficReader.getIncomingBytes().get());
-            String formattedOutgoing = readableByteCount(trafficReader.getOutgoingBytes().get());
+            String formattedIncoming = readableBytes(trafficReader.getIncomingBytes().get());
+            String formattedOutgoing = readableBytes(trafficReader.getOutgoingBytes().get());
             sender.sendMessage(PRIMARY_COLOR + "Incoming Traffic: " + SECONDARY_COLOR + formattedIncoming);
             sender.sendMessage(PRIMARY_COLOR + "Outgoing Traffic: " + SECONDARY_COLOR + formattedOutgoing);
         }
@@ -118,7 +118,7 @@ public class SystemCommand extends LagCommand {
         sender.sendMessage(PRIMARY_COLOR + "Tile Entities: " + SECONDARY_COLOR + tileEntities);
         sender.sendMessage(PRIMARY_COLOR + "Loaded Chunks: " + SECONDARY_COLOR + chunks);
         sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
-        sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableByteCount(usedWorldSize));
+        sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableBytes(usedWorldSize));
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {

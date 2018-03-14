@@ -8,13 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.logging.Level;
 
-import org.hyperic.sigar.FileSystemUsage;
-import org.hyperic.sigar.NetInterfaceStat;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
-import org.hyperic.sigar.SigarProxy;
+import oshi.SystemInfo;
+import oshi.hardware.NetworkIF;
+import oshi.software.os.OSProcess;
 
 import static com.github.games647.lagmonitor.LagUtils.round;
 
@@ -64,34 +61,33 @@ public class NativeSaveTask implements Runnable {
         int netReadDiff = 0;
         int netWriteDiff = 0;
 
-        Sigar sigar = plugin.getNativeData().getSigar();
-        if (sigar != null) {
-            try {
-                Path root = Paths.get(".").getRoot();
-                if (root != null) {
-                    String rootFileSystem = root.toAbsolutePath().toString();
-                    FileSystemUsage fileSystemUsage = sigar.getFileSystemUsage(rootFileSystem);
-                    int diskRead = LagUtils.byteToMega(fileSystemUsage.getDiskReadBytes());
-                    diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
-                    lastDiskRead = diskRead;
+        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+        if (systemInfo != null) {
+            Path root = Paths.get(".").getRoot();
+            if (root != null) {
+                String rootFileSystem = root.toAbsolutePath().toString();
 
-                    int diskWrite = LagUtils.byteToMega(fileSystemUsage.getDiskWriteBytes());
-                    diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
-                    lastDiskWrite = diskRead;
-                }
+                OSProcess process = plugin.getNativeData().getProces();
+                int diskRead = LagUtils.byteToMega(process.getBytesRead());
+                diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
+                lastDiskRead = diskRead;
 
-                NetInterfaceStat usedNetInterfaceStat = findNetworkInterface(sigar);
-                if (usedNetInterfaceStat != null) {
-                    int netRead = LagUtils.byteToMega(usedNetInterfaceStat.getRxBytes());
-                    netReadDiff = (netRead - lastNetRead) / timeDiff;
-                    lastNetRead = netRead;
+                int diskWrite = LagUtils.byteToMega(process.getBytesWritten());
+                diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
+                lastDiskWrite = diskRead;
+            }
 
-                    int netWrite = LagUtils.byteToMega(usedNetInterfaceStat.getTxBytes());
-                    netWriteDiff = (netWrite - lastNetWrite) / timeDiff;
-                    lastNetWrite = netWrite;
-                }
-            } catch (SigarException ex) {
-                plugin.getLogger().log(Level.SEVERE, "Failed to get the disk read/writer for database monitoring", ex);
+            NetworkIF[] networkIfs = systemInfo.getHardware().getNetworkIFs();
+            if (networkIfs.length > 0) {
+                NetworkIF networkInterface = networkIfs[0];
+
+                int netRead = LagUtils.byteToMega(networkInterface.getBytesRecv());
+                netReadDiff = (netRead - lastNetRead) / timeDiff;
+                lastNetRead = netRead;
+
+                int netWrite = LagUtils.byteToMega(networkInterface.getBytesSent());
+                netWriteDiff = (netWrite - lastNetWrite) / timeDiff;
+                lastNetWrite = netWrite;
             }
         }
 
@@ -99,19 +95,5 @@ public class NativeSaveTask implements Runnable {
 
         plugin.getStorage().saveNative(mcReadDiff, mcWriteDiff, freeSpace, freeSpacePct, diskReadDiff, diskWriteDiff
                 , netReadDiff, netWriteDiff);
-    }
-
-    private NetInterfaceStat findNetworkInterface(SigarProxy sigar) throws SigarException {
-        NetInterfaceStat usedNetInterfaceStat = null;
-        String[] netInterfaceList = sigar.getNetInterfaceList();
-        for (String interfaceName : netInterfaceList) {
-            NetInterfaceStat interfaceStat = sigar.getNetInterfaceStat(interfaceName);
-            if (interfaceStat.getRxBytes() != 0) {
-                usedNetInterfaceStat = interfaceStat;
-                break;
-            }
-        }
-
-        return usedNetInterfaceStat;
     }
 }

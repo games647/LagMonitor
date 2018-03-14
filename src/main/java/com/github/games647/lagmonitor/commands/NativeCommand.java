@@ -1,27 +1,17 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.LagUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.hyperic.sigar.CpuInfo;
-import org.hyperic.sigar.CpuPerc;
-import org.hyperic.sigar.DiskUsage;
-import org.hyperic.sigar.FileSystem;
-import org.hyperic.sigar.Mem;
-import org.hyperic.sigar.NetInterfaceStat;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
-import org.hyperic.sigar.SigarProxy;
-
-import static java.util.stream.Collectors.toList;
+import oshi.SystemInfo;
+import oshi.hardware.HWDiskStore;
+import oshi.hardware.NetworkIF;
+import oshi.software.os.OSFileStore;
 
 public class NativeCommand extends LagCommand {
 
@@ -44,94 +34,63 @@ public class NativeCommand extends LagCommand {
             return true;
         }
 
+        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+
         //swap and load is already available in the environment command because MBeans already supports this
-        Sigar sigar = plugin.getNativeData().getSigar();
-        try {
-            int uptime = (int) sigar.getUptime().getUptime();
-            sender.sendMessage(PRIMARY_COLOR + "OS Uptime: " + SECONDARY_COLOR + formatUptime(uptime));
+        long uptime = systemInfo.getHardware().getProcessor().getSystemUptime();
+        sender.sendMessage(PRIMARY_COLOR + "OS Uptime: " + SECONDARY_COLOR + formatUptime(uptime));
 
-            CpuInfo[] cpuInfoList = sigar.getCpuInfoList();
-            int mhz = cpuInfoList[0].getMhz();
-            sender.sendMessage(PRIMARY_COLOR + "CPU MHZ: " + SECONDARY_COLOR + mhz);
+        long mhz = systemInfo.getHardware().getProcessor().getVendorFreq();
+        sender.sendMessage(PRIMARY_COLOR + "CPU MHZ: " + SECONDARY_COLOR + mhz);
 
-            CpuPerc cpuPerc = sigar.getCpuPerc();
-            //IO wait
-            double wait = cpuPerc.getWait();
-            sender.sendMessage(PRIMARY_COLOR + "CPU Wait (I/O): " + SECONDARY_COLOR + wait + '%');
+        // //IO wait
+        // double wait = cpuPerc.getWait();
+        // sender.sendMessage(PRIMARY_COLOR + "CPU Wait (I/O): " + SECONDARY_COLOR + wait + '%');
+        //
+        // Mem mem = sigar.getMem();
+        // //included cache
+        // long actualUsed = mem.getActualUsed();
+        // long used = mem.getUsed();
+        //
+        // long cache = used - actualUsed;
+        // sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
 
-            Mem mem = sigar.getMem();
-            //included cache
-            long actualUsed = mem.getActualUsed();
-            long used = mem.getUsed();
+        printNetworkInfo(sender, systemInfo);
 
-            long cache = used - actualUsed;
-            sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
+        //disk read write
+        HWDiskStore[] diskStores = systemInfo.getHardware().getDiskStores();
+        long diskReads = Arrays.stream(diskStores).mapToLong(HWDiskStore::getReadBytes).sum();
+        long diskWrites = Arrays.stream(diskStores).mapToLong(HWDiskStore::getWriteBytes).sum();
 
-            printNetworkInfo(sender, sigar);
+        sender.sendMessage(PRIMARY_COLOR + "Disk read bytes: " + SECONDARY_COLOR + LagUtils.readableBytes(diskReads));
+        sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + LagUtils.readableBytes(diskWrites));
 
-            //disk read write
-            List<String> diskNames = Arrays.stream(sigar.getFileSystemList())
-                    .map(FileSystem::getDevName)
-                    .filter(name -> name.startsWith("/dev/sd"))
-                    .distinct()
-                    .collect(toList());
-
-            Collection<DiskUsage> diskUsages = new ArrayList<>();
-            for (String diskName : diskNames) {
-                diskUsages.add(sigar.getDiskUsage(diskName));
-            }
-
-            long diskReads = diskUsages.stream().mapToLong(DiskUsage::getReadBytes).sum();
-            long diskWrites = diskUsages.stream().mapToLong(DiskUsage::getWriteBytes).sum();
-
-
-            String diskReadBytes = Sigar.formatSize(diskReads);
-            String diskWriteBytes = Sigar.formatSize(diskWrites);
-
-            sender.sendMessage(PRIMARY_COLOR + "Disk read bytes: " + SECONDARY_COLOR + diskReadBytes);
-            sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + diskWriteBytes);
-
-            sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
-            for (FileSystem fileSystem : sigar.getFileSystemList()) {
-                String dirName = fileSystem.getDirName();
-                String typeName = fileSystem.getSysTypeName();
-                sender.sendMessage(PRIMARY_COLOR + dirName + " - " + SECONDARY_COLOR + typeName);
-            }
-        } catch (SigarException sigarException) {
-            plugin.getLogger().log(Level.SEVERE, null, sigarException);
+        sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
+        for (OSFileStore fileStore : systemInfo.getOperatingSystem().getFileSystem().getFileStores()) {
+            sender.sendMessage(PRIMARY_COLOR + fileStore.getMount() + " - " + SECONDARY_COLOR + fileStore.getType());
         }
 
         return true;
     }
 
-    private void printNetworkInfo(CommandSender sender, SigarProxy sigar) throws SigarException {
+    private void printNetworkInfo(CommandSender sender, SystemInfo info) {
         //net upload download
-        NetInterfaceStat usedNetInterfaceStat = null;
-        String[] netInterfaceList = sigar.getNetInterfaceList();
-        for (String interfaceName : netInterfaceList) {
-            NetInterfaceStat interfaceStat = sigar.getNetInterfaceStat(interfaceName);
-            if (interfaceStat.getRxBytes() != 0) {
-                usedNetInterfaceStat = interfaceStat;
-                break;
-            }
-        }
+        NetworkIF[] networkIfs = info.getHardware().getNetworkIFs();
+        if (networkIfs.length > 0) {
+            NetworkIF networkInterface = networkIfs[0];
 
-        if (usedNetInterfaceStat != null) {
-            long speed = usedNetInterfaceStat.getSpeed();
-            sender.sendMessage(PRIMARY_COLOR + "Net Speed: " + SECONDARY_COLOR + Sigar.formatSize(speed));
-
-            long receivedBytes = usedNetInterfaceStat.getRxBytes();
-            long sentBytes = usedNetInterfaceStat.getTxBytes();
-            sender.sendMessage(PRIMARY_COLOR + "Net Rec: " + SECONDARY_COLOR + Sigar.formatSize(receivedBytes));
-            sender.sendMessage(PRIMARY_COLOR + "Net Sent: " + SECONDARY_COLOR + Sigar.formatSize(sentBytes));
+            String receivedBytes = LagUtils.readableBytes(networkInterface.getBytesRecv());
+            String sentBytes = LagUtils.readableBytes(networkInterface.getBytesSent());
+            sender.sendMessage(PRIMARY_COLOR + "Net Rec: " + SECONDARY_COLOR + receivedBytes);
+            sender.sendMessage(PRIMARY_COLOR + "Net Sent: " + SECONDARY_COLOR + sentBytes);
         }
     }
 
-    private String formatUptime(int uptime) {
-        int days = uptime / (60 * 60 * 24);
+    private String formatUptime(long uptime) {
+        long days = uptime / (60 * 60 * 24);
 
-        int minutes = uptime / 60;
-        int hours = minutes / 60;
+        long minutes = uptime / 60;
+        long hours = minutes / 60;
         hours %= 24;
         minutes %= 60;
         return days + " days " + hours + " hours " + minutes + " Minutes";

@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>LagMonitor</name>
-    <version>1.16.1</version>
+    <version>1.17</version>
 
     <url>https://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
@@ -17,7 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <powermock.version>1.7.1</powermock.version>
+        <powermock.version>1.7.3</powermock.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -93,6 +93,19 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Native data API -->
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>3.4.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.java.dev.jna</groupId>
+                    <artifactId>jna-platform</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -107,24 +120,6 @@
             <artifactId>netty-all</artifactId>
             <version>4.0.23.Final</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.fusesource</groupId>
-            <artifactId>sigar</artifactId>
-            <version>1.6.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.graylog.repackaged</groupId>
-            <artifactId>os-platform-finder</artifactId>
-            <version>1.2.2</version>
         </dependency>
 
         <dependency>
