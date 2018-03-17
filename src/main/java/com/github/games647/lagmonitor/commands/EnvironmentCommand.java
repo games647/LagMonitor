@@ -37,9 +37,8 @@ public class EnvironmentCommand extends LagCommand {
 
         SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
         if (systemInfo != null) {
-            String codeName = systemInfo.getOperatingSystem().getVersion().getCodeName();
-            System.out.println(systemInfo.getOperatingSystem().getVersion());
-            sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + codeName);
+            String family = systemInfo.getOperatingSystem().getFamily();
+            sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + family);
         }
 
         sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
