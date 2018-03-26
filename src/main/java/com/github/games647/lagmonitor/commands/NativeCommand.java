@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import oshi.SystemInfo;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.NetworkIF;
+import oshi.hardware.Sensors;
 import oshi.software.os.OSFileStore;
 
 public class NativeCommand extends LagCommand {
@@ -48,8 +49,19 @@ public class NativeCommand extends LagCommand {
 
         printNetworkInfo(sender, systemInfo);
         printDiskInfo(sender, systemInfo);
+        printSensorsInfo(sender, systemInfo);
 
         return true;
+    }
+
+    private void printSensorsInfo(CommandSender sender, SystemInfo systemInfo) {
+        Sensors sensors = systemInfo.getHardware().getSensors();
+        double cpuTemperature = sensors.getCpuTemperature();
+        sendMessage(sender, "CPU Temp °C", String.valueOf(LagUtils.round(cpuTemperature)));
+        sendMessage(sender, "Voltage", String.valueOf(LagUtils.round(sensors.getCpuVoltage())));
+
+        int[] fanSpeeds = sensors.getFanSpeeds();
+        sendMessage(sender, "Fan speed (rpm)", Arrays.toString(fanSpeeds));
     }
 
     private void printDiskInfo(CommandSender sender, SystemInfo systemInfo) {
