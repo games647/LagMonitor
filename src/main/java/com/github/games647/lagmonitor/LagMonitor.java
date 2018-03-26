@@ -167,7 +167,7 @@ public class LagMonitor extends JavaPlugin {
 
         ProxySelector proxySelector = ProxySelector.getDefault();
         if (proxySelector instanceof BlockingConnectionSelector) {
-            ((Injectable) securityManager).restore();
+            ((Injectable) proxySelector).restore();
         }
 
         for (Plugin plugin : getServer().getPluginManager().getPlugins()) {

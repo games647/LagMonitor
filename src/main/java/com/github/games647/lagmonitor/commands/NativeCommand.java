@@ -7,7 +7,12 @@ import java.util.Arrays;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.FormatStyle;
 import oshi.SystemInfo;
+import oshi.hardware.Baseboard;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.Firmware;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.NetworkIF;
 import oshi.hardware.Sensors;
@@ -50,8 +55,33 @@ public class NativeCommand extends LagCommand {
         printNetworkInfo(sender, systemInfo);
         printDiskInfo(sender, systemInfo);
         printSensorsInfo(sender, systemInfo);
+        printBoardInfo(sender, systemInfo);
 
         return true;
+    }
+
+    private void printBoardInfo(CommandSender sender, SystemInfo systemInfo) {
+        ComputerSystem computerSystem = systemInfo.getHardware().getComputerSystem();
+        sendMessage(sender, "System Manufacturer", computerSystem.getManufacturer());
+        sendMessage(sender, "System model", computerSystem.getModel());
+        sendMessage(sender, "Serial number", computerSystem.getSerialNumber());
+
+        sender.sendMessage(PRIMARY_COLOR + "Baseboard:");
+        Baseboard baseboard = computerSystem.getBaseboard();
+        sendMessage(sender, "    Manufacturer", baseboard.getManufacturer());
+        sendMessage(sender, "    Model", baseboard.getModel());
+        sendMessage(sender, "    Serial", baseboard.getVersion());
+        sendMessage(sender, "    Version", baseboard.getVersion());
+
+        sender.sendMessage(PRIMARY_COLOR + "BIOS Firmware:");
+        Firmware firmware = computerSystem.getFirmware();
+        sendMessage(sender, "    Manufacturer", firmware.getManufacturer());
+        sendMessage(sender, "    Name", firmware.getName());
+        sendMessage(sender, "    Description", firmware.getDescription());
+        sendMessage(sender, "    Version", firmware.getVersion());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+        sendMessage(sender, "    Release date", firmware.getReleaseDate().format(formatter));
     }
 
     private void printSensorsInfo(CommandSender sender, SystemInfo systemInfo) {
