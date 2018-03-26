@@ -113,7 +113,7 @@ public class PaperTimingsCommand extends LagCommand {
         Pagination pagination = new Pagination("Paper Timings", lines);
         pagination.send(sender);
 
-        this.plugin.getPaginations().put(sender.getName(), pagination);
+        plugin.getPaginationManager().setPagination(sender.getName(), pagination);
         return true;
     }
 
@@ -190,7 +190,6 @@ public class PaperTimingsCommand extends LagCommand {
 
     private void printHeadData(TimingHistory lastHistory, Collection<BaseComponent[]> lines) {
         // Represents all time spent running the server this history
-
         long totalTime = Reflection.getField(TimingHistory.class, "totalTime", Long.TYPE).get(lastHistory);
         long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
 

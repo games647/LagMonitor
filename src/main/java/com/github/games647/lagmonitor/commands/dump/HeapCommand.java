@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
@@ -69,7 +69,7 @@ public class HeapCommand extends DumpCommand {
 
             Pagination pagination = new Pagination("Heap", paginatedLines);
             pagination.send(sender);
-            plugin.getPaginations().put(sender.getName(), pagination);
+            plugin.getPaginationManager().setPagination(sender.getName(), pagination);
         } catch (InstanceNotFoundException instanceNotFoundException) {
             plugin.getLogger().log(Level.SEVERE, "You are not using Oracle JVM. OpenJDK hasn't implemented it yet"
                     , instanceNotFoundException);

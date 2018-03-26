@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.commands.dump.DumpCommand;
 import com.google.common.primitives.Ints;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class PaginationCommand extends DumpCommand {
             return true;
         }
 
-        Pagination pagination = plugin.getPaginations().get(sender.getName());
+        Pagination pagination = plugin.getPaginationManager().getPagination(sender.getName());
         if (pagination == null) {
             sender.sendMessage(ChatColor.DARK_RED + "You have no pagination session");
             return true;

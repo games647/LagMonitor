@@ -2,7 +2,6 @@ package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.threading.BlockingActionManager;
 
-import java.net.ProxySelector;
 import java.net.URI;
 
 import org.junit.Before;
@@ -25,7 +24,7 @@ public class BlockingConnectionSelectorTest {
 
     @Before
     public void setUp() throws Exception {
-        this.selector = new BlockingConnectionSelector(actionManager, ProxySelector.getDefault());
+        this.selector = new BlockingConnectionSelector(actionManager);
     }
 
     @Test

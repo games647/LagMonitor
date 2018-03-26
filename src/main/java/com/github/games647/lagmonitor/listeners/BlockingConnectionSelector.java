@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.listeners;
 
 import com.github.games647.lagmonitor.threading.BlockingActionManager;
+import com.github.games647.lagmonitor.threading.Injectable;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -11,16 +12,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class BlockingConnectionSelector extends ProxySelector {
+public class BlockingConnectionSelector extends ProxySelector implements Injectable {
 
     private static final Pattern WWW_PATERN = Pattern.compile("www", Pattern.LITERAL);
 
     private final BlockingActionManager actionManager;
-    private final ProxySelector oldProxySelector;
+    private ProxySelector oldProxySelector;
 
-    public BlockingConnectionSelector(BlockingActionManager actionManager, ProxySelector oldProxySelector) {
+    public BlockingConnectionSelector(BlockingActionManager actionManager) {
         this.actionManager = actionManager;
-        this.oldProxySelector = oldProxySelector;
     }
 
     @Override
@@ -40,7 +40,19 @@ public class BlockingConnectionSelector extends ProxySelector {
         }
     }
 
-    public ProxySelector getOldProxySelector() {
-        return oldProxySelector;
+    @Override
+    public void inject() {
+        ProxySelector proxySelector = ProxySelector.getDefault();
+        if (proxySelector != this) {
+            oldProxySelector = proxySelector;
+            ProxySelector.setDefault(this);
+        }
+    }
+
+    @Override
+    public void restore() {
+        if (ProxySelector.getDefault() == this) {
+            ProxySelector.setDefault(oldProxySelector);
+        }
     }
 }

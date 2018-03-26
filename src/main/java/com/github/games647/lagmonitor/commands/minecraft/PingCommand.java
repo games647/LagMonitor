@@ -1,6 +1,7 @@
 package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.LagUtils;
 import com.github.games647.lagmonitor.RollingOverHistory;
 import com.github.games647.lagmonitor.commands.LagCommand;
 
@@ -25,7 +26,7 @@ public class PingCommand extends LagCommand {
         if (args.length > 0) {
             displayPingOther(sender, command, args);
         } else if (sender instanceof Player) {
-            RollingOverHistory sampleHistory = plugin.getPingHistoryTask().getHistory(sender.getName());
+            RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(sender.getName());
             if (sampleHistory == null) {
                 sender.sendMessage(ChatColor.DARK_RED + "Sorry there is currently no data available");
                 return true;
@@ -46,7 +47,7 @@ public class PingCommand extends LagCommand {
     private void displayPingOther(CommandSender sender, Command command, String[] args) {
         if (sender.hasPermission(command.getPermission() + ".other")) {
             String playerName = args[0];
-            RollingOverHistory sampleHistory = plugin.getPingHistoryTask().getHistory(playerName);
+            RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(playerName);
             if (sampleHistory == null) {
                 sender.sendMessage(ChatColor.DARK_RED + "No data for that player " + playerName);
                 return;
@@ -57,7 +58,7 @@ public class PingCommand extends LagCommand {
             sender.sendMessage(ChatColor.WHITE + playerName + PRIMARY_COLOR + "'s ping is: "
                     + ChatColor.DARK_GREEN + lastPing + "ms");
 
-            float pingAverage = (float) (Math.round(sampleHistory.getAverage() * 100.0) / 100.0);
+            float pingAverage = LagUtils.round(sampleHistory.getAverage());
             sender.sendMessage(PRIMARY_COLOR + "Average: " + ChatColor.DARK_GREEN + pingAverage + "ms");
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission");

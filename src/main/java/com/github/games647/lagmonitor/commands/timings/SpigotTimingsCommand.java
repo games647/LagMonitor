@@ -31,12 +31,12 @@ import static com.github.games647.lagmonitor.LagUtils.round;
  * Parsed from the PHP project by aikar
  * https://github.com/aikar/timings
  */
-public class TimingCommand extends LagCommand {
+public class SpigotTimingsCommand extends LagCommand {
 
     //these timings will be in the breakdown report
     private static final String EXCLUDE_IDENTIFIER = "** ";
 
-    public TimingCommand(LagMonitor plugin) {
+    public SpigotTimingsCommand(LagMonitor plugin) {
         super(plugin);
     }
 
@@ -77,7 +77,7 @@ public class TimingCommand extends LagCommand {
         Pagination pagination = new Pagination("Paper Timings", lines);
         pagination.send(sender);
 
-        this.plugin.getPaginations().put(sender.getName(), pagination);
+        this.plugin.getPaginationManager().setPagination(sender.getName(), pagination);
         return true;
     }
 

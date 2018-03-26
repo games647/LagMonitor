@@ -9,15 +9,25 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 
-public class PingHistoryTask implements Runnable {
+public class PingManager implements Runnable, Listener {
 
     private static final int SAMPLE_SIZE = 5;
 
     private final Map<String, RollingOverHistory> playerHistory = new HashMap<>();
+    private final Plugin plugin;
 
     private Method getHandleMethod;
     private Field pingField;
+
+    public PingManager(Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public void run() {
@@ -68,5 +78,24 @@ public class PingHistoryTask implements Runnable {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent joinEvent) {
+        Player player = joinEvent.getPlayer();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline()) {
+                addPlayer(player);
+            }
+        }, 2 * 20L);
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent quitEvent) {
+        removePlayer(quitEvent.getPlayer());
+    }
+
+    public void clear() {
+        playerHistory.clear();
     }
 }

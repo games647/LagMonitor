@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor.listeners;
 
-import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.threading.BlockingActionManager;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -29,10 +29,10 @@ import org.bukkit.event.world.WorldUnloadEvent;
  */
 public class ThreadSafetyListener implements Listener {
 
-    private final LagMonitor plugin;
+    private final BlockingActionManager actionManager;
 
-    public ThreadSafetyListener(LagMonitor plugin) {
-        this.plugin = plugin;
+    public ThreadSafetyListener(BlockingActionManager actionManager) {
+        this.actionManager = actionManager;
     }
 
     @EventHandler
@@ -129,7 +129,7 @@ public class ThreadSafetyListener implements Listener {
         //async executing of sync event
         String eventName = eventType.getEventName();
         if (!eventType.isAsynchronous()) {
-            plugin.getBlockActionManager().checkThreadSafety(eventName);
+            actionManager.checkThreadSafety(eventName);
         }
     }
 }

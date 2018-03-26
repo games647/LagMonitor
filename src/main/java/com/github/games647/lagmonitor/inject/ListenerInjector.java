@@ -55,7 +55,7 @@ public class ListenerInjector implements EventExecutor {
         }
     }
 
-    public static void uninject(Plugin plugin) {
+    public static void restore(Plugin plugin) {
         List<RegisteredListener> listeners = HandlerList.getRegisteredListeners(plugin);
         for (RegisteredListener listener : listeners) {
             HandlerList.unregisterAll(listener.getListener());

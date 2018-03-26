@@ -1,6 +1,7 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.commands.LagCommand;
 
 import java.lang.management.ManagementFactory;
 import java.nio.file.Path;

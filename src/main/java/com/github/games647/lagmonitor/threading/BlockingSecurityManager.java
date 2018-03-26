@@ -1,31 +1,20 @@
 package com.github.games647.lagmonitor.threading;
 
-import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.FilePermission;
 import java.security.Permission;
 import java.util.Set;
 
-public class BlockingSecurityManager extends SecurityManager {
+public class BlockingSecurityManager extends SecurityManager implements Injectable {
 
-    private final LagMonitor plugin;
-    private final SecurityManager delegate;
-
+    private final BlockingActionManager actionManager;
     private final Set<String> fileWhitelist = ImmutableSet.of(".jar", "session.lock");
 
-    public BlockingSecurityManager(LagMonitor plugin, SecurityManager delegate) {
-        this.plugin = plugin;
+    private SecurityManager delegate;
 
-        this.delegate = delegate;
-    }
-
-    public BlockingSecurityManager(LagMonitor plugin) {
-        this(plugin, System.getSecurityManager());
-    }
-
-    public SecurityManager getOldSecurityManager() {
-        return delegate;
+    public BlockingSecurityManager(BlockingActionManager actionManager) {
+        this.actionManager = actionManager;
     }
 
     @Override
@@ -48,16 +37,30 @@ public class BlockingSecurityManager extends SecurityManager {
 
     private void checkMainThreadOperation(Permission perm) {
         if (isBlockingAction(perm)) {
-            plugin.getBlockActionManager().checkBlockingAction("Permission: " + perm.getName());
+            actionManager.checkBlockingAction("Permission: " + perm.getName());
         }
     }
 
     private boolean isBlockingAction(Permission permission) {
         String actions = permission.getActions();
-
         return permission instanceof FilePermission
                 && actions.contains("read")
                 && fileWhitelist.stream().noneMatch(ignored -> permission.getName().contains(ignored));
+    }
 
+    @Override
+    public void inject() {
+        SecurityManager oldSecurityManager = System.getSecurityManager();
+        if (oldSecurityManager != this) {
+            this.delegate = oldSecurityManager;
+            System.setSecurityManager(this);
+        }
+    }
+
+    @Override
+    public void restore() {
+        if (System.getSecurityManager() == this) {
+            System.setSecurityManager(delegate);
+        }
     }
 }

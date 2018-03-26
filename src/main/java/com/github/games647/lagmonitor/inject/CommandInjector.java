@@ -94,7 +94,7 @@ public class CommandInjector implements TabExecutor {
         return originalCompleter;
     }
 
-    public static void uninject(Plugin toUninject) {
+    public static void restore(Plugin toUninject) {
         PluginManager pluginManager = Bukkit.getPluginManager();
         SimpleCommandMap commandMap = Reflection
                 .getField(SimplePluginManager.class, "commandMap", SimpleCommandMap.class).get(pluginManager);

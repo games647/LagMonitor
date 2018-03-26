@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor.tasks;
 
-import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
 import com.google.common.net.UrlEscapers;
@@ -22,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.TimerTask;
 import java.util.logging.Level;
 
+import org.bukkit.plugin.Plugin;
+
 /**
  * Based on the project https://github.com/sk89q/WarmRoast by sk89q
  */
@@ -31,13 +32,13 @@ public class MonitorTask extends TimerTask {
     private static final int MAX_DEPTH = 25;
 
     private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-    private final LagMonitor plugin;
+    private final Plugin plugin;
     private final long threadId;
 
     private MethodMeasurement rootNode;
     private int samples;
 
-    public MonitorTask(LagMonitor plugin, long threadId) {
+    public MonitorTask(Plugin plugin, long threadId) {
         this.plugin = plugin;
         this.threadId = threadId;
     }
@@ -97,9 +98,9 @@ public class MonitorTask extends TimerTask {
                 return object.get("url").getAsString();
             }
 
-            plugin.getLogger().info("Failed to parse url");
+            plugin.getLogger().log(Level.INFO, "Failed to parse url from {0}", object);
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, null, ex);
+            plugin.getLogger().log(Level.SEVERE, "Failed to upload monitoring data", ex);
         }
 
         return null;
@@ -116,7 +117,6 @@ public class MonitorTask extends TimerTask {
         builder.append('\n');
 
         rootNode.writeString(builder, 1);
-
         return builder.toString();
     }
 }

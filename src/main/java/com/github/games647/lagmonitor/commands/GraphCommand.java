@@ -115,7 +115,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
 
     private void giveMap(Player player, MapView mapView) {
         PlayerInventory inventory = player.getInventory();
-        //amount=0 makes the item disappear if the user drop or try to use it
+
         ItemStack mapItem = new ItemStack(Material.MAP, 1, mapView.getId());
         inventory.addItem(mapItem);
 

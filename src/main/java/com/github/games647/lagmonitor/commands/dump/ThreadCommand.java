@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
@@ -76,7 +76,7 @@ public class ThreadCommand extends DumpCommand {
 
         Pagination pagination = new Pagination("Threads", lines);
         pagination.send(sender);
-        plugin.getPaginations().put(sender.getName(), pagination);
+        plugin.getPaginationManager().setPagination(sender.getName(), pagination);
         return true;
     }
 

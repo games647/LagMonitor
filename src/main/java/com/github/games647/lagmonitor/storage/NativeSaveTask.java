@@ -18,6 +18,7 @@ import static com.github.games647.lagmonitor.LagUtils.round;
 public class NativeSaveTask implements Runnable {
 
     private final LagMonitor plugin;
+    private final Storage storage;
 
     private Instant lastCheck = Instant.now();
 
@@ -28,8 +29,9 @@ public class NativeSaveTask implements Runnable {
     private int lastNetRead;
     private int lastNetWrite;
 
-    public NativeSaveTask(LagMonitor plugin) {
+    public NativeSaveTask(LagMonitor plugin, Storage storage) {
         this.plugin = plugin;
+        this.storage = storage;
     }
 
     @Override
@@ -90,8 +92,7 @@ public class NativeSaveTask implements Runnable {
         }
 
         lastCheck = currentTime;
-
-        plugin.getStorage().saveNative(mcReadDiff, mcWriteDiff, freeSpace, freeSpacePct, diskReadDiff, diskWriteDiff
+        storage.saveNative(mcReadDiff, mcWriteDiff, freeSpace, freeSpacePct, diskReadDiff, diskWriteDiff
                 , netReadDiff, netWriteDiff);
     }
 }

@@ -11,6 +11,9 @@ import java.util.logging.Logger;
 
 public class LagUtils {
 
+    private LagUtils() {
+    }
+
     public static int byteToMega(long bytes) {
         return (int) (bytes / (1024 * 1024));
     }

@@ -28,15 +28,16 @@ import static com.github.games647.lagmonitor.LagUtils.round;
 public class MonitorSaveTask implements Runnable {
 
     protected final LagMonitor plugin;
+    protected final Storage storage;
 
-    public MonitorSaveTask(LagMonitor plugin) {
+    public MonitorSaveTask(LagMonitor plugin, Storage storage) {
         this.plugin = plugin;
+        this.storage = storage;
     }
 
     @Override
     public void run() {
         try {
-            Storage storage = plugin.getStorage();
             int monitorId = onMonitorSave(storage);
             if (monitorId == -1) {
                 //error occurred
@@ -71,7 +72,7 @@ public class MonitorSaveTask implements Runnable {
                             worldRowId = worldData.getRowId();
                         }
 
-                        int lastPing = (int) plugin.getPingHistoryTask().getHistory(player.getName()).getLastSample();
+                        int lastPing = (int) plugin.getPingManager().getHistory(player.getName()).getLastSample();
                         String playerName = player.getName();
                         UUID playerId = player.getUniqueId();
                         playerData.add(new PlayerData(worldRowId, playerId, playerName, lastPing));
@@ -131,7 +132,7 @@ public class MonitorSaveTask implements Runnable {
 
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         float loadAvg = round(osBean.getSystemLoadAverage(), 4);
-        if (loadAvg == -1F) {
+        if (loadAvg == -1.0F) {
             //windows doesn't support this
             loadAvg = 0;
         }

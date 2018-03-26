@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor.threading;
 
-import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -15,14 +14,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class BlockingActionManager implements Listener {
 
-    private final LagMonitor plugin;
+    private final Plugin plugin;
 
     private final Set<PluginViolation> violations = Sets.newConcurrentHashSet();
     private final Set<String> violatedPlugins = Sets.newConcurrentHashSet();
 
-    private final ClassLoader thisClassLoader = this.getClass().getClassLoader();
-
-    public BlockingActionManager(LagMonitor plugin) {
+    public BlockingActionManager(Plugin plugin) {
         this.plugin = plugin;
     }
 

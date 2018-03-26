@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
 

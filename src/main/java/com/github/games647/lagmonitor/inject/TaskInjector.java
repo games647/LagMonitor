@@ -53,7 +53,7 @@ public class TaskInjector implements Runnable {
         }
     }
 
-    public static void uninject(Plugin plugin) {
+    public static void restore(Plugin plugin) {
         BukkitScheduler scheduler = Bukkit.getScheduler();
         List<BukkitTask> pendingTasks = scheduler.getPendingTasks();
         for (BukkitTask pendingTask : pendingTasks) {

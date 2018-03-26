@@ -62,7 +62,7 @@ public class TasksCommand extends LagCommand {
 
         Pagination pagination = new Pagination("Stacktrace", lines);
         pagination.send(sender);
-        plugin.getPaginations().put(sender.getName(), pagination);
+        plugin.getPaginationManager().setPagination(sender.getName(), pagination);
         return true;
     }
 
