@@ -1,6 +1,7 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 import com.google.common.collect.Lists;
 

@@ -62,20 +62,18 @@ public class NativeSaveTask implements Runnable {
         int netWriteDiff = 0;
 
         SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
-        if (systemInfo != null) {
-            Path root = Paths.get(".").getRoot();
-            if (root != null) {
-                String rootFileSystem = root.toAbsolutePath().toString();
+        Path root = Paths.get(".").getRoot();
+        if (root != null) {
+            String rootFileSystem = root.toAbsolutePath().toString();
 
-                OSProcess process = plugin.getNativeData().getProces();
-                int diskRead = LagUtils.byteToMega(process.getBytesRead());
-                diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
-                lastDiskRead = diskRead;
+            OSProcess process = plugin.getNativeData().getProcess();
+            int diskRead = LagUtils.byteToMega(process.getBytesRead());
+            diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
+            lastDiskRead = diskRead;
 
-                int diskWrite = LagUtils.byteToMega(process.getBytesWritten());
-                diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
-                lastDiskWrite = diskRead;
-            }
+            int diskWrite = LagUtils.byteToMega(process.getBytesWritten());
+            diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
+            lastDiskWrite = diskRead;
 
             NetworkIF[] networkIfs = systemInfo.getHardware().getNetworkIFs();
             if (networkIfs.length > 0) {

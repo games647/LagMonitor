@@ -19,8 +19,6 @@ import org.bukkit.command.TabExecutor;
 
 public class StackTraceCommand extends LagCommand implements TabExecutor {
 
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-
     public StackTraceCommand(LagMonitor plugin) {
         super(plugin);
     }
@@ -28,7 +26,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sender.sendMessage(ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
 
@@ -72,7 +70,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
             }
 
             lines.add(new ComponentBuilder(className + '.')
-                    .color(PRIMARY_COLOR)
+                    .color(PRIMARY_COLOR.asBungee())
                     .append(methodName + ':')
                     .color(ChatColor.DARK_GREEN)
                     .append(line)

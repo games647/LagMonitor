@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.timings;
 
 import co.aikar.timings.TimingHistory;
 import co.aikar.timings.Timings;
@@ -6,6 +6,7 @@ import co.aikar.timings.TimingsManager;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Maps;
@@ -59,9 +60,7 @@ public class PaperTimingsCommand extends LagCommand {
     private static final String HISTORY_ENTRY_CLASS = TIMINGS_PACKAGE + '.' + "TimingHistoryEntry";
     private static final String DATA_CLASS = TIMINGS_PACKAGE + '.' + "TimingData";
 
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor HEADER_COLOR = ChatColor.YELLOW;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     private int historyInterval;
 
@@ -186,7 +185,7 @@ public class PaperTimingsCommand extends LagCommand {
 
         lines.add(new ComponentBuilder("    " + childName + " Count: " + childCount + " Time: " + childTime
                 + ' ' + round(percent) + '%')
-                .color(PRIMARY_COLOR).create());
+                .color(PRIMARY_COLOR.asBungee()).create());
     }
 
     private void printHeadData(TimingHistory lastHistory, Collection<BaseComponent[]> lines) {
@@ -196,8 +195,9 @@ public class PaperTimingsCommand extends LagCommand {
         long totalTicks = Reflection.getField(TimingHistory.class, "totalTicks", Long.TYPE).get(lastHistory);
 
         long cost = (long) Reflection.getMethod(EXPORT_CLASS, "getCost").invoke(null);
-        lines.add(new ComponentBuilder("Cost: ").color(PRIMARY_COLOR)
-                .append(Long.toString(cost)).color(SECONDARY_COLOR).create());
+        lines.add(new ComponentBuilder("Cost: ")
+                .color(PRIMARY_COLOR.asBungee())
+                .append(Long.toString(cost)).color(SECONDARY_COLOR.asBungee()).create());
 
         double totalSeconds = (double) totalTime / 1000 / 1000;
 

@@ -1,6 +1,23 @@
 package com.github.games647.lagmonitor;
 
-import com.github.games647.lagmonitor.commands.*;
+import com.github.games647.lagmonitor.commands.EnvironmentCommand;
+import com.github.games647.lagmonitor.commands.FlightRecorderCommand;
+import com.github.games647.lagmonitor.commands.GraphCommand;
+import com.github.games647.lagmonitor.commands.HeapCommand;
+import com.github.games647.lagmonitor.commands.HelpCommand;
+import com.github.games647.lagmonitor.commands.MbeanCommand;
+import com.github.games647.lagmonitor.commands.MonitorCommand;
+import com.github.games647.lagmonitor.commands.NativeCommand;
+import com.github.games647.lagmonitor.commands.PaginationCommand;
+import com.github.games647.lagmonitor.commands.StackTraceCommand;
+import com.github.games647.lagmonitor.commands.ThreadCommand;
+import com.github.games647.lagmonitor.commands.VmCommand;
+import com.github.games647.lagmonitor.commands.minecraft.PingCommand;
+import com.github.games647.lagmonitor.commands.minecraft.SystemCommand;
+import com.github.games647.lagmonitor.commands.minecraft.TasksCommand;
+import com.github.games647.lagmonitor.commands.minecraft.TpsHistoryCommand;
+import com.github.games647.lagmonitor.commands.timings.PaperTimingsCommand;
+import com.github.games647.lagmonitor.commands.timings.TimingCommand;
 import com.github.games647.lagmonitor.inject.CommandInjector;
 import com.github.games647.lagmonitor.inject.ListenerInjector;
 import com.github.games647.lagmonitor.inject.TaskInjector;
@@ -43,6 +60,7 @@ public class LagMonitor extends JavaPlugin {
     private static final int DETECTION_THRESHOLD = 10;
 
     private final Map<String, Pagination> paginations = new HashMap<>();
+    private final NativeData nativeData = new NativeData(getLogger(), new SystemInfo());
 
     private BlockingActionManager blockActionManager;
     private TpsHistoryTask tpsHistoryTask;
@@ -51,7 +69,6 @@ public class LagMonitor extends JavaPlugin {
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
     private Storage storage;
-    private NativeData nativeData;
 
     public LagMonitor() {
         // so you can place the library into the plugins folder
@@ -108,12 +125,6 @@ public class LagMonitor extends JavaPlugin {
             ProxySelector defaultSelector = ProxySelector.getDefault();
             BlockingConnectionSelector selector = new BlockingConnectionSelector(blockActionManager, defaultSelector);
             Bukkit.getScheduler().runTask(this, () -> ProxySelector.setDefault(selector));
-        }
-
-        if (getConfig().getBoolean("native-library")) {
-            nativeData = new NativeData(getLogger(), new SystemInfo());
-        } else {
-            nativeData = new NativeData(getLogger(), null);
         }
 
         if (getConfig().getBoolean("monitor-database")) {

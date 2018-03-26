@@ -1,13 +1,13 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.commands.LagCommand;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
@@ -18,9 +18,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 public class TasksCommand extends LagCommand {
-
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     public TasksCommand(LagMonitor plugin) {
         super(plugin);
@@ -49,16 +46,16 @@ public class TasksCommand extends LagCommand {
             }
 
             lines.add(new ComponentBuilder(owner.getName())
-                    .color(PRIMARY_COLOR)
+                    .color(PRIMARY_COLOR.asBungee())
                     .append('-' + id)
-                    .color(SECONDARY_COLOR)
+                    .color(SECONDARY_COLOR.asBungee())
                     .create());
             Class<?> runnableClass = getRunnableClass(pendingTask);
             if (runnableClass != null) {
                 lines.add(new ComponentBuilder("    Task: ")
-                        .color(PRIMARY_COLOR)
+                        .color(PRIMARY_COLOR.asBungee())
                         .append(runnableClass.getSimpleName())
-                        .color(SECONDARY_COLOR)
+                        .color(SECONDARY_COLOR.asBungee())
                         .create());
             }
         }

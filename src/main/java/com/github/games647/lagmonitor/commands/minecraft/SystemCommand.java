@@ -1,7 +1,8 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.LagUtils;
+import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -23,9 +23,6 @@ import org.bukkit.plugin.PluginManager;
 import static com.github.games647.lagmonitor.LagUtils.readableBytes;
 
 public class SystemCommand extends LagCommand {
-
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     public SystemCommand(LagMonitor plugin) {
         super(plugin);

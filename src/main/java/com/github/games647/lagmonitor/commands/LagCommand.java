@@ -4,6 +4,7 @@ import com.github.games647.lagmonitor.LagMonitor;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public abstract class LagCommand implements CommandExecutor {
+
+    protected static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
+    protected static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     protected final LagMonitor plugin;
 

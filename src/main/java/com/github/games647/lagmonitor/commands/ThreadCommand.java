@@ -25,9 +25,6 @@ import org.bukkit.command.CommandSender;
 
 public class ThreadCommand extends DumpCommand {
 
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
-
     //https://docs.oracle.com/javase/8/docs/jre/api/management/extension/com/sun/management/DiagnosticCommandMBean.html
     private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
     private static final String DUMP_COMMAND = "threadPrint";
@@ -64,7 +61,7 @@ public class ThreadCommand extends DumpCommand {
             }
 
             BaseComponent[] components = new ComponentBuilder(thread.getName())
-                    .color(PRIMARY_COLOR)
+                    .color(PRIMARY_COLOR.asBungee())
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND
                             , "/stacktrace " + thread.getName()))
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT
@@ -72,7 +69,7 @@ public class ThreadCommand extends DumpCommand {
                     .append("-" + thread.getId() + " State: ")
                     .color(ChatColor.GOLD)
                     .append(thread.getState().toString())
-                    .color(SECONDARY_COLOR)
+                    .color(SECONDARY_COLOR.asBungee())
                     .create();
             lines.add(components);
         }

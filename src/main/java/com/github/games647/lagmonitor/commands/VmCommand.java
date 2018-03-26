@@ -9,14 +9,10 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class VmCommand extends LagCommand {
-
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
     public VmCommand(LagMonitor plugin) {
         super(plugin);
@@ -32,8 +28,9 @@ public class VmCommand extends LagCommand {
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 
         //java info
+        String javaVersion = StandardSystemProperty.JAVA_VERSION.value();
+        sender.sendMessage(PRIMARY_COLOR + "Java Version: " + SECONDARY_COLOR + javaVersion);
         sender.sendMessage(PRIMARY_COLOR + "Java VM: " + SECONDARY_COLOR + runtimeBean.getVmName());
-        sender.sendMessage(PRIMARY_COLOR + "Java Version: " + SECONDARY_COLOR + StandardSystemProperty.JAVA_VERSION.value());
         sender.sendMessage(PRIMARY_COLOR + "Java Vendor: " + SECONDARY_COLOR
                 + runtimeBean.getVmVendor() + ' ' + runtimeBean.getVmVersion());
 

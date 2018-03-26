@@ -15,10 +15,10 @@ public class PlayerData {
         this.playerName = playerName;
 
         if (ping < 0) {
-            ping = Integer.MAX_VALUE;
+            this.ping = Integer.MAX_VALUE;
+        } else {
+            this.ping = ping;
         }
-
-        this.ping = ping;
     }
 
     public int getWorldId() {

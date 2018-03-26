@@ -19,7 +19,6 @@ public class GraphListener implements Listener {
 
     private final boolean mainHandSupported;
 
-
     public GraphListener() {
         boolean mainHandMethodEx = false;
         try {

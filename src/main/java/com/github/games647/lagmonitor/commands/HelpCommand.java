@@ -66,8 +66,7 @@ public class HelpCommand extends LagCommand {
                     hoverBuilder.color(ChatColor.GOLD);
                 }
 
-                descriptionComponent
-                        .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hoverBuilder.create()));
+                descriptionComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hoverBuilder.create()));
             } else {
                 descriptionComponent.setText(description);
             }

@@ -1,7 +1,8 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.RollingOverHistory;
+import com.github.games647.lagmonitor.commands.LagCommand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -10,8 +11,6 @@ import org.bukkit.entity.Player;
 
 public class PingCommand extends LagCommand {
 
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-
     public PingCommand(LagMonitor plugin) {
         super(plugin);
     }
@@ -19,7 +18,7 @@ public class PingCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sender.sendMessage(ChatColor.DARK_RED + "Not whitelisted");
             return true;
         }
 

@@ -36,14 +36,6 @@ oncePerPlugin: false
 # the server is receiving or is sending.
 traffic-counter: true
 
-# With this options it's possible to access more native features of the OS like:
-# * CPU MHZ
-# * File reads/writes (per second or since startup)
-# * Network download/upload (per second or since startup)
-# * OS uptime
-# * Network adapter speed
-native-library: false
-
 # If you enable this, it will save some monitoring data periodically into a MySQL database
 # There you can find lag sources with a history
 # And you could create a web interface for monitoring your server

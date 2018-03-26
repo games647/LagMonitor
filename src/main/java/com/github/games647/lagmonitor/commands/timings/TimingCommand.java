@@ -1,8 +1,9 @@
-package com.github.games647.lagmonitor.commands;
+package com.github.games647.lagmonitor.commands.timings;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
 import com.github.games647.lagmonitor.Timing;
+import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
 

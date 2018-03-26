@@ -15,9 +15,6 @@ import oshi.software.os.OSFileStore;
 
 public class NativeCommand extends LagCommand {
 
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
-
     public NativeCommand(LagMonitor plugin) {
         super(plugin);
     }

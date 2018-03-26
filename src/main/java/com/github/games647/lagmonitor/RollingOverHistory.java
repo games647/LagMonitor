@@ -26,10 +26,10 @@ public class RollingOverHistory {
         if (currentSize < samples.length) {
             //array is not full yet
             currentSize++;
-        } else {
-            //delete the latest sample which wil be overridden
-            total -= samples[currentPosition];
         }
+
+        //delete the latest sample which wil be overridden
+        total -= samples[currentPosition];
 
         total += sample;
         samples[currentPosition] = sample;

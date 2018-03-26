@@ -11,6 +11,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -33,7 +34,7 @@ public abstract class TinyProtocol {
     private static final FieldAccessor<Object> GET_CONNECTION = Reflection.getField(SERVER_CLASS, CONNECTION_CLASS, 0);
 
     // Injected channel handlers
-    private final List<Channel> serverChannels = new ArrayList<>();
+    private final Collection<Channel> serverChannels = new ArrayList<>();
     private ChannelInboundHandlerAdapter serverChannelHandler;
 
     private volatile boolean closed;
@@ -75,7 +76,6 @@ public abstract class TinyProtocol {
                     @Override
                     public void channelRead(ChannelHandlerContext handlerContext, Object object) throws Exception {
                         onChannelRead(handlerContext, object);
-
                         super.channelRead(handlerContext, object);
                     }
 
@@ -83,7 +83,6 @@ public abstract class TinyProtocol {
                     public void write(ChannelHandlerContext handlerContext, Object object, ChannelPromise promise)
                             throws Exception {
                         onChannelWrite(handlerContext, object, promise);
-
                         super.write(handlerContext, object, promise);
                     }
                 });

@@ -106,7 +106,7 @@ public class MonitorTask extends TimerTask {
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         ThreadInfo threadInfo = threadMXBean.getThreadInfo(threadId, MAX_DEPTH);
 
         StringBuilder builder = new StringBuilder();

@@ -81,19 +81,15 @@ public class GraphCommand extends LagCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> result = new ArrayList<>();
-
         if (args.length != 1) {
             return Collections.emptyList();
         }
 
         String lastArg = args[args.length - 1];
-        result.addAll(graphTypes.keySet().stream()
+        return graphTypes.keySet().stream()
                 .filter(type -> type.startsWith(lastArg))
-                .collect(toList()));
-
-        result.sort(String.CASE_INSENSITIVE_ORDER);
-        return result;
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(toList());
     }
 
     private void buildCombinedGraph(Player player, String[] args) {

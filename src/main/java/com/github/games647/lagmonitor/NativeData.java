@@ -17,6 +17,8 @@ public class NativeData {
 
     private final Logger logger;
 
+    private final int pid;
+
     private final SystemInfo info;
     private final OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
 
@@ -27,6 +29,12 @@ public class NativeData {
         if (info == null && !(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
             logger.severe("You're not using Oracle Java nor using the native library. " +
                     "You wan't be able to read native data");
+        }
+
+        if (info == null) {
+            pid = -1;
+        } else {
+            pid = info.getOperatingSystem().getProcessId();
         }
     }
 
@@ -39,15 +47,14 @@ public class NativeData {
             com.sun.management.OperatingSystemMXBean nativeOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
             return nativeOsBean.getProcessCpuLoad();
         } else if (info != null) {
-            int pid = info.getOperatingSystem().getProcessId();
-            // return info.getOperatingSystem().getProcess(pid).get
+            // return info.getOperatingSystem().getProcess(pid).getState();
         }
 
         return -1;
     }
 
-    public OSProcess getProces() {
-        return null;
+    public OSProcess getProcess() {
+        return info.getOperatingSystem().getProcess(pid);
     }
 
     public double getCPULoad() {

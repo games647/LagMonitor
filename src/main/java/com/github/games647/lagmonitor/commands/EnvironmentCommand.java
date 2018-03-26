@@ -16,9 +16,6 @@ import static com.github.games647.lagmonitor.LagUtils.readableBytes;
 
 public class EnvironmentCommand extends LagCommand {
 
-    private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
-    private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
-
     public EnvironmentCommand(LagMonitor plugin) {
         super(plugin);
     }
@@ -36,10 +33,8 @@ public class EnvironmentCommand extends LagCommand {
         sender.sendMessage(PRIMARY_COLOR + "OS Name: " + SECONDARY_COLOR + osBean.getName());
 
         SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
-        if (systemInfo != null) {
-            String family = systemInfo.getOperatingSystem().getFamily();
-            sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + family);
-        }
+        String family = systemInfo.getOperatingSystem().getFamily();
+        sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + family);
 
         sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
         sender.sendMessage(PRIMARY_COLOR + "OS Arch: " + SECONDARY_COLOR + osBean.getArch());

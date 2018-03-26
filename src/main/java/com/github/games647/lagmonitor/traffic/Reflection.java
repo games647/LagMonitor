@@ -287,7 +287,7 @@ public final class Reflection {
      * This is useful when looking up fields by a NMS or OBC type.
      * <p>
      *
-     * @see {@link #getClass()} for more information.
+     * @see Object#getClass()
      * @param lookupName - the class name with variables.
      * @return The class.
      */
@@ -301,7 +301,7 @@ public final class Reflection {
      * Retrieve a class from its full name.
      * <p>
      * Strings enclosed with curly brackets - such as {TEXT} - will be replaced according to the following table:
-     * <p>
+     * </p>
      * <table border="1">
      * <tr>
      * <th>Variable</th>
