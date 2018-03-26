@@ -31,7 +31,7 @@ public class SystemCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -53,40 +53,38 @@ public class SystemCommand extends LagCommand {
         long totalMemory = runtime.totalMemory();
 
         // runtime specific
-        sender.sendMessage(PRIMARY_COLOR + "Uptime: " + SECONDARY_COLOR + uptimeFormat);
-        sender.sendMessage(PRIMARY_COLOR + "Arguments: " + SECONDARY_COLOR + runtimeBean.getInputArguments());
+        sendMessage(sender, "Uptime", uptimeFormat);
+        sendMessage(sender, "Arguments", runtimeBean.getInputArguments().toString());
 
+        sendMessage(sender, "Max Heap RAM", readableBytes(maxMemory));
+        sendMessage(sender, "Total RAM", readableBytes(totalMemory));
+        sendMessage(sender, "Free Heap RAM", readableBytes(freeMemory));
 
-        sender.sendMessage(PRIMARY_COLOR + "Max Heap RAM: " + SECONDARY_COLOR + readableBytes(maxMemory));
-        sender.sendMessage(PRIMARY_COLOR + "Total RAM: " + SECONDARY_COLOR + readableBytes(totalMemory));
-        sender.sendMessage(PRIMARY_COLOR + "Free Heap RAM: " + SECONDARY_COLOR + readableBytes(freeMemory));
-
-        sender.sendMessage(PRIMARY_COLOR + "Threads: " + SECONDARY_COLOR + threadCount);
+        sendMessage(sender, "Threads", String.valueOf(threadCount));
     }
 
     private void displayMinecraftInfo(CommandSender sender) {
         //Minecraft specific
-        sender.sendMessage(PRIMARY_COLOR + "TPS: " + SECONDARY_COLOR + plugin.getTpsHistoryTask().getLastSample());
+        sendMessage(sender, "TPS", String.valueOf(plugin.getTpsHistoryTask().getLastSample()));
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
             String formattedIncoming = readableBytes(trafficReader.getIncomingBytes().get());
             String formattedOutgoing = readableBytes(trafficReader.getOutgoingBytes().get());
-            sender.sendMessage(PRIMARY_COLOR + "Incoming Traffic: " + SECONDARY_COLOR + formattedIncoming);
-            sender.sendMessage(PRIMARY_COLOR + "Outgoing Traffic: " + SECONDARY_COLOR + formattedOutgoing);
+            sendMessage(sender, "Incoming Traffic", formattedIncoming);
+            sendMessage(sender, "Outgoing Traffic", formattedOutgoing);
         }
 
         PluginManager pluginManager = Bukkit.getPluginManager();
         Plugin[] plugins = pluginManager.getPlugins();
-        sender.sendMessage(PRIMARY_COLOR + "Loaded Plugins: "
-                + SECONDARY_COLOR + getEnabledPlugins(plugins) + '/' + plugins.length);
+        sendMessage(sender, "Loaded Plugins", String.valueOf(getEnabledPlugins(plugins) + '/' + plugins.length));
 
         int onlinePlayers = Bukkit.getOnlinePlayers().size();
         int maxPlayers = Bukkit.getMaxPlayers();
-        sender.sendMessage(PRIMARY_COLOR + "Players: " + SECONDARY_COLOR + onlinePlayers + '/' + maxPlayers);
+        sendMessage(sender, "Players", String.valueOf(onlinePlayers + '/' + maxPlayers));
 
         displayWorldInfo(sender);
-        sender.sendMessage(PRIMARY_COLOR + "Server version: " + SECONDARY_COLOR + Bukkit.getVersion());
+        sendMessage(sender, "Server version", Bukkit.getVersion());
     }
 
     private void displayWorldInfo(CommandSender sender) {
@@ -111,11 +109,11 @@ public class SystemCommand extends LagCommand {
             usedWorldSize += LagUtils.getFolderSize(plugin.getLogger(), worldFolder.toPath());
         }
 
-        sender.sendMessage(PRIMARY_COLOR + "Entities: " + SECONDARY_COLOR + livingEntities + '/' + entities);
-        sender.sendMessage(PRIMARY_COLOR + "Tile Entities: " + SECONDARY_COLOR + tileEntities);
-        sender.sendMessage(PRIMARY_COLOR + "Loaded Chunks: " + SECONDARY_COLOR + chunks);
-        sender.sendMessage(PRIMARY_COLOR + "Worlds: " + SECONDARY_COLOR + Bukkit.getWorlds().size());
-        sender.sendMessage(PRIMARY_COLOR + "World Size: " + SECONDARY_COLOR + readableBytes(usedWorldSize));
+        sendMessage(sender, "Entities", String.valueOf(livingEntities + '/' + entities));
+        sendMessage(sender, "Tile Entities", String.valueOf(tileEntities));
+        sendMessage(sender, "Loaded Chunks", String.valueOf(chunks));
+        sendMessage(sender, "Worlds", String.valueOf(Bukkit.getWorlds().size()));
+        sendMessage(sender, "World Size", readableBytes(usedWorldSize));
     }
 
     private int getEnabledPlugins(Plugin[] plugins) {

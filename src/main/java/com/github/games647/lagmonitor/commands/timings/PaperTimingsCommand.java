@@ -79,22 +79,22 @@ public class PaperTimingsCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
         try {
             Class.forName(EXPORT_CLASS);
         } catch (ClassNotFoundException e) {
-            sender.sendMessage(ChatColor.DARK_RED + "You aren't using PaperSpigot.");
-            sender.sendMessage(ChatColor.DARK_RED + "This command is for the new timings (v2) system only");
-            sender.sendMessage(ChatColor.DARK_RED + "Please use '/timing' for the old system");
+            sendError(sender, "You aren't using PaperSpigot.");
+            sendError(sender, "This command is for the new timings (v2) system only");
+            sendError(sender, "Please use '/timing' for the old system");
             return true;
         }
 
         if (!Timings.isTimingsEnabled()) {
-            sender.sendMessage(ChatColor.DARK_RED + "The server deactivated timing reports");
-            sender.sendMessage(ChatColor.DARK_RED + "Go to paper.yml and activate timings");
+            sendError(sender,"The server deactivated timing reports");
+            sendError(sender,"Go to paper.yml and activate timings");
             return true;
         }
 

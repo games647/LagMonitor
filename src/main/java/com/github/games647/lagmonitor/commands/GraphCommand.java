@@ -45,7 +45,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -59,7 +59,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
                     String graph = args[0];
                     GraphRenderer renderer = graphTypes.get(graph);
                     if (renderer == null) {
-                        sender.sendMessage(ChatColor.DARK_RED + "Unknown graph type");
+                        sendError(sender, "Unknown graph type");
                     } else {
                         giveMap(player, installRenderer(player, renderer));
                     }
@@ -73,7 +73,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
             MapView mapView = installRenderer(player, graphRenderer);
             giveMap(player, mapView);
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "Not implemented for the console");
+            sendError(sender, "Not implemented for the console");
         }
 
         return true;
@@ -97,7 +97,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
         for (String arg : args) {
             GraphRenderer renderer = graphTypes.get(arg);
             if (renderer == null) {
-                player.sendMessage(ChatColor.DARK_RED + "Unknown graph type " + arg);
+                sendError(player, "Unknown graph type " + arg);
                 return;
             }
 
@@ -105,7 +105,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
         }
 
         if (renderers.size() > MAX_COMBINED) {
-            player.sendMessage(ChatColor.DARK_RED + "Too many graphs");
+            sendError(player, "Too many graphs");
         } else {
             CombinedGraph combinedGraph = new CombinedGraph(renderers.toArray(new GraphRenderer[renderers.size()]));
             MapView view = installRenderer(player, combinedGraph);

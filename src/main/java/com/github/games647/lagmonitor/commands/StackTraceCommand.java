@@ -26,7 +26,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -42,7 +42,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
                 }
             }
 
-            sender.sendMessage(ChatColor.DARK_RED + "No thread with that name found");
+            sendError(sender, "No thread with that name found");
         } else {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             printStackTrace(sender, stackTrace);

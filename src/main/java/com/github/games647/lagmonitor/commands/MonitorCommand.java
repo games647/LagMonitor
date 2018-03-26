@@ -34,7 +34,7 @@ public class MonitorCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -47,10 +47,10 @@ public class MonitorCommand extends LagCommand {
             } else if ("paste".equalsIgnoreCase(monitorCommand)) {
                 pasteMonitor(sender);
             } else {
-                sender.sendMessage(ChatColor.DARK_RED + "Invalid command parameter");
+                sendError(sender, "Invalid command parameter");
             }
         } else if (monitorTask == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
+            sendError(sender, "Monitor is not running");
         } else {
             List<BaseComponent[]> lines = new ArrayList<>();
             synchronized (monitorTask) {
@@ -101,14 +101,14 @@ public class MonitorCommand extends LagCommand {
 
             sender.sendMessage(ChatColor.DARK_GREEN + "Monitor started");
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "Monitor is already running");
+            sendError(sender, "Monitor task is already running");
         }
     }
 
     private void stopMonitor(CommandSender sender) {
         Timer timer = plugin.getMonitorTimer();
         if (monitorTask == null && timer == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
+            sendError(sender, "Monitor is not running");
         } else {
             timer.cancel();
             timer.purge();
@@ -122,13 +122,13 @@ public class MonitorCommand extends LagCommand {
     private void pasteMonitor(final CommandSender sender) {
         Timer timer = plugin.getMonitorTimer();
         if (monitorTask == null && timer == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Monitor is not running");
+            sendError(sender, "Monitor is not running");
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             String reportUrl = monitorTask.paste();
             if (reportUrl == null) {
-                sender.sendMessage(ChatColor.DARK_RED + "Error occurred. Please check the console");
+                sendError(sender, "Error occurred. Please check the console");
             } else {
                 sender.sendMessage(ChatColor.DARK_GREEN + "Report url: " + reportUrl + ".profile");
             }

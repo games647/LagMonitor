@@ -43,4 +43,12 @@ public abstract class LagCommand implements CommandExecutor {
         //whitelist doesn't exist
         return true;
     }
+
+    protected void sendMessage(CommandSender sender, String title, String value) {
+        sender.sendMessage(PRIMARY_COLOR + title + ": " + SECONDARY_COLOR + value);
+    }
+
+    protected void sendError(CommandSender sender, String msg) {
+        sender.sendMessage(ChatColor.DARK_RED + msg);
+    }
 }

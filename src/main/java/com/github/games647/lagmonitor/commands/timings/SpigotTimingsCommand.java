@@ -43,13 +43,13 @@ public class SpigotTimingsCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
         if (!Bukkit.getPluginManager().useTimings()) {
-            sender.sendMessage(ChatColor.DARK_RED + "The server deactivated timing reports");
-            sender.sendMessage(ChatColor.DARK_RED + "Go to bukkit.yml and activate plugin-profiling");
+            sendError(sender, "The server deactivated timing reports");
+            sendError(sender, "Go to bukkit.yml and activate plugin-profiling");
             return true;
         }
 
@@ -57,14 +57,14 @@ public class SpigotTimingsCommand extends LagCommand {
         try {
             Class.forName("org.bukkit.command.defaults.TimingsCommand");
         } catch (ClassNotFoundException e) {
-            sender.sendMessage(ChatColor.DARK_RED + "You're using a new Timings version on your server system");
-            sender.sendMessage(ChatColor.DARK_RED + "Please use the experimental command /paper");
+            sendError(sender, "You're using a new Timings version on your server system");
+            sendError(sender, "Please use the experimental command /paper");
         }
 
         //place sampleTime here to be very accurate
         long sampleTime = System.nanoTime() - TimingsCommand.timingStart;
         if (sampleTime <= 1_000 * 1_000 * 1_000) {
-            sender.sendMessage(ChatColor.DARK_RED + "Sampling time is too low");
+            sendError(sender, "Sampling time is too low");
             return true;
         }
 

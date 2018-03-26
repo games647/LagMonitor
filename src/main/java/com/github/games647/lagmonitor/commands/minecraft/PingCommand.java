@@ -19,7 +19,7 @@ public class PingCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -28,7 +28,7 @@ public class PingCommand extends LagCommand {
         } else if (sender instanceof Player) {
             RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(sender.getName());
             if (sampleHistory == null) {
-                sender.sendMessage(ChatColor.DARK_RED + "Sorry there is currently no data available");
+                sendError(sender, "Sorry there is currently no data available");
                 return true;
             }
 

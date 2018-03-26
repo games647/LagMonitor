@@ -7,7 +7,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.text.DecimalFormat;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import oshi.SystemInfo;
@@ -23,26 +22,26 @@ public class EnvironmentCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
 
         //os general info
-        sender.sendMessage(PRIMARY_COLOR + "OS Name: " + SECONDARY_COLOR + osBean.getName());
+        sendMessage(sender, "OS Name", osBean.getName());
 
         SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
         String family = systemInfo.getOperatingSystem().getFamily();
-        sender.sendMessage(PRIMARY_COLOR + "Platform name: " + SECONDARY_COLOR + family);
+        sendMessage(sender, "Platform name", family);
 
-        sender.sendMessage(PRIMARY_COLOR + "OS Version: " + SECONDARY_COLOR + osBean.getVersion());
-        sender.sendMessage(PRIMARY_COLOR + "OS Arch: " + SECONDARY_COLOR + osBean.getArch());
+        sendMessage(sender, "OS Version", osBean.getVersion());
+        sendMessage(sender, "OS Arch", osBean.getArch());
 
         //CPU
-        sender.sendMessage(PRIMARY_COLOR + "Cores: " + SECONDARY_COLOR + osBean.getAvailableProcessors());
-        sender.sendMessage(PRIMARY_COLOR + "CPU: " + SECONDARY_COLOR + System.getenv("PROCESSOR_IDENTIFIER"));
-        sender.sendMessage(PRIMARY_COLOR + "Load Average: " + SECONDARY_COLOR + osBean.getSystemLoadAverage());
+        sendMessage(sender, "Cores", String.valueOf(osBean.getAvailableProcessors()));
+        sendMessage(sender, "CPU", System.getenv("PROCESSOR_IDENTIFIER"));
+        sendMessage(sender, "Load Average", String.valueOf(osBean.getSystemLoadAverage()));
         printExtendOsInfo(sender);
 
         displayDiskSpace(sender);
@@ -63,20 +62,20 @@ public class EnvironmentCommand extends LagCommand {
         String systemLoadFormat = decimalFormat.format(systemCpuLoad);
         String processLoadFormat = decimalFormat.format(processCpuLoad);
 
-        sender.sendMessage(PRIMARY_COLOR + "System Usage: " + SECONDARY_COLOR + systemLoadFormat);
-        sender.sendMessage(PRIMARY_COLOR + "Process Usage: " + SECONDARY_COLOR + processLoadFormat);
+        sendMessage(sender,"System Usage", systemLoadFormat);
+        sendMessage(sender,"Process Usage", processLoadFormat);
 
         //swap
         long totalSwap = nativeData.getTotalSwap();
         long freeSwap = nativeData.getFreeSwap();
-        sender.sendMessage(PRIMARY_COLOR + "Total Swap: " + SECONDARY_COLOR + readableBytes(totalSwap));
-        sender.sendMessage(PRIMARY_COLOR + "Free Swap: " + SECONDARY_COLOR + readableBytes(freeSwap));
+        sendMessage(sender, "Total Swap", readableBytes(totalSwap));
+        sendMessage(sender, "Free Swap", readableBytes(freeSwap));
 
         //RAM
         long totalMemory = nativeData.getTotalMemory();
         long freeMemory = nativeData.getFreeMemory();
-        sender.sendMessage(PRIMARY_COLOR + "Total OS RAM: " + SECONDARY_COLOR + readableBytes(totalMemory));
-        sender.sendMessage(PRIMARY_COLOR + "Free OS RAM: " + SECONDARY_COLOR + readableBytes(freeMemory));
+        sendMessage(sender, "Total OS RAM", readableBytes(totalMemory));
+        sendMessage(sender, "Free OS RAM", readableBytes(freeMemory));
     }
 
     private void displayDiskSpace(CommandSender sender) {
@@ -84,7 +83,7 @@ public class EnvironmentCommand extends LagCommand {
         long totalSpace = plugin.getNativeData().getTotalSpace();
 
         //Disk info
-        sender.sendMessage(PRIMARY_COLOR + "Disk Size: " + SECONDARY_COLOR + readableBytes(totalSpace));
-        sender.sendMessage(PRIMARY_COLOR + "Free Space: " + SECONDARY_COLOR + readableBytes(freeSpace));
+        sendMessage(sender,"Disk Size", readableBytes(totalSpace));
+        sendMessage(sender,"Free Space", readableBytes(freeSpace));
     }
 }

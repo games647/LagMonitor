@@ -27,13 +27,13 @@ public class PaginationCommand extends DumpCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
         Pagination pagination = plugin.getPaginationManager().getPagination(sender.getName());
         if (pagination == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "You have no pagination session");
+            sendError(sender, "You have no pagination session");
             return true;
         }
 
@@ -51,7 +51,7 @@ public class PaginationCommand extends DumpCommand {
                 onPageNumber(subCommand, sender, pagination);
             }
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "Not enough arguments");
+            sendError(sender, "Not enough arguments");
         }
 
         return true;
@@ -60,13 +60,13 @@ public class PaginationCommand extends DumpCommand {
     private void onPageNumber(String subCommand, CommandSender sender, Pagination pagination) {
         Integer page = Ints.tryParse(subCommand);
         if (page == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Unknown subcommand or not a valid page number");
+            sendError(sender, "Unknown subcommand or not a valid page number");
         } else {
             if (page < 1) {
-                sender.sendMessage(ChatColor.DARK_RED + "Page number is too small");
+                sendError(sender, "Page number too small");
                 return;
             } else if (page > pagination.getTotalPages(sender instanceof Player)) {
-                sender.sendMessage(ChatColor.DARK_RED + "Page number is too high");
+                sendError(sender, "Page number too high");
                 return;
             }
 
@@ -77,7 +77,7 @@ public class PaginationCommand extends DumpCommand {
     private void onNextPage(Pagination pagination, CommandSender sender) {
         int lastPage = pagination.getLastSentPage();
         if (lastPage >= pagination.getTotalPages(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.DARK_RED + "You are already on the last page");
+            sendError(sender,"You are already on the last page");
             return;
         }
 
@@ -87,7 +87,7 @@ public class PaginationCommand extends DumpCommand {
     private void onPrevPage(Pagination pagination, CommandSender sender) {
         int lastPage = pagination.getLastSentPage();
         if (lastPage <= 1) {
-            sender.sendMessage(ChatColor.DARK_RED + "You are already on the first page");
+            sendError(sender,"You are already on the first page");
             return;
         }
 

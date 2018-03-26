@@ -5,7 +5,6 @@ import com.github.games647.lagmonitor.LagUtils;
 
 import java.util.Arrays;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import oshi.SystemInfo;
@@ -22,12 +21,7 @@ public class NativeCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!isAllowed(sender, command)) {
-            sender.sendMessage(org.bukkit.ChatColor.DARK_RED + "Not whitelisted");
-            return true;
-        }
-
-        if (!plugin.getConfig().getBoolean("native-library")) {
-            sender.sendMessage(ChatColor.DARK_RED + "Native support is disabled");
+            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -35,10 +29,10 @@ public class NativeCommand extends LagCommand {
 
         //swap and load is already available in the environment command because MBeans already supports this
         long uptime = systemInfo.getHardware().getProcessor().getSystemUptime();
-        sender.sendMessage(PRIMARY_COLOR + "OS Uptime: " + SECONDARY_COLOR + formatUptime(uptime));
+        sendMessage(sender, "OS Updatime", formatUptime(uptime));
 
         long mhz = systemInfo.getHardware().getProcessor().getVendorFreq();
-        sender.sendMessage(PRIMARY_COLOR + "CPU MHZ: " + SECONDARY_COLOR + mhz);
+        sendMessage(sender, "CPU MHZ", String.valueOf(mhz));
 
         // //IO wait
         // double wait = cpuPerc.getWait();
@@ -53,21 +47,24 @@ public class NativeCommand extends LagCommand {
         // sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
 
         printNetworkInfo(sender, systemInfo);
+        printDiskInfo(sender, systemInfo);
 
+        return true;
+    }
+
+    private void printDiskInfo(CommandSender sender, SystemInfo systemInfo) {
         //disk read write
         HWDiskStore[] diskStores = systemInfo.getHardware().getDiskStores();
         long diskReads = Arrays.stream(diskStores).mapToLong(HWDiskStore::getReadBytes).sum();
         long diskWrites = Arrays.stream(diskStores).mapToLong(HWDiskStore::getWriteBytes).sum();
 
-        sender.sendMessage(PRIMARY_COLOR + "Disk read bytes: " + SECONDARY_COLOR + LagUtils.readableBytes(diskReads));
-        sender.sendMessage(PRIMARY_COLOR + "Disk write bytes: " + SECONDARY_COLOR + LagUtils.readableBytes(diskWrites));
+        sendMessage(sender, "Disk read bytes", LagUtils.readableBytes(diskReads));
+        sendMessage(sender, "Disk write bytes", LagUtils.readableBytes(diskWrites));
 
         sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
         for (OSFileStore fileStore : systemInfo.getOperatingSystem().getFileSystem().getFileStores()) {
-            sender.sendMessage(PRIMARY_COLOR + fileStore.getMount() + " - " + SECONDARY_COLOR + fileStore.getType());
+            sendMessage(sender, "    " + fileStore.getMount(), fileStore.getType());
         }
-
-        return true;
     }
 
     private void printNetworkInfo(CommandSender sender, SystemInfo info) {
@@ -78,8 +75,8 @@ public class NativeCommand extends LagCommand {
 
             String receivedBytes = LagUtils.readableBytes(networkInterface.getBytesRecv());
             String sentBytes = LagUtils.readableBytes(networkInterface.getBytesSent());
-            sender.sendMessage(PRIMARY_COLOR + "Net Rec: " + SECONDARY_COLOR + receivedBytes);
-            sender.sendMessage(PRIMARY_COLOR + "Net Sent: " + SECONDARY_COLOR + sentBytes);
+            sendMessage(sender, "Net Rec", receivedBytes);
+            sendMessage(sender, "Net Sent", sentBytes);
         }
     }
 
