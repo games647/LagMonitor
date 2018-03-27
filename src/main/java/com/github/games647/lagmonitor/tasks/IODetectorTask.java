@@ -1,17 +1,17 @@
 package com.github.games647.lagmonitor.tasks;
 
-import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.threading.BlockingActionManager;
 
 import java.lang.Thread.State;
 import java.util.TimerTask;
 
-public class BlockingIODetectorTask extends TimerTask {
+public class IODetectorTask extends TimerTask {
 
+    private final BlockingActionManager actionManager;
     private final Thread mainThread;
-    private final LagMonitor plugin;
 
-    public BlockingIODetectorTask(LagMonitor plugin, Thread mainThread) {
-        this.plugin = plugin;
+    public IODetectorTask(BlockingActionManager actionManager, Thread mainThread) {
+        this.actionManager = actionManager;
         this.mainThread = mainThread;
     }
 
@@ -32,13 +32,13 @@ public class BlockingIODetectorTask extends TimerTask {
                 if (isElementEqual(topElement, "java.net.DualStackPlainSocketImpl", "connect0")
                         || isElementEqual(topElement, "java.net.SocketInputStream", "socketRead0")
                         || isElementEqual(topElement, "java.net.SocketOutputStream", "socketWrite0")) {
-                    plugin.getBlockActionManager().logCurrentStack("Server is performing {1} on the main thread. "
+                    actionManager.logCurrentStack("Server is performing {1} on the main thread. "
                             + "Properly caused by {0}", "java.net.SocketStream");
                 } //File (in) - java.io.FileInputStream.readBytes
                 //File (out) - java.io.FileOutputStream.writeBytes
                 else if (isElementEqual(topElement, "java.io.FileInputStream", "readBytes")
                         || isElementEqual(topElement, "java.io.FileOutputStream", "writeBytes")) {
-                    plugin.getBlockActionManager().logCurrentStack("Server is performing {1} on the main thread. " +
+                    actionManager.logCurrentStack("Server is performing {1} on the main thread. " +
                             "Properly caused by {0}", "java.io.FileStream");
                 }
             }

@@ -14,6 +14,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class BlockingActionManager implements Listener {
 
+    //feel free to improve the wording of this:
+    private static final String THREAD_SAFETY_NOTICE = "As threads **can** run concurrently or in parallel " +
+            "shared data access has to be synchronized (thread-safety) in order to prevent " +
+            "unexpected behavior or crashes.";
+
+    private static final String SAFETY_METHODS = "You can guarantee thread-safety by " +
+            "running the data access always on the same thread, using atomic operations, " +
+            "locks (ex: a synchronized block), immutable objects, thread local data " +
+            "or something similar";
+
+    private static final String COMMON_SAFE = "Common things that are thread-safe: Logging, Bukkit Scheduler, " +
+            "Concurrent collections (ex: ConcurrentHashMap or Collections.synchronized*), ...";
+
     private final Plugin plugin;
 
     private final Set<PluginViolation> violations = Sets.newConcurrentHashSet();
@@ -24,20 +37,25 @@ public class BlockingActionManager implements Listener {
     }
 
     public void checkBlockingAction(String event) {
-        if (Bukkit.isPrimaryThread()) {
-            String message = "Plugin {0} is performing a blocking action on the main thread. "
-                    + "This could be a performance hit {1}. " +
-                    "Such actions should be handled async from the main thread. ";
-            logCurrentStack(message, event);
+        if (!Bukkit.isPrimaryThread()) {
+            return;
         }
+
+        String message = "Plugin {0} is performing a blocking I/O operation ({1}) on the main thread. " +
+                "This could affect the server performance, because the thread pauses until it gets the response. " +
+                "Such operations should be performed asynchronous from the main thread. " +
+                "Keep in mind to keep the code thread-safe.";
+        logCurrentStack(message, event);
     }
 
     public void checkThreadSafety(String eventName) {
-        if (!Bukkit.isPrimaryThread()) {
-            String message = "Plugin {0} did a async operation for an sync Event {1}. "
-                    + "This could cause server stability issues. ";
-            logCurrentStack(message, eventName);
+        if (Bukkit.isPrimaryThread()) {
+            return;
         }
+
+        logCurrentStack("Plugin {0} triggered an synchronous event {1} from an asynchronous Thread.", eventName);
+        plugin.getLogger().info(THREAD_SAFETY_NOTICE);
+        plugin.getLogger().info("Use runTask* (no Async*), scheduleSync* or callSyncMethod to run on the main thread.");
     }
 
     public void logCurrentStack(String format, String eventName) {
