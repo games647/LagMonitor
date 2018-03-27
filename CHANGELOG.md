@@ -1,19 +1,31 @@
 # Changelog
 
+## 1.17
+
+* Add statically compiled java version checker
+* Add a lot of more native Hardware and Software details:
+    * Sensors (voltage, fan speed)
+    * Motherboard
+    * Networking
+    * CPU
+    * Java properties
+    * Process
+    * User
+* Enable native data support by default
+* Replace outdated sigar library with oshi
+* Validate input for average comparison (Fixes #37)
+
 ## 1.16
 
+* Use Bukkit's internal method to find the plugin owner
 * Fix checking vanilla command class check if we found an obfuscated plugin
 * Dynamically adjust text padding for graphs
 * Fix invalid threads graph name
 * Count the read/write of all disks
-* Minor styling improvements
 * Use migration file creating MySQL table
-* Remove duplicated code and clean up project
 * Use MEDIUMINT for os with > 64GB of ram (Related #33)
-* Fix folder size
+* Fix folder size calculation
 * Fix free ram calculation (Fixes #33)
-* Fix typos
-* Allow the Sigar library to be placed in the java library folder
 * Delay ping fetching on player join, because the first ping request is very inaccurate.
 
 ## 1.15
