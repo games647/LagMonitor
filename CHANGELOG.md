@@ -2,6 +2,8 @@
 
 ## 1.17
 
+* Improve wording for thread block or safety warnings:
+    * If you think something is missing or could be described better, please make a pull request.
 * Add Thread safety checks for command events too
     * Ref: https://www.spigotmc.org/threads/plugins-triggering-commands-async.31815/
 * Add statically compiled java version checker

@@ -35,8 +35,6 @@
                 <version>3.1.0</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <!--Remove the unneeded for running sigar as a standalone-->
-                    <minimizeJar>true</minimizeJar>
                     <relocations>
                         <relocation>
                             <pattern>com.sun.jna</pattern>
