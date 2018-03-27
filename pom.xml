@@ -37,6 +37,20 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <!--Remove the unneeded for running sigar as a standalone-->
                     <minimizeJar>true</minimizeJar>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.sun.jna</pattern>
+                            <shadedPattern>lagmonitor.jna</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.threeten.bp</pattern>
+                            <shadedPattern>lagmonitor.bp</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>oshi</pattern>
+                            <shadedPattern>lagmonitor.oshi</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>
@@ -98,12 +112,6 @@
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
             <version>3.4.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.java.dev.jna</groupId>
-                    <artifactId>jna-platform</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
