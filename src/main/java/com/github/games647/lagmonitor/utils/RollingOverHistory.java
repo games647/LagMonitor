@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor;
+package com.github.games647.lagmonitor.utils;
 
 import java.util.Arrays;
 

@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.LagUtils;
+import com.github.games647.lagmonitor.utils.LagUtils;
 
 import java.util.Arrays;
 

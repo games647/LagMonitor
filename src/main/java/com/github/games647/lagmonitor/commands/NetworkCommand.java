@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.LagUtils;
+import com.github.games647.lagmonitor.utils.LagUtils;
 
 import java.util.Arrays;
 
@@ -34,7 +34,7 @@ public class NetworkCommand extends LagCommand {
 
         for (NetworkIF networkInterface : systemInfo.getHardware().getNetworkIFs()) {
             sendMessage(sender, "Name", networkInterface.getName());
-            sendMessage(sender, "    Displayname", networkInterface.getDisplayName());
+            sendMessage(sender, "    Display", networkInterface.getDisplayName());
             sendMessage(sender, "    MAC", networkInterface.getMacaddr());
             sendMessage(sender, "    MTU", String.valueOf(networkInterface.getMTU()));
             sendMessage(sender, "    IPv4", Arrays.toString(networkInterface.getIPv4addr()));

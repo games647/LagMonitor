@@ -1,9 +1,10 @@
 package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.LagUtils;
+import com.github.games647.lagmonitor.utils.LagUtils;
 import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import com.google.common.base.StandardSystemProperty;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -22,7 +23,7 @@ import org.bukkit.plugin.PluginManager;
 import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 
-import static com.github.games647.lagmonitor.LagUtils.readableBytes;
+import static com.github.games647.lagmonitor.utils.LagUtils.readableBytes;
 
 public class SystemCommand extends LagCommand {
 
@@ -39,8 +40,19 @@ public class SystemCommand extends LagCommand {
 
         displayRuntimeInfo(sender);
         displayProcessInfo(sender);
+        displayUserInfo(sender);
         displayMinecraftInfo(sender);
         return true;
+    }
+
+    private void displayUserInfo(CommandSender sender) {
+        sender.sendMessage(PRIMARY_COLOR + "User");
+
+        sendMessage(sender, "    Timezone", System.getProperty("user.timezone", "Unknown"));
+        sendMessage(sender, "    Country", System.getProperty("user.country", "Unknown"));
+        sendMessage(sender, "    Language", System.getProperty("user.language", "Unknown"));
+        sendMessage(sender, "    Home", StandardSystemProperty.USER_HOME.value());
+        sendMessage(sender, "    Name", StandardSystemProperty.USER_NAME.value());
     }
 
     private void displayProcessInfo(CommandSender sender) {
@@ -71,6 +83,8 @@ public class SystemCommand extends LagCommand {
         // runtime specific
         sendMessage(sender, "Uptime", uptimeFormat);
         sendMessage(sender, "Arguments", runtimeBean.getInputArguments().toString());
+        sendMessage(sender, "Classpath", runtimeBean.getClassPath());
+        sendMessage(sender, "Library path", runtimeBean.getLibraryPath());
 
         sendMessage(sender, "Max Heap RAM", readableBytes(maxMemory));
         sendMessage(sender, "Total RAM", readableBytes(totalMemory));

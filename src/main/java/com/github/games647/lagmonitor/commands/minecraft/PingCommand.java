@@ -1,8 +1,8 @@
 package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.LagUtils;
-import com.github.games647.lagmonitor.RollingOverHistory;
+import com.github.games647.lagmonitor.utils.LagUtils;
+import com.github.games647.lagmonitor.utils.RollingOverHistory;
 import com.github.games647.lagmonitor.commands.LagCommand;
 
 import org.bukkit.ChatColor;

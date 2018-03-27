@@ -6,6 +6,7 @@ import com.github.games647.lagmonitor.NativeData;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.text.DecimalFormat;
+import java.util.Map.Entry;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,7 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.software.os.OperatingSystem;
 
-import static com.github.games647.lagmonitor.LagUtils.readableBytes;
+import static com.github.games647.lagmonitor.utils.LagUtils.readableBytes;
 
 public class EnvironmentCommand extends LagCommand {
 
@@ -55,11 +56,18 @@ public class EnvironmentCommand extends LagCommand {
         sendMessage(sender, "    Vendor freq", String.valueOf(processor.getVendorFreq()));
         sendMessage(sender, "    Logical Cores", String.valueOf(processor.getLogicalProcessorCount()));
         sendMessage(sender, "    Physical Cores", String.valueOf(processor.getPhysicalProcessorCount()));
+        sendMessage(sender, "    Endian", System.getProperty("sun.cpu.endian", "Unknown"));
 
         sendMessage(sender, "Load Average", String.valueOf(osBean.getSystemLoadAverage()));
         printExtendOsInfo(sender);
 
         displayDiskSpace(sender);
+
+        sender.sendMessage(PRIMARY_COLOR + "Variables:");
+        for (Entry<String, String> variable : System.getenv().entrySet()) {
+            sendMessage(sender, "    " + variable.getKey(), variable.getValue());
+        }
+
         return true;
     }
 

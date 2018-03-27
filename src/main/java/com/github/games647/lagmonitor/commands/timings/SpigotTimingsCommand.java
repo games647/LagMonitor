@@ -2,7 +2,6 @@ package com.github.games647.lagmonitor.commands.timings;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
-import com.github.games647.lagmonitor.Timing;
 import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
@@ -25,7 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.TimingsCommand;
 import org.spigotmc.CustomTimingsHandler;
 
-import static com.github.games647.lagmonitor.LagUtils.round;
+import static com.github.games647.lagmonitor.utils.LagUtils.round;
 
 /**
  * Parsed from the PHP project by aikar

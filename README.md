@@ -24,13 +24,16 @@ server timings and so on.
 * Plugin specific profiles
 * Thread safety checks
 * Blocking operations on the main thread check
-* Information about native OS
+* Many details about your setup like Hardware (Disk, Processor, ...) and about your OS 
 * Compatible 1.8+ servers
-* Test with Spigot, Paper
 * Make Heap and Thread dumps
 * Create Java Flight Recorder dump and analyze it later on your own computer
 * Free
-* Open Source
+
+## Requirements
+
+* Java 8
+* Spigot, Paper or a fork of it
 
 ## Permissions
 
@@ -52,6 +55,7 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.graph
 * lagmonitor.command.native
 * lagmonitor.command.vm
+* lagmonitor.command.network
 * lagmonitor.command.tasks
 * lagmonitor.command.paper
 * lagmonitor.command.heap
@@ -75,6 +79,7 @@ lagmonitor.commands.* - Access to all commands
     /graph [heap/cpu/threads/classes] - Gives you visual graph about your server (currently only the heap usage)
     /native - Gives you some native os information
     /vm - Outputs vm specific information like garbage collector, class loading or vm specification
+    /network - Shows network interface configuration
     /tasks - Information about running and pending tasks
     /paper - Outputs Paper timings
     /heap - Heap dump about your current memory

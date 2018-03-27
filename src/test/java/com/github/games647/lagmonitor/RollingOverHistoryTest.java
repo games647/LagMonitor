@@ -1,5 +1,7 @@
 package com.github.games647.lagmonitor;
 
+import com.github.games647.lagmonitor.utils.RollingOverHistory;
+
 import java.util.Arrays;
 
 import org.junit.Test;

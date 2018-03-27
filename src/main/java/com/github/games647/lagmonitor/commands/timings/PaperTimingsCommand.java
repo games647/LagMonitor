@@ -26,7 +26,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import static com.github.games647.lagmonitor.LagUtils.round;
+import static com.github.games647.lagmonitor.utils.LagUtils.round;
 
 /**
  * Paper and Sponge uses a new timings system (v2).

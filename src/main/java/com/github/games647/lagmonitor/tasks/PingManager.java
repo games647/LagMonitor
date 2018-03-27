@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor.tasks;
 
-import com.github.games647.lagmonitor.RollingOverHistory;
+import com.github.games647.lagmonitor.utils.RollingOverHistory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

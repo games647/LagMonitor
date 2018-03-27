@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.LagUtils;
+import com.github.games647.lagmonitor.utils.LagUtils;
 import com.github.games647.lagmonitor.NativeData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -23,7 +23,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import static com.github.games647.lagmonitor.LagUtils.round;
+import static com.github.games647.lagmonitor.utils.LagUtils.round;
 
 public class MonitorSaveTask implements Runnable {
 

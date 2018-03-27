@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor;
+package com.github.games647.lagmonitor.utils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
