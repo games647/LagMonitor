@@ -37,10 +37,6 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
-                            <pattern>com.sun.jna</pattern>
-                            <shadedPattern>lagmonitor.jna</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>org.threeten.bp</pattern>
                             <shadedPattern>lagmonitor.bp</shadedPattern>
                         </relocation>
@@ -109,7 +105,7 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-            <version>3.4.4</version>
+            <version>3.4.3</version>
         </dependency>
 
         <dependency>

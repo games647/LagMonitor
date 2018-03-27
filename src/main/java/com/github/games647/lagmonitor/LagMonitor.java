@@ -37,6 +37,7 @@ import com.github.games647.lagmonitor.threading.BlockingActionManager;
 import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.threading.Injectable;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import com.sun.jna.Native;
 
 import java.net.ProxySelector;
 import java.nio.file.Files;
@@ -65,6 +66,11 @@ public class LagMonitor extends JavaPlugin {
     private TrafficReader trafficReader;
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
+
+    public LagMonitor() {
+        Native.DEBUG_JNA_LOAD = true;
+        Native.DEBUG_JNA_LOAD = true;
+    }
 
     @Override
     public void onEnable() {
