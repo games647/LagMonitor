@@ -2,6 +2,8 @@
 
 ## 1.17
 
+* Add Thread safety checks for command events too
+    * Ref: https://www.spigotmc.org/threads/plugins-triggering-commands-async.31815/
 * Add statically compiled java version checker
 * Add a lot of more native Hardware and Software details:
     * Sensors (voltage, fan speed)

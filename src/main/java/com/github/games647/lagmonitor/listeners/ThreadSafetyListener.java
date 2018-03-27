@@ -8,9 +8,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -36,6 +39,11 @@ public class ThreadSafetyListener implements Listener {
     }
 
     @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent commandEvent) {
+        checkSafety(commandEvent);
+    }
+
+    @EventHandler
     public void onInventoryOpen(InventoryOpenEvent inventoryOpenEvent) {
         checkSafety(inventoryOpenEvent);
     }
@@ -51,8 +59,8 @@ public class ThreadSafetyListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerQuitEvent quitEvent) {
-        checkSafety(quitEvent);
+    public void onPlayerJoin(PlayerJoinEvent joinEvent) {
+        checkSafety(joinEvent);
     }
 
     @EventHandler
@@ -123,6 +131,11 @@ public class ThreadSafetyListener implements Listener {
     @EventHandler
     public void onSpawnChange(SpawnChangeEvent spawnChangeEvent) {
         checkSafety(spawnChangeEvent);
+    }
+
+    @EventHandler
+    public void onSpawnChange(EntitySpawnEvent spawnEvent) {
+        checkSafety(spawnEvent);
     }
 
     private void checkSafety(Event eventType) {

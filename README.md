@@ -12,7 +12,9 @@ server timings and so on.
 ## Features
 
 * Player ping
-* Log the server performance into a MySQL/MariaDB database
+* Offline Java version checker
+* Thread safety checks
+* Many details about your setup like Hardware (Disk, Processor, ...) and about your OS 
 * Sample CPU usage
 * Analyze RAM usage
 * Access to Stacktraces of running threads
@@ -22,12 +24,11 @@ server timings and so on.
 * In-game timings viewer
 * Access to Java environment variables (mbeans)
 * Plugin specific profiles
-* Thread safety checks
 * Blocking operations on the main thread check
-* Many details about your setup like Hardware (Disk, Processor, ...) and about your OS 
 * Compatible 1.8+ servers
 * Make Heap and Thread dumps
 * Create Java Flight Recorder dump and analyze it later on your own computer
+* Log the server performance into a MySQL/MariaDB database
 * Free
 
 ## Requirements
