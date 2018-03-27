@@ -14,8 +14,8 @@ import oshi.hardware.Baseboard;
 import oshi.hardware.ComputerSystem;
 import oshi.hardware.Firmware;
 import oshi.hardware.HWDiskStore;
-import oshi.hardware.NetworkIF;
 import oshi.hardware.Sensors;
+import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 
 public class NativeCommand extends LagCommand {
@@ -35,10 +35,7 @@ public class NativeCommand extends LagCommand {
 
         //swap and load is already available in the environment command because MBeans already supports this
         long uptime = systemInfo.getHardware().getProcessor().getSystemUptime();
-        sendMessage(sender, "OS Updatime", formatUptime(uptime));
-
-        long mhz = systemInfo.getHardware().getProcessor().getVendorFreq();
-        sendMessage(sender, "CPU MHZ", String.valueOf(mhz));
+        sendMessage(sender, "OS Uptime", formatUptime(uptime));
 
         // //IO wait
         // double wait = cpuPerc.getWait();
@@ -52,7 +49,6 @@ public class NativeCommand extends LagCommand {
         // long cache = used - actualUsed;
         // sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
 
-        printNetworkInfo(sender, systemInfo);
         printDiskInfo(sender, systemInfo);
         printSensorsInfo(sender, systemInfo);
         printBoardInfo(sender, systemInfo);
@@ -103,22 +99,27 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "Disk read bytes", LagUtils.readableBytes(diskReads));
         sendMessage(sender, "Disk write bytes", LagUtils.readableBytes(diskWrites));
 
-        sender.sendMessage(PRIMARY_COLOR + "Filesystems:");
-        for (OSFileStore fileStore : systemInfo.getOperatingSystem().getFileSystem().getFileStores()) {
-            sendMessage(sender, "    " + fileStore.getMount(), fileStore.getType());
+        sender.sendMessage(PRIMARY_COLOR + "Disks:");
+        for (HWDiskStore disk : systemInfo.getHardware().getDiskStores()) {
+            String size = LagUtils.readableBytes(disk.getSize());
+            sendMessage(sender, "    " + disk.getName(), disk.getModel() + ' ' + size);
         }
-    }
 
-    private void printNetworkInfo(CommandSender sender, SystemInfo info) {
-        //net upload download
-        NetworkIF[] networkIfs = info.getHardware().getNetworkIFs();
-        if (networkIfs.length > 0) {
-            NetworkIF networkInterface = networkIfs[0];
+        FileSystem fileSystem = systemInfo.getOperatingSystem().getFileSystem();
+        sendMessage(sender, "Open file descriptors", String.valueOf(fileSystem.getOpenFileDescriptors()));
+        sendMessage(sender, "Max file descriptors", String.valueOf(fileSystem.getMaxFileDescriptors()));
 
-            String receivedBytes = LagUtils.readableBytes(networkInterface.getBytesRecv());
-            String sentBytes = LagUtils.readableBytes(networkInterface.getBytesSent());
-            sendMessage(sender, "Net Rec", receivedBytes);
-            sendMessage(sender, "Net Sent", sentBytes);
+        sender.sendMessage(PRIMARY_COLOR + "Mounts:");
+        for (OSFileStore fileStore : fileSystem.getFileStores()) {
+            String type = fileStore.getType();
+            String desc = fileStore.getDescription();
+
+            long totalSpaceBytes = fileStore.getTotalSpace();
+            String totalSpace = LagUtils.readableBytes(totalSpaceBytes);
+            String usedSpace = LagUtils.readableBytes(totalSpaceBytes - fileStore.getUsableSpace());
+
+            String format = desc + ' ' + type + ' ' + usedSpace + '/' + totalSpace;
+            sendMessage(sender, "    " + fileStore.getMount(), format);
         }
     }
 

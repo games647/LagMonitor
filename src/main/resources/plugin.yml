@@ -65,6 +65,10 @@ commands:
         description: 'Gives you information about your Hardware'
         aliases: [virtualmachine, machine, virtual]
         permission: ${project.artifactId}.command.vm
+    network:
+        description: 'Gives you information about your Network configuration'
+        aliases: [net]
+        permission: ${project.artifactId}.command.network
     tasks:
         description: 'Information about running and pending tasks'
         aliases: [task]
@@ -110,6 +114,7 @@ permissions:
             ${project.artifactId}.command.graph: true
             ${project.artifactId}.command.native: true
             ${project.artifactId}.command.vm: true
+            ${project.artifactId}.command.network: true
             ${project.artifactId}.command.tasks: true
             ${project.artifactId}.command.paper: true
             ${project.artifactId}.command.jfr: true

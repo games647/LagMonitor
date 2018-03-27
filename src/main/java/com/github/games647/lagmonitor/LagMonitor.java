@@ -6,6 +6,7 @@ import com.github.games647.lagmonitor.commands.HelpCommand;
 import com.github.games647.lagmonitor.commands.MbeanCommand;
 import com.github.games647.lagmonitor.commands.MonitorCommand;
 import com.github.games647.lagmonitor.commands.NativeCommand;
+import com.github.games647.lagmonitor.commands.NetworkCommand;
 import com.github.games647.lagmonitor.commands.PaginationCommand;
 import com.github.games647.lagmonitor.commands.StackTraceCommand;
 import com.github.games647.lagmonitor.commands.VmCommand;
@@ -236,5 +237,6 @@ public class LagMonitor extends JavaPlugin {
         getCommand("heap").setExecutor(new HeapCommand(this));
         getCommand("lagpage").setExecutor(new PaginationCommand(this));
         getCommand("jfr").setExecutor(new FlightRecorderCommand(this));
+        getCommand("network").setExecutor(new NetworkCommand(this));
     }
 }
