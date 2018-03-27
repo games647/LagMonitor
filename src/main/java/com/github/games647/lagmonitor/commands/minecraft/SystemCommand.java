@@ -19,6 +19,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import oshi.SystemInfo;
+import oshi.software.os.OSProcess;
 
 import static com.github.games647.lagmonitor.LagUtils.readableBytes;
 
@@ -36,8 +38,22 @@ public class SystemCommand extends LagCommand {
         }
 
         displayRuntimeInfo(sender);
+        displayProcessInfo(sender);
         displayMinecraftInfo(sender);
         return true;
+    }
+
+    private void displayProcessInfo(CommandSender sender) {
+        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+        OSProcess process = plugin.getNativeData().getProcess();
+
+        sender.sendMessage(PRIMARY_COLOR + "Process:");
+        sendMessage(sender, "    PID", String.valueOf(process.getProcessID()));
+        sendMessage(sender, "    Name", process.getName());
+        sendMessage(sender, "    Path", process.getPath());
+        sendMessage(sender, "    Working directory", process.getCurrentWorkingDirectory());
+        sendMessage(sender, "    User", process.getUser());
+        sendMessage(sender, "    Group", process.getGroup());
     }
 
     private void displayRuntimeInfo(CommandSender sender) {

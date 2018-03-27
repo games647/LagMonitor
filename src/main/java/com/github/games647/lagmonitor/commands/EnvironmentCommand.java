@@ -10,6 +10,8 @@ import java.text.DecimalFormat;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import oshi.software.os.OperatingSystem;
 
 import static com.github.games647.lagmonitor.LagUtils.readableBytes;
 
@@ -30,17 +32,30 @@ public class EnvironmentCommand extends LagCommand {
 
         //os general info
         sendMessage(sender, "OS Name", osBean.getName());
-
-        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
-        String family = systemInfo.getOperatingSystem().getFamily();
-        sendMessage(sender, "Platform name", family);
-
-        sendMessage(sender, "OS Version", osBean.getVersion());
         sendMessage(sender, "OS Arch", osBean.getArch());
 
+        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+
+        OperatingSystem osInfo = systemInfo.getOperatingSystem();
+        sendMessage(sender, "OS family", osInfo.getFamily());
+        sendMessage(sender, "OS version", String.valueOf(osInfo.getVersion()));
+        sendMessage(sender, "OS Manufacturer", osInfo.getManufacturer());
+
+        sendMessage(sender, "Total processes", String.valueOf(osInfo.getProcessCount()));
+        sendMessage(sender, "Total threads", String.valueOf(osInfo.getThreadCount()));
+
         //CPU
-        sendMessage(sender, "Cores", String.valueOf(osBean.getAvailableProcessors()));
-        sendMessage(sender, "CPU", System.getenv("PROCESSOR_IDENTIFIER"));
+        CentralProcessor processor = systemInfo.getHardware().getProcessor();
+        sender.sendMessage(PRIMARY_COLOR + "CPU:");
+        sendMessage(sender, "    Vendor", processor.getVendor());
+        sendMessage(sender, "    Family", processor.getFamily());
+        sendMessage(sender, "    Name", processor.getName());
+        sendMessage(sender, "    Model", processor.getModel());
+        sendMessage(sender, "    Id", processor.getIdentifier());
+        sendMessage(sender, "    Vendor freq", String.valueOf(processor.getVendorFreq()));
+        sendMessage(sender, "    Logical Cores", String.valueOf(processor.getLogicalProcessorCount()));
+        sendMessage(sender, "    Physical Cores", String.valueOf(processor.getPhysicalProcessorCount()));
+
         sendMessage(sender, "Load Average", String.valueOf(osBean.getSystemLoadAverage()));
         printExtendOsInfo(sender);
 
