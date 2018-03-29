@@ -52,14 +52,6 @@ public class SpigotTimingsCommand extends LagCommand {
             return true;
         }
 
-        //paperspigot moved to class to package co.aikar.timings
-        try {
-            Class.forName("org.bukkit.command.defaults.TimingsCommand");
-        } catch (ClassNotFoundException e) {
-            sendError(sender, "You're using a new Timings version on your server system");
-            sendError(sender, "Please use the experimental command /paper");
-        }
-
         //place sampleTime here to be very accurate
         long sampleTime = System.nanoTime() - TimingsCommand.timingStart;
         if (sampleTime <= 1_000 * 1_000 * 1_000) {

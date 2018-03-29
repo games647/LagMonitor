@@ -58,7 +58,6 @@ lagmonitor.commands.* - Access to all commands
 * lagmonitor.command.vm
 * lagmonitor.command.network
 * lagmonitor.command.tasks
-* lagmonitor.command.paper
 * lagmonitor.command.heap
 * lagmonitor.command.jfr
 
@@ -82,7 +81,6 @@ lagmonitor.commands.* - Access to all commands
     /vm - Outputs vm specific information like garbage collector, class loading or vm specification
     /network - Shows network interface configuration
     /tasks - Information about running and pending tasks
-    /paper - Outputs Paper timings
     /heap - Heap dump about your current memory
     /lagpage <next/prev/pageNumber/save/all> - Pagination command for the current pagination session
     /jfr <start/stop/dump> - Manages the Java Flight Recordings of the native Java VM. It gives you much more detailed

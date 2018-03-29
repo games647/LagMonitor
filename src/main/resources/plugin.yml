@@ -78,10 +78,6 @@ commands:
         aliases: [ram]
         usage: /<command> [dump]
         permission: ${project.artifactId}.command.heap
-    papertiming:
-        description: 'Debug command for Paper timings parser'
-        aliases: [paper-timing, papertimings]
-        permission: ${project.artifactId}.command.paper
     lagpage:
         description: 'Pagination command for the current pagination session'
         usage: '/<command> <next/prev/number>'
@@ -116,7 +112,6 @@ permissions:
             ${project.artifactId}.command.vm: true
             ${project.artifactId}.command.network: true
             ${project.artifactId}.command.tasks: true
-            ${project.artifactId}.command.paper: true
             ${project.artifactId}.command.jfr: true
 
     ${project.artifactId}.command.ping.other:

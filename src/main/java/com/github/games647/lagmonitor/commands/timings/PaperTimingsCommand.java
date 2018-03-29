@@ -83,15 +83,6 @@ public class PaperTimingsCommand extends LagCommand {
             return true;
         }
 
-        try {
-            Class.forName(EXPORT_CLASS);
-        } catch (ClassNotFoundException e) {
-            sendError(sender, "You aren't using PaperSpigot.");
-            sendError(sender, "This command is for the new timings (v2) system only");
-            sendError(sender, "Please use '/timing' for the old system");
-            return true;
-        }
-
         if (!Timings.isTimingsEnabled()) {
             sendError(sender,"The server deactivated timing reports");
             sendError(sender,"Go to paper.yml and activate timings");

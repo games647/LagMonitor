@@ -230,15 +230,21 @@ public class LagMonitor extends JavaPlugin {
         getCommand("system").setExecutor(new SystemCommand(this));
         getCommand("env").setExecutor(new EnvironmentCommand(this));
         getCommand("monitor").setExecutor(new MonitorCommand(this));
-        getCommand("timing").setExecutor(new SpigotTimingsCommand(this));
         getCommand("graph").setExecutor(new GraphCommand(this));
         getCommand("native").setExecutor(new NativeCommand(this));
         getCommand("vm").setExecutor(new VmCommand(this));
         getCommand("tasks").setExecutor(new TasksCommand(this));
-        getCommand("paper-timing").setExecutor(new PaperTimingsCommand(this));
         getCommand("heap").setExecutor(new HeapCommand(this));
         getCommand("lagpage").setExecutor(new PaginationCommand(this));
         getCommand("jfr").setExecutor(new FlightRecorderCommand(this));
         getCommand("network").setExecutor(new NetworkCommand(this));
+
+        //paper moved to class to package co.aikar.timings
+        try {
+            Class.forName("org.bukkit.command.defaults.TimingsCommand");
+            getCommand("timing").setExecutor(new SpigotTimingsCommand(this));
+        } catch (ClassNotFoundException e) {
+            getCommand("timing").setExecutor(new PaperTimingsCommand(this));
+        }
     }
 }
