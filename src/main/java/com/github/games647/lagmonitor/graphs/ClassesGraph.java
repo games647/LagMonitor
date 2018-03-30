@@ -21,9 +21,7 @@ public class ClassesGraph extends GraphRenderer {
         int roundedMax = (int) (5 * (Math.ceil((float) loadedClasses / 5)));
         int loadedHeight = getHeightScaled(roundedMax, loadedClasses);
 
-        for (int yPos = MAX_HEIGHT - loadedHeight; yPos < 128; yPos++) {
-            canvas.setPixel(nextPosX, yPos, MAX_COLOR);
-        }
+        fillBar(canvas, nextPosX, MAX_HEIGHT - loadedHeight, MAX_COLOR);
 
         //these is the max number
         return loadedClasses;

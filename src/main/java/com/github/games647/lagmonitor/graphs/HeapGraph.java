@@ -28,15 +28,9 @@ public class HeapGraph extends GraphRenderer {
         //x=0 y=0 is the left top point so convert it
         int convertedMaxHeight = MAX_HEIGHT - maxHeight;
         int convertedUsedHeight = MAX_HEIGHT - usedHeight;
-        canvas.setPixel(nextPosX, convertedMaxHeight, MAX_COLOR);
-        for (int yPos = convertedMaxHeight; yPos < 128; yPos++) {
-            canvas.setPixel(nextPosX, yPos, MAX_COLOR);
-        }
 
-        canvas.setPixel(nextPosX, convertedUsedHeight, USED_COLOR);
-        for (int yPos = convertedUsedHeight; yPos < 128; yPos++) {
-            canvas.setPixel(nextPosX, yPos, USED_COLOR);
-        }
+        fillBar(canvas, nextPosX, convertedMaxHeight, MAX_COLOR);
+        fillBar(canvas, nextPosX, convertedUsedHeight, USED_COLOR);
 
         return maxHeight;
     }

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
@@ -67,9 +68,8 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
 
     public void writeString(StringBuilder builder, int indent) {
         StringBuilder b = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            b.append(' ');
-        }
+        IntStream.range(0, indent).forEach(i -> b.append(' '));
+
         String padding = b.toString();
 
         for (MethodMeasurement child : getChildInvokes().values()) {

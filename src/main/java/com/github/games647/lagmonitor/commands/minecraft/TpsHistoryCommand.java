@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -40,9 +41,10 @@ public class TpsHistoryCommand extends LagCommand {
         }
 
         List<StringBuilder> graphLines = Lists.newArrayListWithExpectedSize(GRAPH_LINES);
-        for (int line = 1; line <= GRAPH_LINES; line++) {
-            graphLines.add(new StringBuilder(GRAPH_WIDTH * 2));
-        }
+        IntStream.rangeClosed(1, GRAPH_LINES)
+                .map(i -> GRAPH_WIDTH * 2)
+                .mapToObj(StringBuilder::new)
+                .forEach(graphLines::add);
 
         TpsHistoryTask tpsHistoryTask = plugin.getTpsHistoryTask();
 

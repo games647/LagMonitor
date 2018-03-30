@@ -41,9 +41,9 @@ public abstract class GraphRenderer extends MapRenderer {
                 nextPosX = 0;
             }
 
-            clearMap(canvas, nextPosX);
+            clearBar(canvas, nextPosX);
             //make it more visual where the renderer is at the moment
-            clearMap(canvas, nextPosX + 1);
+            clearBar(canvas, nextPosX + 1);
             int maxValue = renderGraphTick(canvas, nextPosX);
 
             //override the color
@@ -66,7 +66,7 @@ public abstract class GraphRenderer extends MapRenderer {
         return MAX_HEIGHT * value / maxValue;
     }
 
-    protected void clearMap(MapCanvas canvas, int posX) {
+    protected void clearBar(MapCanvas canvas, int posX) {
         //resets the complete y coordinates on this x in order to free unused
         for (int yPos = 0; yPos < MAX_HEIGHT; yPos++) {
             canvas.setPixel(posX, yPos, (byte) 0);
@@ -75,9 +75,13 @@ public abstract class GraphRenderer extends MapRenderer {
 
     protected void clearMap(MapCanvas canvas) {
         for (int xPos = 0; xPos < MAX_WIDTH; xPos++) {
-            for (int yPos = 0; yPos < 128; yPos++) {
-                canvas.setPixel(xPos, yPos, (byte) 0);
-            }
+            fillBar(canvas, xPos, 0, (byte) 0);
+        }
+    }
+
+    protected void fillBar(MapCanvas canvas, int xPos, int yStart, byte color) {
+        for (int yPos = yStart; yPos < MAX_HEIGHT; yPos++) {
+            canvas.setPixel(xPos, yPos, color);
         }
     }
 

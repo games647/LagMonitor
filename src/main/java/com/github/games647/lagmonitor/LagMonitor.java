@@ -46,6 +46,7 @@ import java.util.Timer;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import oshi.SystemInfo;
@@ -240,11 +241,12 @@ public class LagMonitor extends JavaPlugin {
         getCommand("network").setExecutor(new NetworkCommand(this));
 
         //paper moved to class to package co.aikar.timings
+        PluginCommand timing = getCommand("timing");
         try {
             Class.forName("org.bukkit.command.defaults.TimingsCommand");
-            getCommand("timing").setExecutor(new SpigotTimingsCommand(this));
+            timing.setExecutor(new SpigotTimingsCommand(this));
         } catch (ClassNotFoundException e) {
-            getCommand("timing").setExecutor(new PaperTimingsCommand(this));
+            timing.setExecutor(new PaperTimingsCommand(this));
         }
     }
 }

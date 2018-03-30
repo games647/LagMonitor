@@ -47,13 +47,8 @@ public class CpuGraph extends GraphRenderer {
             localProcessHeight = this.processHeight;
         }
 
-        for (int yPos = MAX_HEIGHT - localSystemHeight; yPos < 128; yPos++) {
-            canvas.setPixel(nextPosX, yPos, MAX_COLOR);
-        }
-
-        for (int yPos = MAX_HEIGHT - localProcessHeight; yPos < 128; yPos++) {
-            canvas.setPixel(nextPosX, yPos, USED_COLOR);
-        }
+        fillBar(canvas, nextPosX, MAX_HEIGHT - localSystemHeight, MAX_COLOR);
+        fillBar(canvas, nextPosX, MAX_HEIGHT - localProcessHeight, USED_COLOR);
 
         //set max height as 100%
         return 100;
