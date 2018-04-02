@@ -86,6 +86,17 @@ lagmonitor.commands.* - Access to all commands
     /jfr <start/stop/dump> - Manages the Java Flight Recordings of the native Java VM. It gives you much more detailed
         information including network communications, file read/write times, detailed heap and thread data, ...
 
+## Development builds
+
+Development builds of this project can be acquired at the provided CI (continuous integration) server. It contains the
+latest changes from the Source-Code in preparation for the following release. This means they could contain new
+features, bug fixes and other changes since the last release.
+
+Nevertheless builds are only tested using a small set of automated and minor manual tests. Therefore they **could**
+contain new bugs and are likely to be less stable than released versions.
+
+https://ci.codemc.org/job/Games647/job/LagMonitor/changes
+
 ## Images
 
 ### Heap command
