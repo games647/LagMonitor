@@ -33,8 +33,8 @@ server timings and so on.
 
 ## Requirements
 
-* Java 8
-* Spigot, Paper or a fork of it
+* Java 8+
+* Spigot or a fork of it (ex: Paper)
 
 ## Permissions
 
@@ -42,7 +42,8 @@ lagmonitor.* - Access to all LagMonitor features
 
 lagmonitor.commands.* - Access to all commands
 
-#### All command permissions
+### All command permissions
+
 * lagmonitor.command.ping
 * lagmonitor.command.ping.other
 * lagmonitor.command.stacktrace

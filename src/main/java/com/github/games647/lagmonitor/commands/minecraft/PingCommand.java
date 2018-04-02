@@ -1,10 +1,11 @@
 package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.utils.LagUtils;
 import com.github.games647.lagmonitor.utils.RollingOverHistory;
-import com.github.games647.lagmonitor.commands.LagCommand;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,7 +49,7 @@ public class PingCommand extends LagCommand {
         if (sender.hasPermission(command.getPermission() + ".other")) {
             String playerName = args[0];
             RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(playerName);
-            if (sampleHistory == null) {
+            if (sampleHistory == null || !canSee(sender, playerName)) {
                 sender.sendMessage(ChatColor.DARK_RED + "No data for that player " + playerName);
                 return;
             }
@@ -63,5 +64,13 @@ public class PingCommand extends LagCommand {
         } else {
             sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission");
         }
+    }
+
+    private boolean canSee(CommandSender sender, String playerName) {
+        if (sender instanceof Player) {
+            return ((Player) sender).canSee(Bukkit.getPlayerExact(playerName));
+        }
+
+        return true;
     }
 }

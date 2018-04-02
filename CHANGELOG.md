@@ -2,6 +2,7 @@
 
 ## 1.17
 
+* Hide vanished players from the ping command
 * Merge Paper and Spigot Timings parsing into one command
 * Improve wording for thread block or safety warnings:
     * If you think something is missing or could be described better, please make a pull request.

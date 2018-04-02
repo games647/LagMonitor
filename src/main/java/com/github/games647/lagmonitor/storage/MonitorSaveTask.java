@@ -132,7 +132,7 @@ public class MonitorSaveTask implements Runnable {
 
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         float loadAvg = round(osBean.getSystemLoadAverage(), 4);
-        if (loadAvg == -1.0F) {
+        if (loadAvg < 0) {
             //windows doesn't support this
             loadAvg = 0;
         }

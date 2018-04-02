@@ -78,7 +78,7 @@ public class JavaVersionTest {
 
         lower = new JavaVersion("9.0.3");
         higher = new JavaVersion("9.0.4");
-        assertThat(lower.compareTo(higher), is(-1));
+        assertThat(higher.compareTo(lower), is(1));
     }
 
     @Test
