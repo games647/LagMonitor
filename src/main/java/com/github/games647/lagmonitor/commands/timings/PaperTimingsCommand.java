@@ -93,7 +93,7 @@ public class PaperTimingsCommand extends LagCommand {
 
         TimingHistory lastHistory = history.peek();
         if (lastHistory == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "Not enough data collected yet");
+            sendError(sender, "Not enough data collected yet");
             return true;
         }
 

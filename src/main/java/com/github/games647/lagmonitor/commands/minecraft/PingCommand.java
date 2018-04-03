@@ -28,7 +28,7 @@ public class PingCommand extends LagCommand {
         } else if (sender instanceof Player) {
             displayPingSelf(sender);
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "You have to be in game in order to see your own ping");
+            sendError(sender, "You have to be in game in order to see your own ping");
         }
 
         return true;
@@ -53,7 +53,7 @@ public class PingCommand extends LagCommand {
             String playerName = args[0];
             RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(playerName);
             if (sampleHistory == null || !canSee(sender, playerName)) {
-                sender.sendMessage(ChatColor.DARK_RED + "No data for that player " + playerName);
+                sendError(sender, "No data for that player " + playerName);
                 return;
             }
 
@@ -65,7 +65,7 @@ public class PingCommand extends LagCommand {
             float pingAverage = LagUtils.round(sampleHistory.getAverage());
             sender.sendMessage(PRIMARY_COLOR + "Average: " + ChatColor.DARK_GREEN + pingAverage + "ms");
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "You don't have enough permission");
+            sendError(sender, "You don't have enough permission");
         }
     }
 

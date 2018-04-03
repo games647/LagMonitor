@@ -25,8 +25,6 @@ import org.bukkit.command.CommandSender;
 
 public class ThreadCommand extends DumpCommand {
 
-    //https://docs.oracle.com/javase/8/docs/jre/api/management/extension/com/sun/management/DiagnosticCommandMBean.html
-    private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
     private static final String DUMP_COMMAND = "threadPrint";
 
     public ThreadCommand(LagMonitor plugin) {
@@ -81,8 +79,7 @@ public class ThreadCommand extends DumpCommand {
 
     private void onDump(CommandSender sender) {
         try {
-            String result = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, DUMP_COMMAND
-                    , new Object[]{ArrayUtils.EMPTY_STRING_ARRAY}, new String[]{String[].class.getName()});
+            String result = invokeDiagnosticCommand(DUMP_COMMAND, ArrayUtils.EMPTY_STRING_ARRAY);
 
             Path dumpFile = getNewDumpFile();
             Files.write(dumpFile, Collections.singletonList(result));
@@ -90,12 +87,10 @@ public class ThreadCommand extends DumpCommand {
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());
             sender.sendMessage(ChatColor.GRAY + "You can analyse it using VisualVM");
         } catch (InstanceNotFoundException instanceNotFoundException) {
-            plugin.getLogger().log(Level.SEVERE, "You are not using Oracle JVM. OpenJDK hasn't implemented it yet"
-                    , instanceNotFoundException);
-            sender.sendMessage(ChatColor.DARK_RED + "You are not using Oracle JVM. OpenJDK hasn't implemented it yet");
+            sendError(sender, NOT_ORACLE_MSG);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
-            sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
+            sendError(sender, "An exception occurred. Please check the server log");
         }
     }
 }

@@ -2,6 +2,7 @@ package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pagination;
+import com.sun.management.HotSpotDiagnosticMXBean;
 
 import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
@@ -10,8 +11,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -23,14 +22,7 @@ import org.bukkit.command.CommandSender;
 
 public class HeapCommand extends DumpCommand {
 
-    //https://docs.oracle.com/javase/8/docs/jre/api/management/extension/com/sun/management/DiagnosticCommandMBean.html
-    private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
     private static final String HEAP_COMMAND = "gcClassHistogram";
-
-    //can be useful for dumping heaps in binary format
-    //https://docs.oracle.com/javase/8/docs/jre/api/management/extension/com/sun/management/HotSpotDiagnosticMXBean.html
-    private static final String HOTSPOT_DIAGNOSTIC = "com.sun.management:type=HotSpotDiagnostic";
-    private static final String DUMP_COMMAND = "dumpHeap";
     private static final boolean DUMP_DEAD_OBJECTS = false;
 
     public HeapCommand(LagMonitor plugin) {
@@ -48,7 +40,7 @@ public class HeapCommand extends DumpCommand {
             if ("dump".equalsIgnoreCase(subCommand)) {
                 onDump(sender);
             } else {
-                sender.sendMessage(ChatColor.DARK_RED + "Unknown subcommand");
+                sendError(sender, "Unknown subcommand");
             }
 
             return true;
@@ -56,13 +48,8 @@ public class HeapCommand extends DumpCommand {
 
         List<BaseComponent[]> paginatedLines = new ArrayList<>();
         try {
-            ObjectName diagnosticObjectName = ObjectName.getInstance(DIAGNOSTIC_COMMAND);
-
-            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            String reply = (String) mBeanServer.invoke(diagnosticObjectName, HEAP_COMMAND
-                    , new Object[]{ArrayUtils.EMPTY_STRING_ARRAY}, new String[]{String[].class.getName()});
-            String[] lines = reply.split("\n");
-            for (String line : lines) {
+            String reply = invokeDiagnosticCommand(HEAP_COMMAND, ArrayUtils.EMPTY_STRING_ARRAY);
+            for (String line : reply.split("\n")) {
                 paginatedLines.add(new ComponentBuilder(line).create());
             }
 
@@ -70,12 +57,10 @@ public class HeapCommand extends DumpCommand {
             pagination.send(sender);
             plugin.getPaginationManager().setPagination(sender.getName(), pagination);
         } catch (InstanceNotFoundException instanceNotFoundException) {
-            plugin.getLogger().log(Level.SEVERE, "You are not using Oracle JVM. OpenJDK hasn't implemented it yet"
-                    , instanceNotFoundException);
-            sender.sendMessage(ChatColor.DARK_RED + "You are not using Oracle JVM. OpenJDK hasn't implemented it yet");
+            sendError(sender, NOT_ORACLE_MSG);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
-            sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
+            sendError(sender, "An exception occurred. Please check the server log");
         }
 
         return true;
@@ -83,16 +68,21 @@ public class HeapCommand extends DumpCommand {
 
     private void onDump(CommandSender sender) {
         try {
+            Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
+
+            //can be useful for dumping heaps in binary format
+            HotSpotDiagnosticMXBean hostSpot = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
+
             Path dumpFile = getNewDumpFile();
-            invokeBeanCommand(HOTSPOT_DIAGNOSTIC, DUMP_COMMAND
-                    , new Object[]{dumpFile.toAbsolutePath().toString(), DUMP_DEAD_OBJECTS}
-                    , new String[]{String.class.getName(), Boolean.TYPE.getName()});
+            hostSpot.dumpHeap(dumpFile.toAbsolutePath().toString(), DUMP_DEAD_OBJECTS);
 
             sender.sendMessage(ChatColor.GRAY + "Dump created: " + dumpFile.getFileName());
             sender.sendMessage(ChatColor.GRAY + "You can analyse it using VisualVM");
+        } catch (ClassNotFoundException notFoundEx) {
+            sendError(sender, NOT_ORACLE_MSG);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.SEVERE, null, ex);
-            sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
+            sendError(sender, "An exception occurred. Please check the server log");
         }
     }
 }

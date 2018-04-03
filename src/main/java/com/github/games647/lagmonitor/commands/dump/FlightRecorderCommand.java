@@ -5,13 +5,16 @@ import com.github.games647.lagmonitor.LagMonitor;
 import java.nio.file.Path;
 import java.util.logging.Level;
 
-import org.bukkit.ChatColor;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ReflectionException;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class FlightRecorderCommand extends DumpCommand {
 
-    private static final String BEAN_NAME = "com.sun.management:type=DiagnosticCommand";
     private static final String START_COMMAND = "jfrStart";
     private static final String STOP_COMMAND = "jfrStop";
     private static final String DUMP_COMMAND = "jfrDump";
@@ -34,61 +37,49 @@ public class FlightRecorderCommand extends DumpCommand {
             return true;
         }
 
-        if (args.length > 0) {
-            String subCommand = args[0];
-            if ("start".equalsIgnoreCase(subCommand)) {
-                onStartCommand(sender);
-            } else if ("stop".equalsIgnoreCase(subCommand)) {
-                onStopCommand(sender);
-            } else if ("dump".equalsIgnoreCase(subCommand)) {
-                onDumpCommand(sender);
+        try {
+            if (args.length > 0) {
+                String subCommand = args[0];
+                if ("start".equalsIgnoreCase(subCommand)) {
+                    onStartCommand(sender);
+                } else if ("stop".equalsIgnoreCase(subCommand)) {
+                    onStopCommand(sender);
+                } else if ("dump".equalsIgnoreCase(subCommand)) {
+                    onDumpCommand(sender);
+                } else {
+                    sendError(sender, "Unknown subcommand");
+                }
             } else {
-                sender.sendMessage(ChatColor.DARK_RED + "Unknown subcommand");
+                sendError(sender, "Not enough arguments");
             }
-        } else {
-            sender.sendMessage(ChatColor.DARK_RED + "Not enough arguments");
+        } catch (InstanceNotFoundException notFoundEx) {
+            sendError(sender, NOT_ORACLE_MSG);
+        } catch (Exception ex) {
+            plugin.getLogger().log(Level.SEVERE, null, ex);
+            sendError(sender, "An exception occurred. Please check the server log");
         }
 
         return true;
     }
 
-    private void onStartCommand(CommandSender sender) {
-        try {
-            String reply = (String) invokeBeanCommand(BEAN_NAME, START_COMMAND
-                    , new Object[]{new String[]{"settings=" + settingsPath, "name=" + recordingName}}
-                    , new String[]{String[].class.getName()});
-            sender.sendMessage(reply);
-        } catch (Exception ex) {
-            plugin.getLogger().log(Level.SEVERE, null, ex);
-            sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
-        }
+    private void onStartCommand(CommandSender sender)
+            throws MalformedObjectNameException, ReflectionException, MBeanException, InstanceNotFoundException {
+        String reply = invokeDiagnosticCommand(START_COMMAND, "settings=" + settingsPath, "name=" + recordingName);
+        sender.sendMessage(reply);
     }
 
-    private void onStopCommand(CommandSender sender) {
-        try {
-            String reply = (String) invokeBeanCommand(BEAN_NAME, STOP_COMMAND
-                    , new Object[]{new String[]{"name=" + recordingName}}
-                    , new String[]{String[].class.getName()});
-
-            sender.sendMessage(reply);
-        } catch (Exception ex) {
-            plugin.getLogger().log(Level.SEVERE, null, ex);
-            sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
-        }
+    private void onStopCommand(CommandSender sender)
+            throws MalformedObjectNameException, ReflectionException, MBeanException, InstanceNotFoundException {
+        String reply = invokeDiagnosticCommand(STOP_COMMAND, "name=" + recordingName);
+        sender.sendMessage(reply);
     }
 
-    private void onDumpCommand(CommandSender sender) {
-        try {
-            Path dumpFile = getNewDumpFile();
-            String reply = (String) invokeBeanCommand(BEAN_NAME, DUMP_COMMAND
-                    , new Object[]{new String[]{"filename=" + dumpFile.toAbsolutePath()
-                            , "name=" + recordingName, "compress=true"}}
-                    , new String[]{String[].class.getName()});
+    private void onDumpCommand(CommandSender sender)
+            throws MalformedObjectNameException, ReflectionException, MBeanException, InstanceNotFoundException {
+        Path dumpFile = getNewDumpFile();
+        String reply = invokeDiagnosticCommand(DUMP_COMMAND
+                , "filename=" + dumpFile.toAbsolutePath(), "name=" + recordingName, "compress=true");
 
-            sender.sendMessage(reply);
-        } catch (Exception ex) {
-            plugin.getLogger().log(Level.SEVERE, null, ex);
-            sender.sendMessage(ChatColor.DARK_RED + "An exception occurred. Please check the server log");
-        }
+        sender.sendMessage(reply);
     }
 }

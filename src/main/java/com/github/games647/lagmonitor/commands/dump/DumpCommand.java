@@ -17,6 +17,10 @@ import javax.management.ReflectionException;
 
 public abstract class DumpCommand extends LagCommand {
 
+    //https://docs.oracle.com/javase/10/docs/jre/api/management/extension/com/sun/management/DiagnosticCommandMBean.html
+    protected static final String DIAGNOSTIC_BEAN = "com.sun.management:type=DiagnosticCommand";
+    protected static final String NOT_ORACLE_MSG = "You are not using Oracle JVM. OpenJDK hasn't implemented it yet";
+
     private final String filePrefix;
     private final String fileExt;
 
@@ -41,5 +45,11 @@ public abstract class DumpCommand extends LagCommand {
         ObjectName beanObject = ObjectName.getInstance(beanName);
 
         return beanServer.invoke(beanObject, command, args, signature);
+    }
+
+    public String invokeDiagnosticCommand(String command, String... args)
+            throws MalformedObjectNameException, ReflectionException, MBeanException, InstanceNotFoundException {
+        return (String) invokeBeanCommand(DIAGNOSTIC_BEAN, command,
+                new Object[]{args}, new String[]{String[].class.getName()});
     }
 }
