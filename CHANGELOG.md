@@ -2,6 +2,9 @@
 
 ## 1.17
 
+* Close all resources after calculating folder size
+* Verify if JFR methods are available in the current VM
+* Enable native driver by default if available
 * Hide vanished players from the ping command
 * Merge Paper and Spigot Timings parsing into one command
 * Improve wording for thread block or safety warnings:

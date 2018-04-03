@@ -1,11 +1,17 @@
 package com.github.games647.lagmonitor.tasks;
 
+import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.utils.RollingOverHistory;
 
-import java.lang.reflect.Field;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -14,20 +20,42 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PingManager implements Runnable, Listener {
-
-    private static final int SAMPLE_SIZE = 5;
 
     //the server is pinging the client every 40 Ticks (2 sec) - so check it then
     //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
     public static final int PING_INTERVAL = 2 * 20;
+    private static final int SAMPLE_SIZE = 5;
+
+    private static final MethodHandle pingField;
+    private static final MethodHandle getHandleMethod;
+
+    static {
+        Class<?> craftPlayerClass = Reflection.getCraftBukkitClass("entity.CraftPlayer");
+        Class<?> entityPlayer = Reflection.getMinecraftClass("EntityPlayer");
+
+        Lookup lookup = MethodHandles.publicLookup();
+
+        MethodHandle localHandle = null;
+        MethodHandle localPing = null;
+        try {
+            Method getHandleMethod = craftPlayerClass.getDeclaredMethod("getHandle");
+            localHandle = lookup.unreflect(getHandleMethod);
+
+            localPing = lookup.findGetter(entityPlayer, "ping", Integer.TYPE);
+        } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException reflectiveEx) {
+            Logger logger = JavaPlugin.getPlugin(LagMonitor.class).getLogger();
+            logger.log(Level.WARNING, "Cannot find ping field/method", reflectiveEx);
+        }
+
+        getHandleMethod = localHandle;
+        pingField = localPing;
+    }
 
     private final Map<String, RollingOverHistory> playerHistory = new HashMap<>();
     private final Plugin plugin;
-
-    private Method getHandleMethod;
-    private Field pingField;
 
     public PingManager(Plugin plugin) {
         this.plugin = plugin;
@@ -39,7 +67,6 @@ public class PingManager implements Runnable, Listener {
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
                 int ping = getPing(player);
-
                 history.add(ping);
             }
         });
@@ -64,23 +91,12 @@ public class PingManager implements Runnable, Listener {
 
     private int getReflectionPing(Player player) {
         try {
-            if (getHandleMethod == null) {
-                getHandleMethod = player.getClass().getDeclaredMethod("getHandle");
-                //disable java security check. This will speed it a little
-                getHandleMethod.setAccessible(true);
-            }
-
             Object entityPlayer = getHandleMethod.invoke(player);
-            if (pingField == null) {
-                pingField = entityPlayer.getClass().getDeclaredField("ping");
-                //disable java security check. This will speed it a little
-                pingField.setAccessible(true);
-            }
-
-            //returns the found int value
-            return pingField.getInt(entityPlayer);
+            return (int) pingField.invoke(entityPlayer);
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            return -1;
+        } catch (Throwable throwable) {
+            throw (Error) throwable;
         }
     }
 
