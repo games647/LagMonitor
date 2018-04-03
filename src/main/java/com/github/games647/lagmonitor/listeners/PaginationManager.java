@@ -11,18 +11,18 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PaginationManager implements Listener {
 
-    private final Map<String, Pagination> paginations = new HashMap<>();
+    private final Map<String, Pagination> pages = new HashMap<>();
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent quitEvent) {
-        paginations.remove(quitEvent.getPlayer().getName());
+        pages.remove(quitEvent.getPlayer().getName());
     }
 
     public Pagination getPagination(String username) {
-        return paginations.get(username);
+        return pages.get(username);
     }
 
     public void setPagination(String username, Pagination pagination) {
-        paginations.put(username, pagination);
+        pages.put(username, pagination);
     }
 }

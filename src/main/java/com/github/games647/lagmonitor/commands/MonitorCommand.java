@@ -33,7 +33,7 @@ public class MonitorCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
+        if (!canExecute(sender, command)) {
             sendError(sender, "Not whitelisted");
             return true;
         }
@@ -96,7 +96,7 @@ public class MonitorCommand extends LagCommand {
             timer = new Timer(plugin.getName() + "-Monitor");
             plugin.setMonitorTimer(timer);
 
-            monitorTask = new MonitorTask(plugin, Thread.currentThread().getId());
+            monitorTask = new MonitorTask(plugin.getLogger(), Thread.currentThread().getId());
             timer.scheduleAtFixedRate(monitorTask, SAMPLE_DELAY, SAMPLE_INTERVAL);
 
             sender.sendMessage(ChatColor.DARK_GREEN + "Monitor started");

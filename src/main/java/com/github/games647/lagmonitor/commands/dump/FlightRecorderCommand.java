@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 
 public class FlightRecorderCommand extends DumpCommand {
 
-    private static final String DIAGNOSTIC_COMMAND = "com.sun.management:type=DiagnosticCommand";
+    private static final String BEAN_NAME = "com.sun.management:type=DiagnosticCommand";
     private static final String START_COMMAND = "jfrStart";
     private static final String STOP_COMMAND = "jfrStop";
     private static final String DUMP_COMMAND = "jfrDump";
@@ -19,7 +19,6 @@ public class FlightRecorderCommand extends DumpCommand {
     private static final String SETTINGS_FILE = "default.jfc";
 
     private final String settingsPath;
-
     private final String recordingName;
 
     public FlightRecorderCommand(LagMonitor plugin) {
@@ -31,8 +30,7 @@ public class FlightRecorderCommand extends DumpCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
@@ -56,7 +54,7 @@ public class FlightRecorderCommand extends DumpCommand {
 
     private void onStartCommand(CommandSender sender) {
         try {
-            String reply = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, START_COMMAND
+            String reply = (String) invokeBeanCommand(BEAN_NAME, START_COMMAND
                     , new Object[]{new String[]{"settings=" + settingsPath, "name=" + recordingName}}
                     , new String[]{String[].class.getName()});
             sender.sendMessage(reply);
@@ -68,7 +66,7 @@ public class FlightRecorderCommand extends DumpCommand {
 
     private void onStopCommand(CommandSender sender) {
         try {
-            String reply = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, STOP_COMMAND
+            String reply = (String) invokeBeanCommand(BEAN_NAME, STOP_COMMAND
                     , new Object[]{new String[]{"name=" + recordingName}}
                     , new String[]{String[].class.getName()});
 
@@ -82,7 +80,7 @@ public class FlightRecorderCommand extends DumpCommand {
     private void onDumpCommand(CommandSender sender) {
         try {
             Path dumpFile = getNewDumpFile();
-            String reply = (String) invokeBeanCommand(DIAGNOSTIC_COMMAND, DUMP_COMMAND
+            String reply = (String) invokeBeanCommand(BEAN_NAME, DUMP_COMMAND
                     , new Object[]{new String[]{"filename=" + dumpFile.toAbsolutePath()
                             , "name=" + recordingName, "compress=true"}}
                     , new String[]{String[].class.getName()});

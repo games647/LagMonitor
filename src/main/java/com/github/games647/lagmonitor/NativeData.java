@@ -1,11 +1,14 @@
 package com.github.games647.lagmonitor;
 
+import com.sun.management.UnixOperatingSystemMXBean;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +31,7 @@ public class NativeData {
 
         if (info == null && !(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
             logger.severe("You're not using Oracle Java nor using the native library. " +
-                    "You wan't be able to read native data");
+                    "You won't be able to read some native data");
         }
 
         if (info == null) {
@@ -38,23 +41,27 @@ public class NativeData {
         }
     }
 
-    public SystemInfo getSystemInfo() {
-        return info;
+    public Optional<SystemInfo> getSystemInfo() {
+        return Optional.ofNullable(info);
     }
 
     public double getProcessCPULoad() {
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean nativeOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
             return nativeOsBean.getProcessCpuLoad();
-        } else if (info != null) {
+        // } else if (info != null) {
             // return info.getOperatingSystem().getProcess(pid).getState();
         }
 
         return -1;
     }
 
-    public OSProcess getProcess() {
-        return info.getOperatingSystem().getProcess(pid);
+    public Optional<OSProcess> getProcess() {
+        if (info == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(info.getOperatingSystem().getProcess(pid));
     }
 
     public double getCPULoad() {
@@ -63,6 +70,26 @@ public class NativeData {
             return nativeOsBean.getSystemCpuLoad();
         } else if (info != null) {
             return info.getHardware().getProcessor().getSystemCpuLoad();
+        }
+
+        return -1;
+    }
+
+    public long getOpenFileDescriptors() {
+        if (osBean instanceof com.sun.management.UnixOperatingSystemMXBean) {
+            return ((UnixOperatingSystemMXBean) osBean).getOpenFileDescriptorCount();
+        } else if (info != null) {
+            return info.getOperatingSystem().getFileSystem().getOpenFileDescriptors();
+        }
+
+        return -1;
+    }
+
+    public long getMaxFileDescriptors() {
+        if (osBean instanceof com.sun.management.UnixOperatingSystemMXBean) {
+            return ((UnixOperatingSystemMXBean) osBean).getMaxFileDescriptorCount();
+        } else if (info != null) {
+            return info.getOperatingSystem().getFileSystem().getMaxFileDescriptors();
         }
 
         return -1;
@@ -96,7 +123,7 @@ public class NativeData {
             return nativeOsBean.getFreeSwapSpaceSize();
         } else if (info != null) {
             GlobalMemory memory = info.getHardware().getMemory();
-            return memory.getSwapTotal() - memory.getSwapUsed();
+            return memory.getAvailable();
         }
 
         return -1;

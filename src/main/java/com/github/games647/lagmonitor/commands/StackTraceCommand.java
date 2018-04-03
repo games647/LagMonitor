@@ -6,8 +6,10 @@ import com.github.games647.lagmonitor.Pagination;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -25,8 +27,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
@@ -56,31 +57,33 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
         //begin from the top
         for (int i = stackTrace.length - 1; i >= 0; i--) {
-            StackTraceElement traceElement = stackTrace[i];
-
-            String className = Pagination.filterPackageNames(traceElement.getClassName());
-            String methodName = traceElement.getMethodName();
-
-            boolean nativeMethod = traceElement.isNativeMethod();
-            int lineNumber = traceElement.getLineNumber();
-
-            String line = Integer.toString(lineNumber);
-            if (nativeMethod) {
-                line = "Native";
-            }
-
-            lines.add(new ComponentBuilder(className + '.')
-                    .color(PRIMARY_COLOR.asBungee())
-                    .append(methodName + ':')
-                    .color(ChatColor.DARK_GREEN)
-                    .append(line)
-                    .color(ChatColor.DARK_PURPLE)
-                    .create());
+            lines.add(formatTraceElement(stackTrace[i]));
         }
 
         Pagination pagination = new Pagination("Stacktrace", lines);
         pagination.send(sender);
         plugin.getPaginationManager().setPagination(sender.getName(), pagination);
+    }
+
+    private BaseComponent[] formatTraceElement(StackTraceElement traceElement) {
+        String className = Pagination.filterPackageNames(traceElement.getClassName());
+        String methodName = traceElement.getMethodName();
+
+        boolean nativeMethod = traceElement.isNativeMethod();
+        int lineNumber = traceElement.getLineNumber();
+
+        String line = Integer.toString(lineNumber);
+        if (nativeMethod) {
+            line = "Native";
+        }
+
+        return new ComponentBuilder(className + '.')
+                .color(PRIMARY_COLOR.asBungee())
+                .append(methodName + ':')
+                .color(ChatColor.DARK_GREEN)
+                .append(line)
+                .color(ChatColor.DARK_PURPLE)
+                .create();
     }
 
     @Override
@@ -95,13 +98,10 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
         String requestName = builder.toString();
 
         ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads(false, false);
-        for (ThreadInfo thread : threads) {
-            if (thread.getThreadName().startsWith(requestName)) {
-                result.add(thread.getThreadName());
-            }
-        }
-
-        result.sort(String.CASE_INSENSITIVE_ORDER);
-        return result;
+        return Arrays.stream(threads)
+                .map(ThreadInfo::getThreadName)
+                .filter(name -> name.startsWith(requestName))
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.toList());
     }
 }

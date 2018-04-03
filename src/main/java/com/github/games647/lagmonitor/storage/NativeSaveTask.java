@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
 import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;
@@ -63,21 +64,9 @@ public class NativeSaveTask implements Runnable {
         int netReadDiff = 0;
         int netWriteDiff = 0;
 
-        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
-        Path root = Paths.get(".").getRoot();
-        if (root != null) {
-            String rootFileSystem = root.toAbsolutePath().toString();
-
-            OSProcess process = plugin.getNativeData().getProcess();
-            int diskRead = LagUtils.byteToMega(process.getBytesRead());
-            diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
-            lastDiskRead = diskRead;
-
-            int diskWrite = LagUtils.byteToMega(process.getBytesWritten());
-            diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
-            lastDiskWrite = diskRead;
-
-            NetworkIF[] networkIfs = systemInfo.getHardware().getNetworkIFs();
+        Optional<SystemInfo> systemInfo = plugin.getNativeData().getSystemInfo();
+        if (systemInfo.isPresent()) {
+            NetworkIF[] networkIfs = systemInfo.get().getHardware().getNetworkIFs();
             if (networkIfs.length > 0) {
                 NetworkIF networkInterface = networkIfs[0];
 
@@ -88,6 +77,21 @@ public class NativeSaveTask implements Runnable {
                 int netWrite = LagUtils.byteToMega(networkInterface.getBytesSent());
                 netWriteDiff = (netWrite - lastNetWrite) / timeDiff;
                 lastNetWrite = netWrite;
+            }
+
+            Path root = Paths.get(".").getRoot();
+            Optional<OSProcess> optProcess = plugin.getNativeData().getProcess();
+            if (root != null && optProcess.isPresent()) {
+                OSProcess process = optProcess.get();
+                String rootFileSystem = root.toAbsolutePath().toString();
+
+                int diskRead = LagUtils.byteToMega(process.getBytesRead());
+                diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
+                lastDiskRead = diskRead;
+
+                int diskWrite = LagUtils.byteToMega(process.getBytesWritten());
+                diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
+                lastDiskWrite = diskRead;
             }
         }
 

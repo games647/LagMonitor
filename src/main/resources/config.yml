@@ -59,8 +59,10 @@ tps-save-interval: 300
 monitor-save-interval: 900
 
 # Information about your server which is good to see, but might not be really useful for finding lag sources
-# Some information might be NULL if you disabled the feature above
-# For example: native and minecraft-traffic-counter
+# For example:
+#   * native
+#   * Minecraft traffic counter
+#   * Minecraft process specific writes and reads
 native-save-interval: 1200
 
 # A permissions independent way to whitelist certain commands

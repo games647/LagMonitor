@@ -20,8 +20,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.TimerTask;
 import java.util.logging.Level;
-
-import org.bukkit.plugin.Plugin;
+import java.util.logging.Logger;
 
 /**
  * Based on the project https://github.com/sk89q/WarmRoast by sk89q
@@ -32,14 +31,14 @@ public class MonitorTask extends TimerTask {
     private static final int MAX_DEPTH = 25;
 
     private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-    private final Plugin plugin;
+    private final Logger logger;
     private final long threadId;
 
     private MethodMeasurement rootNode;
     private int samples;
 
-    public MonitorTask(Plugin plugin, long threadId) {
-        this.plugin = plugin;
+    public MonitorTask(Logger logger, long threadId) {
+        this.logger = logger;
         this.threadId = threadId;
     }
 
@@ -84,7 +83,7 @@ public class MonitorTask extends TimerTask {
                     new OutputStreamWriter(httpConnection.getOutputStream(), StandardCharsets.UTF_8))
             ) {
                 writer.write("content=" + UrlEscapers.urlPathSegmentEscaper().escape(toString()));
-                writer.write("&from=" + plugin.getName());
+                writer.write("&from=" + logger.getName());
             }
 
             JsonObject object;
@@ -98,9 +97,9 @@ public class MonitorTask extends TimerTask {
                 return object.get("url").getAsString();
             }
 
-            plugin.getLogger().log(Level.INFO, "Failed to parse url from {0}", object);
+            logger.log(Level.INFO, "Failed to parse url from {0}", object);
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to upload monitoring data", ex);
+            logger.log(Level.SEVERE, "Failed to upload monitoring data", ex);
         }
 
         return null;

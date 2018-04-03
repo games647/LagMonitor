@@ -29,15 +29,14 @@ public class VmCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 
         //java info
-        sendJavaVersion(sender);
+        sendJavaVersion(sender, JavaVersion.detect());
 
         sendMessage(sender, "Java release date", System.getProperty("java.version.date", "n/a"));
         sendMessage(sender, "Java VM", runtimeBean.getVmName() + ' ' + runtimeBean.getVmVersion());
@@ -55,6 +54,7 @@ public class VmCommand extends LagCommand {
 
         CompilationMXBean compileBean = ManagementFactory.getCompilationMXBean();
         sendMessage(sender, "Compiler name", compileBean.getName());
+        sendMessage(sender, "Compilation time (ms)", String.valueOf(compileBean.getTotalCompilationTime()));
 
         //class loading
         ClassLoadingMXBean classBean = ManagementFactory.getClassLoadingMXBean();
@@ -66,15 +66,14 @@ public class VmCommand extends LagCommand {
         List<GarbageCollectorMXBean> gcBean = ManagementFactory.getGarbageCollectorMXBeans();
         for (GarbageCollectorMXBean collector : gcBean) {
             sendMessage(sender, "Garbage collector", collector.getName());
-            sendMessage(sender, "    Time", String.valueOf(collector.getCollectionTime()));
+            sendMessage(sender, "    Time (ms)", String.valueOf(collector.getCollectionTime()));
             sendMessage(sender, "    Count", String.valueOf(collector.getCollectionCount()));
         }
 
         return true;
     }
 
-    private void sendJavaVersion(CommandSender sender) {
-        JavaVersion version = JavaVersion.detect();
+    private void sendJavaVersion(CommandSender sender, JavaVersion version) {
         ComponentBuilder builder = new ComponentBuilder("Java version: ").color(PRIMARY_COLOR.asBungee())
                 .append(version.getRaw()).color(SECONDARY_COLOR.asBungee());
         if (version.isOutdated()) {

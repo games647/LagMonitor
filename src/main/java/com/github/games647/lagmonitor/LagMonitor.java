@@ -37,10 +37,14 @@ import com.github.games647.lagmonitor.threading.BlockingActionManager;
 import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.threading.Injectable;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
-import com.sun.jna.Native;
 
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.ProxySelector;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.logging.Level;
@@ -49,33 +53,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import oshi.SystemInfo;
 
 public class LagMonitor extends JavaPlugin {
+
+    private static final String JNA_FILE = "jna-4.4.0.jar";
 
     //the server is pinging the client every 40 Ticks (2 sec) - so check it then
     //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
     private static final int PING_INTERVAL = 2 * 20;
     private static final int DETECTION_THRESHOLD = 10;
 
-    private final NativeData nativeData = new NativeData(getLogger(), new SystemInfo());
     private final PingManager pingManager = new PingManager(this);
     private final BlockingActionManager actionManager = new BlockingActionManager(this);
     private final PaginationManager paginationManager = new PaginationManager();
     private final TpsHistoryTask tpsHistoryTask = new TpsHistoryTask();
 
+    private NativeData nativeData;
     private TrafficReader trafficReader;
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
 
     public LagMonitor() {
-        Native.DEBUG_JNA_LOAD = true;
-        Native.DEBUG_JNA_LOAD = true;
+        //always debug jna loading
+        System.setProperty("jna.debug_load", String.valueOf(true));
+        System.setProperty("jna.debug_load.jna", String.valueOf(true));
     }
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        setupNativeAdapter();
 
         if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
@@ -96,6 +105,7 @@ public class LagMonitor extends JavaPlugin {
         //register listeners
         getServer().getPluginManager().registerEvents(pingManager, this);
         getServer().getPluginManager().registerEvents(paginationManager, this);
+        getServer().getPluginManager().registerEvents(new GraphListener(), this);
 
         //add the player to the list in the case the plugin is loaded at runtime
         Bukkit.getOnlinePlayers().forEach(pingManager::addPlayer);
@@ -125,7 +135,37 @@ public class LagMonitor extends JavaPlugin {
         }
 
         registerCommands();
-        getServer().getPluginManager().registerEvents(new GraphListener(), this);
+    }
+
+    private void setupNativeAdapter() {
+        SystemInfo info = null;
+        try {
+            Class.forName("com.sun.jna.Platform");
+            info = new SystemInfo();
+
+            getLogger().info("Found JNA native library. Enabling extended native data support to display more data");
+        } catch (ClassNotFoundException classNotFoundEx) {
+            Path jnaPath = getDataFolder().toPath().resolve(JNA_FILE);
+            if (Files.exists(jnaPath)) {
+                if (getClassLoader() instanceof URLClassLoader) {
+                    try {
+                        Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                        addUrl.setAccessible(true);
+                        addUrl.invoke(getClassLoader(), jnaPath.toUri().toURL());
+
+                        getLogger().info("Added JNA to the classpath");
+                    } catch (ReflectiveOperationException | MalformedURLException reflectiveEx) {
+                        getLogger().log(Level.INFO, "Cannot add JNA to the classpath", reflectiveEx);
+                    }
+                }
+            } else {
+                getLogger().info("JNA not found. " +
+                        "Please download the following to the folder of this plugin to display more data about your setup");
+                getLogger().info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar");
+            }
+        }
+
+        nativeData = new NativeData(getLogger(), info);
     }
 
     private void setupNativeDatabase() {
@@ -140,12 +180,13 @@ public class LagMonitor extends JavaPlugin {
             Storage storage = new Storage(this, host, port, database, username, password, tablePrefix);
             storage.createTables();
 
-            getServer().getScheduler().runTaskTimer(this, new TpsSaveTask(this, storage), 20L,
+            BukkitScheduler scheduler = getServer().getScheduler();
+            scheduler.runTaskTimer(this, new TpsSaveTask(this, storage), 20L,
                      getConfig().getInt("tps-save-interval") * 20L);
             //this can run async because it runs independently from the main thread
-            getServer().getScheduler().runTaskTimerAsynchronously(this, new MonitorSaveTask(this, storage),
+            scheduler.runTaskTimerAsynchronously(this, new MonitorSaveTask(this, storage),
                     20L,getConfig().getInt("monitor-save-interval") * 20L);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, new NativeSaveTask(this, storage),
+            scheduler.runTaskTimerAsynchronously(this, new NativeSaveTask(this, storage),
                     20L,getConfig().getInt("native-save-interval") * 20L);
         } catch (SQLException sqlEx) {
             getLogger().log(Level.SEVERE, "Failed to setup monitoring database", sqlEx);

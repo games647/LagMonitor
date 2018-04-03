@@ -44,7 +44,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
+        if (!canExecute(sender, command)) {
             sendError(sender, "Not whitelisted");
             return true;
         }

@@ -41,8 +41,7 @@ public class SpigotTimingsCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 

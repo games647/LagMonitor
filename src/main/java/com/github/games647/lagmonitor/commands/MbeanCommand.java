@@ -3,11 +3,12 @@ package com.github.games647.lagmonitor.commands;
 import com.github.games647.lagmonitor.LagMonitor;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServer;
@@ -29,8 +30,7 @@ public class MbeanCommand extends LagCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
@@ -69,36 +69,28 @@ public class MbeanCommand extends LagCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> result = new ArrayList<>();
         String lastArg = args[args.length - 1];
 
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+
+        Stream<String> result = Stream.empty();
         if (args.length == 1) {
             Set<ObjectName> mbeans = mBeanServer.queryNames(null, null);
-            result.addAll(mbeans.stream()
-                    .filter(mbean -> mbean.getCanonicalName().startsWith(lastArg))
+            result = mbeans.stream()
                     .map(ObjectName::getCanonicalName)
-                    .collect(toList()));
+                    .filter(name -> name.startsWith(lastArg));
         } else if (args.length == 2) {
             try {
                 ObjectName beanObject = ObjectName.getInstance(args[0]);
-                MBeanAttributeInfo[] attributes = mBeanServer.getMBeanInfo(beanObject).getAttributes();
-                for (MBeanAttributeInfo attribute : attributes) {
-                    if ("ObjectName".equals(attribute.getName())) {
+                result = Arrays.stream(mBeanServer.getMBeanInfo(beanObject).getAttributes())
+                        .map(MBeanAttributeInfo::getName)
                         //ignore the object name - it's already known if the user invoke the command
-                        continue;
-                    }
-
-                    if (attribute.getName().startsWith(lastArg)) {
-                        result.add(attribute.getName());
-                    }
-                }
+                        .filter(attribute -> !"ObjectName".equals(attribute));
             } catch (Exception ex) {
                 plugin.getLogger().log(Level.SEVERE, null, ex);
             }
         }
 
-        result.sort(String.CASE_INSENSITIVE_ORDER);
-        return result;
+        return result.sorted(String.CASE_INSENSITIVE_ORDER).collect(toList());
     }
 }

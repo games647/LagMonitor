@@ -17,7 +17,6 @@
     * Java properties
     * Process
     * User
-* Enable native data support by default
 * Replace outdated sigar library with oshi
 * Validate input for average comparison (Fixes #37)
 

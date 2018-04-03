@@ -1,9 +1,11 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
+import com.github.games647.lagmonitor.NativeData;
 import com.github.games647.lagmonitor.utils.LagUtils;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,7 +17,6 @@ import oshi.hardware.ComputerSystem;
 import oshi.hardware.Firmware;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.Sensors;
-import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 
 public class NativeCommand extends LagCommand {
@@ -26,12 +27,17 @@ public class NativeCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
-        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+        Optional<SystemInfo> optInfo = plugin.getNativeData().getSystemInfo();
+        if (!optInfo.isPresent()) {
+            sendError(sender, NATIVE_NOT_FOUND);
+            return true;
+        }
+
+        SystemInfo systemInfo = optInfo.get();
 
         //swap and load is already available in the environment command because MBeans already supports this
         long uptime = systemInfo.getHardware().getProcessor().getSystemUptime();
@@ -105,12 +111,12 @@ public class NativeCommand extends LagCommand {
             sendMessage(sender, "    " + disk.getName(), disk.getModel() + ' ' + size);
         }
 
-        FileSystem fileSystem = systemInfo.getOperatingSystem().getFileSystem();
-        sendMessage(sender, "Open file descriptors", String.valueOf(fileSystem.getOpenFileDescriptors()));
-        sendMessage(sender, "Max file descriptors", String.valueOf(fileSystem.getMaxFileDescriptors()));
+        NativeData nativeData = plugin.getNativeData();
+        sendMessage(sender, "Open file descriptors", String.valueOf(nativeData.getOpenFileDescriptors()));
+        sendMessage(sender, "Max file descriptors", String.valueOf(nativeData.getMaxFileDescriptors()));
 
         sender.sendMessage(PRIMARY_COLOR + "Mounts:");
-        for (OSFileStore fileStore : fileSystem.getFileStores()) {
+        for (OSFileStore fileStore : systemInfo.getOperatingSystem().getFileSystem().getFileStores()) {
             String type = fileStore.getType();
             String desc = fileStore.getDescription();
 

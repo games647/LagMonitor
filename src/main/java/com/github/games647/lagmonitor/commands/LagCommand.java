@@ -2,6 +2,8 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -16,24 +18,24 @@ public abstract class LagCommand implements CommandExecutor {
     protected static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     protected static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
+    protected static final String NATIVE_NOT_FOUND = "Native library not found. Please download it to see this data";
+
     protected final LagMonitor plugin;
 
     public LagCommand(LagMonitor plugin) {
         this.plugin = plugin;
     }
 
-    public boolean isAllowed(CommandSender sender, Command cmd) {
+    private boolean isCommandWhitelisted(Command cmd, CommandSender sender) {
         if (!(sender instanceof Player)) {
             return true;
         }
 
         FileConfiguration config = plugin.getConfig();
-        List<String> commandWhitelist = config.getStringList("whitelist-" + cmd.getName());
-        if (commandWhitelist != null && !commandWhitelist.isEmpty()) {
-            return commandWhitelist.contains(sender.getName());
-        }
 
-        for (String alias : cmd.getAliases()) {
+        Collection<String> aliases = new ArrayList<>(cmd.getAliases());
+        aliases.add(cmd.getName());
+        for (String alias : aliases) {
             List<String> aliasWhitelist = config.getStringList("whitelist-" + alias);
             if (aliasWhitelist != null && !aliasWhitelist.isEmpty()) {
                 return aliasWhitelist.contains(sender.getName());
@@ -41,6 +43,15 @@ public abstract class LagCommand implements CommandExecutor {
         }
 
         //whitelist doesn't exist
+        return true;
+    }
+
+    public boolean canExecute(CommandSender sender, Command cmd) {
+        if (!isCommandWhitelisted(cmd, sender)) {
+            sendError(sender, "Command not whitelisted for you!");
+            return false;
+        }
+
         return true;
     }
 

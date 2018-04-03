@@ -7,6 +7,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.text.DecimalFormat;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,7 +25,7 @@ public class EnvironmentCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
+        if (!canExecute(sender, command)) {
             sendError(sender, "Not whitelisted");
             return true;
         }
@@ -35,27 +36,34 @@ public class EnvironmentCommand extends LagCommand {
         sendMessage(sender, "OS Name", osBean.getName());
         sendMessage(sender, "OS Arch", osBean.getArch());
 
-        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
+        Optional<SystemInfo> optInfo = plugin.getNativeData().getSystemInfo();
+        if (optInfo.isPresent()) {
+            SystemInfo systemInfo = optInfo.get();
 
-        OperatingSystem osInfo = systemInfo.getOperatingSystem();
-        sendMessage(sender, "OS family", osInfo.getFamily());
-        sendMessage(sender, "OS version", String.valueOf(osInfo.getVersion()));
-        sendMessage(sender, "OS Manufacturer", osInfo.getManufacturer());
+            OperatingSystem osInfo = systemInfo.getOperatingSystem();
+            sendMessage(sender, "OS family", osInfo.getFamily());
+            sendMessage(sender, "OS version", osInfo.getVersion().toString());
+            sendMessage(sender, "OS Manufacturer", osInfo.getManufacturer());
 
-        sendMessage(sender, "Total processes", String.valueOf(osInfo.getProcessCount()));
-        sendMessage(sender, "Total threads", String.valueOf(osInfo.getThreadCount()));
+            sendMessage(sender, "Total processes", String.valueOf(osInfo.getProcessCount()));
+            sendMessage(sender, "Total threads", String.valueOf(osInfo.getThreadCount()));
+        }
 
         //CPU
-        CentralProcessor processor = systemInfo.getHardware().getProcessor();
         sender.sendMessage(PRIMARY_COLOR + "CPU:");
-        sendMessage(sender, "    Vendor", processor.getVendor());
-        sendMessage(sender, "    Family", processor.getFamily());
-        sendMessage(sender, "    Name", processor.getName());
-        sendMessage(sender, "    Model", processor.getModel());
-        sendMessage(sender, "    Id", processor.getIdentifier());
-        sendMessage(sender, "    Vendor freq", String.valueOf(processor.getVendorFreq()));
-        sendMessage(sender, "    Logical Cores", String.valueOf(processor.getLogicalProcessorCount()));
-        sendMessage(sender, "    Physical Cores", String.valueOf(processor.getPhysicalProcessorCount()));
+        if (optInfo.isPresent()) {
+            CentralProcessor processor = optInfo.get().getHardware().getProcessor();
+
+            sendMessage(sender, "    Vendor", processor.getVendor());
+            sendMessage(sender, "    Family", processor.getFamily());
+            sendMessage(sender, "    Name", processor.getName());
+            sendMessage(sender, "    Model", processor.getModel());
+            sendMessage(sender, "    Id", processor.getIdentifier());
+            sendMessage(sender, "    Vendor freq", String.valueOf(processor.getVendorFreq()));
+            sendMessage(sender, "    Physical Cores", String.valueOf(processor.getPhysicalProcessorCount()));
+        }
+
+        sendMessage(sender, "    Logical Cores", String.valueOf(osBean.getAvailableProcessors()));
         sendMessage(sender, "    Endian", System.getProperty("sun.cpu.endian", "Unknown"));
 
         sendMessage(sender, "Load Average", String.valueOf(osBean.getSystemLoadAverage()));

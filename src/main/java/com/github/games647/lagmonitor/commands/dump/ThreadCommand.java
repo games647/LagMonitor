@@ -35,8 +35,7 @@ public class ThreadCommand extends DumpCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
@@ -60,13 +59,13 @@ public class ThreadCommand extends DumpCommand {
                 continue;
             }
 
-            BaseComponent[] components = new ComponentBuilder(thread.getName())
+            BaseComponent[] components = new ComponentBuilder("ID-" + thread.getId() + ": ")
                     .color(PRIMARY_COLOR.asBungee())
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND
                             , "/stacktrace " + thread.getName()))
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT
                             , new ComponentBuilder("Show the stacktrace").create()))
-                    .append("-" + thread.getId() + " State: ")
+                    .append(thread.getName() + ' ')
                     .color(ChatColor.GOLD)
                     .append(thread.getState().toString())
                     .color(SECONDARY_COLOR.asBungee())

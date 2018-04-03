@@ -1,9 +1,9 @@
 package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.utils.LagUtils;
 import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import com.github.games647.lagmonitor.utils.LagUtils;
 import com.google.common.base.StandardSystemProperty;
 
 import java.io.File;
@@ -11,6 +11,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
@@ -20,7 +21,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 
 import static com.github.games647.lagmonitor.utils.LagUtils.readableBytes;
@@ -33,8 +33,7 @@ public class SystemCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!isAllowed(sender, command)) {
-            sendError(sender, "Not whitelisted");
+        if (!canExecute(sender, command)) {
             return true;
         }
 
@@ -56,16 +55,21 @@ public class SystemCommand extends LagCommand {
     }
 
     private void displayProcessInfo(CommandSender sender) {
-        SystemInfo systemInfo = plugin.getNativeData().getSystemInfo();
-        OSProcess process = plugin.getNativeData().getProcess();
+        Optional<OSProcess> optProcess = plugin.getNativeData().getProcess();
 
         sender.sendMessage(PRIMARY_COLOR + "Process:");
-        sendMessage(sender, "    PID", String.valueOf(process.getProcessID()));
-        sendMessage(sender, "    Name", process.getName());
-        sendMessage(sender, "    Path", process.getPath());
-        sendMessage(sender, "    Working directory", process.getCurrentWorkingDirectory());
-        sendMessage(sender, "    User", process.getUser());
-        sendMessage(sender, "    Group", process.getGroup());
+        if (optProcess.isPresent()) {
+            OSProcess process = optProcess.get();
+
+            sendMessage(sender, "    PID", String.valueOf(process.getProcessID()));
+            sendMessage(sender, "    Name", process.getName());
+            sendMessage(sender, "    Path", process.getPath());
+            sendMessage(sender, "    Working directory", process.getCurrentWorkingDirectory());
+            sendMessage(sender, "    User", process.getUser());
+            sendMessage(sender, "    Group", process.getGroup());
+        } else {
+            sendError(sender, NATIVE_NOT_FOUND);
+        }
     }
 
     private void displayRuntimeInfo(CommandSender sender) {
@@ -86,9 +90,10 @@ public class SystemCommand extends LagCommand {
         sendMessage(sender, "Classpath", runtimeBean.getClassPath());
         sendMessage(sender, "Library path", runtimeBean.getLibraryPath());
 
-        sendMessage(sender, "Max Heap RAM", readableBytes(maxMemory));
-        sendMessage(sender, "Total RAM", readableBytes(totalMemory));
-        sendMessage(sender, "Free Heap RAM", readableBytes(freeMemory));
+        sendMessage(sender, "Reserved used RAM", readableBytes(totalMemory - freeMemory));
+        sendMessage(sender, "Reserved free RAM", readableBytes(freeMemory));
+        sendMessage(sender, "Reserved RAM", readableBytes(totalMemory));
+        sendMessage(sender, "Max RAM", readableBytes(maxMemory));
 
         sendMessage(sender, "Threads", String.valueOf(threadCount));
     }
