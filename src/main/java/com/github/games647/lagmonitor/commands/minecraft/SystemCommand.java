@@ -118,11 +118,11 @@ public class SystemCommand extends LagCommand {
         }
 
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
-        sendMessage(sender, "Loaded Plugins", String.valueOf(getEnabledPlugins(plugins) + '/' + plugins.length));
+        sendMessage(sender, "Loaded Plugins", String.format("%d/%d", getEnabledPlugins(plugins), plugins.length));
 
         int onlinePlayers = Bukkit.getOnlinePlayers().size();
         int maxPlayers = Bukkit.getMaxPlayers();
-        sendMessage(sender, "Players", String.valueOf(onlinePlayers + '/' + maxPlayers));
+        sendMessage(sender, "Players", String.format("%d/%d", onlinePlayers, maxPlayers));
 
         displayWorldInfo(sender);
         sendMessage(sender, "Server version", Bukkit.getVersion());
@@ -150,7 +150,7 @@ public class SystemCommand extends LagCommand {
             usedWorldSize += LagUtils.getFolderSize(plugin.getLogger(), worldFolder.toPath());
         }
 
-        sendMessage(sender, "Entities", String.valueOf(livingEntities + '/' + entities));
+        sendMessage(sender, "Entities", String.format("%d/%d", livingEntities, entities));
         sendMessage(sender, "Tile Entities", String.valueOf(tileEntities));
         sendMessage(sender, "Loaded Chunks", String.valueOf(chunks));
         sendMessage(sender, "Worlds", String.valueOf(worlds.size()));
