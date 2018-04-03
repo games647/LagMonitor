@@ -10,16 +10,15 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -38,7 +37,7 @@ public class MonitorSaveTask implements Runnable {
     @Override
     public void run() {
         try {
-            int monitorId = onMonitorSave(storage);
+            int monitorId = save();
             if (monitorId == -1) {
                 //error occurred
                 return;
@@ -87,41 +86,33 @@ public class MonitorSaveTask implements Runnable {
     private Map<UUID, WorldData> getWorldData()
             throws ExecutionException, InterruptedException {
         //this is not thread-safe and have to run sync
+
         Future<Map<UUID, WorldData>> worldFuture = Bukkit.getScheduler()
                 .callSyncMethod(plugin, () -> {
-                    List<World> worlds = Bukkit.getWorlds();
-                    Map<UUID, WorldData> worldsData = Maps.newHashMapWithExpectedSize(worlds.size());
-                    for (World world : worlds) {
-                        UUID worldId = world.getUID();
-                        String worldName = world.getName();
-                        int tileEntities = 0;
-                        for (Chunk loadedChunk : world.getLoadedChunks()) {
-                            tileEntities += loadedChunk.getTileEntities().length;
-                        }
+                            List<World> worlds = Bukkit.getWorlds();
+                            HashMap<UUID, WorldData> worldsData = Maps.newHashMapWithExpectedSize(worlds.size());
+                            for (World world : worlds) {
+                                worldsData.put(world.getUID(), WorldData.fromWorld(world));
+                            }
 
-                        int entities = world.getEntities().size();
-                        int chunks = world.getLoadedChunks().length;
-
-                        WorldData worldData = new WorldData(worldName, chunks, tileEntities, entities);
-                        worldsData.put(worldId, worldData);
-                    }
-
-                    return worldsData;
-                });
+                            return worldsData;
+                        });
 
         Map<UUID, WorldData> worldsData = worldFuture.get();
+
         //this can run async because it's thread-safe
-        for (Entry<UUID, WorldData> entry : worldsData.entrySet()) {
-            UUID worldId = entry.getKey();
-            WorldData worldData = entry.getValue();
-            Path worldFolder = Bukkit.getWorld(worldId).getWorldFolder().toPath();
-            worldData.setWorldSize(LagUtils.byteToMega(LagUtils.getFolderSize(plugin.getLogger(), worldFolder)));
-        }
-        
+        worldsData.values().parallelStream()
+                .forEach(data -> {
+                    Path worldFolder = Bukkit.getWorld(data.getWorldName()).getWorldFolder().toPath();
+
+                    int worldSize = LagUtils.byteToMega(LagUtils.getFolderSize(plugin.getLogger(), worldFolder));
+                    data.setWorldSize(worldSize);
+                });
+
         return worldsData;
     }
 
-    private int onMonitorSave(Storage storage) {
+    private int save() {
         Runtime runtime = Runtime.getRuntime();
         int maxMemory = LagUtils.byteToMega(runtime.maxMemory());
         //we need the free ram not the free heap
@@ -139,12 +130,12 @@ public class MonitorSaveTask implements Runnable {
 
         NativeData nativeData = plugin.getNativeData();
         float systemUsage = round(nativeData.getCPULoad() * 100, 4);
-        float procUsage = round(nativeData.getProcessCPULoad() * 100, 4);
+        float processUsage = round(nativeData.getProcessCPULoad() * 100, 4);
 
         int totalOsMemory = LagUtils.byteToMega(nativeData.getTotalMemory());
         int freeOsRam = LagUtils.byteToMega(nativeData.getFreeMemory());
 
         float freeOsRamPct = round((freeOsRam * 100) / totalOsMemory, 4);
-        return storage.saveMonitor(procUsage, systemUsage, freeRam, freeRamPct, freeOsRam, freeOsRamPct, loadAvg);
+        return storage.saveMonitor(processUsage, systemUsage, freeRam, freeRamPct, freeOsRam, freeOsRamPct, loadAvg);
     }
 }

@@ -9,6 +9,7 @@ import com.google.common.base.StandardSystemProperty;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -38,6 +39,7 @@ public class SystemCommand extends LagCommand {
         }
 
         displayRuntimeInfo(sender, ManagementFactory.getRuntimeMXBean());
+        displayThreadInfo(sender, ManagementFactory.getThreadMXBean());
         displayProcessInfo(sender);
         displayUserInfo(sender);
         displayMinecraftInfo(sender);
@@ -83,9 +85,13 @@ public class SystemCommand extends LagCommand {
         sendMessage(sender, "Arguments", runtimeBean.getInputArguments().toString());
         sendMessage(sender, "Classpath", runtimeBean.getClassPath());
         sendMessage(sender, "Library path", runtimeBean.getLibraryPath());
+    }
 
-        int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
-        sendMessage(sender, "Threads", String.valueOf(threadCount));
+    private void displayThreadInfo(CommandSender sender, ThreadMXBean threadBean) {
+        sendMessage(sender, "Threads", String.valueOf(threadBean.getThreadCount()));
+        sendMessage(sender, "Peak threads", String.valueOf(threadBean.getPeakThreadCount()));
+        sendMessage(sender, "Daemon threads", String.valueOf(threadBean.getDaemonThreadCount()));
+        sendMessage(sender, "Total started threads", String.valueOf(threadBean.getTotalStartedThreadCount()));
     }
 
     private void displayMemoryInfo(CommandSender sender, Runtime runtime) {

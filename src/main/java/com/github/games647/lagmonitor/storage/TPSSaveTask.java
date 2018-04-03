@@ -1,13 +1,13 @@
 package com.github.games647.lagmonitor.storage;
 
-import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
+import com.github.games647.lagmonitor.tasks.TPSHistoryTask;
 
-public class TpsSaveTask implements Runnable {
+public class TPSSaveTask implements Runnable {
 
-    private final TpsHistoryTask tpsHistoryTask;
+    private final TPSHistoryTask tpsHistoryTask;
     private final Storage storage;
 
-    public TpsSaveTask(TpsHistoryTask tpsHistoryTask, Storage storage) {
+    public TPSSaveTask(TPSHistoryTask tpsHistoryTask, Storage storage) {
         this.tpsHistoryTask = tpsHistoryTask;
         this.storage = storage;
     }

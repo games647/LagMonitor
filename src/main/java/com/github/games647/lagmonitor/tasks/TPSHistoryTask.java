@@ -2,7 +2,7 @@ package com.github.games647.lagmonitor.tasks;
 
 import com.github.games647.lagmonitor.utils.RollingOverHistory;
 
-public class TpsHistoryTask implements Runnable {
+public class TPSHistoryTask implements Runnable {
 
     public static final int RUN_INTERVAL = 20;
     private static final int ONE_MINUTE = 60;

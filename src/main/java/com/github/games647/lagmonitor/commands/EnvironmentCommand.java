@@ -71,6 +71,10 @@ public class EnvironmentCommand extends LagCommand {
 
         displayDiskSpace(sender);
 
+        NativeData nativeData = plugin.getNativeData();
+        sendMessage(sender, "Open file descriptors", String.valueOf(nativeData.getOpenFileDescriptors()));
+        sendMessage(sender, "Max file descriptors", String.valueOf(nativeData.getMaxFileDescriptors()));
+
         sender.sendMessage(PRIMARY_COLOR + "Variables:");
         for (Entry<String, String> variable : System.getenv().entrySet()) {
             sendMessage(sender, "    " + variable.getKey(), variable.getValue());

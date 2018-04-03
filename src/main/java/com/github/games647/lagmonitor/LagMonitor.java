@@ -15,8 +15,8 @@ import com.github.games647.lagmonitor.commands.dump.HeapCommand;
 import com.github.games647.lagmonitor.commands.dump.ThreadCommand;
 import com.github.games647.lagmonitor.commands.minecraft.PingCommand;
 import com.github.games647.lagmonitor.commands.minecraft.SystemCommand;
-import com.github.games647.lagmonitor.commands.minecraft.TasksCommand;
 import com.github.games647.lagmonitor.commands.minecraft.TPSCommand;
+import com.github.games647.lagmonitor.commands.minecraft.TasksCommand;
 import com.github.games647.lagmonitor.commands.timings.PaperTimingsCommand;
 import com.github.games647.lagmonitor.commands.timings.SpigotTimingsCommand;
 import com.github.games647.lagmonitor.inject.CommandInjector;
@@ -29,10 +29,10 @@ import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.storage.MonitorSaveTask;
 import com.github.games647.lagmonitor.storage.NativeSaveTask;
 import com.github.games647.lagmonitor.storage.Storage;
-import com.github.games647.lagmonitor.storage.TpsSaveTask;
+import com.github.games647.lagmonitor.storage.TPSSaveTask;
 import com.github.games647.lagmonitor.tasks.IODetectorTask;
 import com.github.games647.lagmonitor.tasks.PingManager;
-import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
+import com.github.games647.lagmonitor.tasks.TPSHistoryTask;
 import com.github.games647.lagmonitor.threading.BlockingActionManager;
 import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.threading.Injectable;
@@ -67,7 +67,7 @@ public class LagMonitor extends JavaPlugin {
     private final PingManager pingManager = new PingManager(this);
     private final BlockingActionManager actionManager = new BlockingActionManager(this);
     private final PageManager pageManager = new PageManager();
-    private final TpsHistoryTask tpsHistoryTask = new TpsHistoryTask();
+    private final TPSHistoryTask tpsHistoryTask = new TPSHistoryTask();
 
     private NativeData nativeData;
     private TrafficReader trafficReader;
@@ -91,7 +91,7 @@ public class LagMonitor extends JavaPlugin {
 
         //register schedule tasks
         BukkitScheduler scheduler = getServer().getScheduler();
-        scheduler.runTaskTimer(this, tpsHistoryTask, 20L, TpsHistoryTask.RUN_INTERVAL);
+        scheduler.runTaskTimer(this, tpsHistoryTask, 20L, TPSHistoryTask.RUN_INTERVAL);
         scheduler.runTaskTimer(this, pingManager, 20L, PingManager.PING_INTERVAL);
 
         //register listeners
@@ -178,11 +178,11 @@ public class LagMonitor extends JavaPlugin {
             String username = getConfig().getString("username");
             String password = getConfig().getString("password");
             String tablePrefix = getConfig().getString("tablePrefix");
-            Storage storage = new Storage(this, host, port, database, username, password, tablePrefix);
+            Storage storage = new Storage(getLogger(), host, port, database, username, password, tablePrefix);
             storage.createTables();
 
             BukkitScheduler scheduler = getServer().getScheduler();
-            scheduler.runTaskTimerAsynchronously(this, new TpsSaveTask(tpsHistoryTask, storage), 20L,
+            scheduler.runTaskTimerAsynchronously(this, new TPSSaveTask(tpsHistoryTask, storage), 20L,
                      getConfig().getInt("tps-save-interval") * 20L);
             //this can run async because it runs independently from the main thread
             scheduler.runTaskTimerAsynchronously(this, new MonitorSaveTask(this, storage),
@@ -248,7 +248,7 @@ public class LagMonitor extends JavaPlugin {
         return trafficReader;
     }
 
-    public TpsHistoryTask getTpsHistoryTask() {
+    public TPSHistoryTask getTpsHistoryTask() {
         return tpsHistoryTask;
     }
 

@@ -75,7 +75,7 @@ commands:
         permission: ${project.artifactId}.command.tasks
     heap:
         description: 'Heap dump about your current memory'
-        aliases: [ram]
+        aliases: [ram, memory]
         usage: /<command> [dump]
         permission: ${project.artifactId}.command.heap
     lagpage:

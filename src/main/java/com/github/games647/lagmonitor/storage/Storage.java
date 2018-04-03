@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor.storage;
 
-import com.github.games647.lagmonitor.LagMonitor;
 import com.google.common.collect.Lists;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
@@ -16,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Storage {
 
@@ -27,11 +27,11 @@ public class Storage {
 
     private final MysqlDataSource dataSource;
 
-    private final LagMonitor plugin;
+    private final Logger logger;
     private final String prefix;
 
-    public Storage(LagMonitor plugin, String host, int port, String database, String user, String pass, String prefix) {
-        this.plugin = plugin;
+    public Storage(Logger logger, String host, int port, String database, String user, String pass, String prefix) {
+        this.logger = logger;
 
         this.prefix = prefix;
 
@@ -64,7 +64,7 @@ public class Storage {
 
             stmt.executeBatch();
         } catch (IOException ioEx) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load migration file", ioEx);
+            logger.log(Level.SEVERE, "Failed to load migration file", ioEx);
         }
     }
 
@@ -89,8 +89,8 @@ public class Storage {
                 }
             }
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving monitor data to database", sqlEx);
-            plugin.getLogger().log(Level.SEVERE, "Using this data {0}"
+            logger.log(Level.SEVERE, "Error saving monitor data to database", sqlEx);
+            logger.log(Level.SEVERE, "Using this data {0}"
                     , Lists.newArrayList(procUsage, osUsage, freeRam, freeRamPct, osRam, osRamPct, loadAvg));
         }
 
@@ -128,8 +128,8 @@ public class Storage {
 
             return true;
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving worlds data to database", sqlEx);
-            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", worldsData);
+            logger.log(Level.SEVERE, "Error saving worlds data to database", sqlEx);
+            logger.log(Level.SEVERE, "Using this data {0}", worldsData);
         }
 
         return false;
@@ -154,13 +154,13 @@ public class Storage {
 
             stmt.executeBatch();
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving player data to database", sqlEx);
-            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", playerData);
+            logger.log(Level.SEVERE, "Error saving player data to database", sqlEx);
+            logger.log(Level.SEVERE, "Using this data {0}", playerData);
         }
 
     }
 
-    public void saveNative(int mcRead, int mcWrite, long freeSpace, float freePct, int diskRead, int diskWrite
+    public void saveNative(int mcRead, int mcWrite, int freeSpace, float freePct, int diskRead, int diskWrite
             , int netRead, int netWrite) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement stmt = con.prepareStatement("INSERT INTO " + prefix + NATIVE_TABLE
@@ -169,7 +169,7 @@ public class Storage {
             stmt.setInt(1, mcRead);
             stmt.setInt(2, mcWrite);
 
-            stmt.setInt(3, (int) freeSpace);
+            stmt.setInt(3, freeSpace);
 
             stmt.setFloat(4, freePct);
 
@@ -180,8 +180,8 @@ public class Storage {
             stmt.setInt(8, netWrite);
             stmt.execute();
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving native stats to database", sqlEx);
-            plugin.getLogger().log(Level.SEVERE, "Using this data {0}"
+            logger.log(Level.SEVERE, "Error saving native stats to database", sqlEx);
+            logger.log(Level.SEVERE, "Using this data {0}"
                     , Lists.newArrayList(mcRead, mcWrite, freeSpace, freePct, diskRead, diskWrite, netRead, netWrite));
         }
     }
@@ -193,8 +193,8 @@ public class Storage {
             stmt.setFloat(1, tps);
             stmt.execute();
         } catch (SQLException sqlEx) {
-            plugin.getLogger().log(Level.SEVERE, "Error saving tps to database", sqlEx);
-            plugin.getLogger().log(Level.SEVERE, "Using this data {0}", new Object[]{tps});
+            logger.log(Level.SEVERE, "Error saving tps to database", sqlEx);
+            logger.log(Level.SEVERE, "Using this data {0}", new Object[]{tps});
         }
     }
 }

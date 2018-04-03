@@ -2,7 +2,7 @@ package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.commands.LagCommand;
-import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
+import com.github.games647.lagmonitor.tasks.TPSHistoryTask;
 import com.google.common.collect.Lists;
 
 import java.text.DecimalFormat;
@@ -45,7 +45,7 @@ public class TPSCommand extends LagCommand {
                 .mapToObj(StringBuilder::new)
                 .forEach(graphLines::add);
 
-        TpsHistoryTask tpsHistoryTask = plugin.getTpsHistoryTask();
+        TPSHistoryTask tpsHistoryTask = plugin.getTpsHistoryTask();
 
         boolean console = true;
         if (sender instanceof Player) {
@@ -62,7 +62,7 @@ public class TPSCommand extends LagCommand {
         return true;
     }
 
-    private void printAverageHistory(TpsHistoryTask tpsHistoryTask, CommandSender sender) {
+    private void printAverageHistory(TPSHistoryTask tpsHistoryTask, CommandSender sender) {
         float minuteAverage = tpsHistoryTask.getMinuteSample().getAverage();
         float quarterAverage = tpsHistoryTask.getQuarterSample().getAverage();
         float halfHourAverage = tpsHistoryTask.getHalfHourSample().getAverage();

@@ -40,16 +40,17 @@ public class NativeSaveTask implements Runnable {
         Instant currentTime = Instant.now();
         int timeDiff = (int) Duration.between(lastCheck, currentTime).getSeconds();
 
-        TrafficReader trafficReader = plugin.getTrafficReader();
         int mcReadDiff = 0;
         int mcWriteDiff = 0;
+
+        TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
             int mcRead = LagUtils.byteToMega(trafficReader.getIncomingBytes().get());
-            mcReadDiff = (mcRead - lastMcRead) / timeDiff;
+            mcReadDiff = getDifference(mcRead, lastMcRead, timeDiff);
             lastMcRead = mcRead;
 
             int mcWrite = LagUtils.byteToMega(trafficReader.getOutgoingBytes().get());
-            mcWriteDiff = (mcWrite - lastMcWrite) / timeDiff;
+            mcWriteDiff = getDifference(mcWrite, lastMcWrite, timeDiff);
             lastMcWrite = mcWrite;
         }
 
@@ -71,11 +72,11 @@ public class NativeSaveTask implements Runnable {
                 NetworkIF networkInterface = networkIfs[0];
 
                 int netRead = LagUtils.byteToMega(networkInterface.getBytesRecv());
-                netReadDiff = (netRead - lastNetRead) / timeDiff;
+                netReadDiff = getDifference(netRead, lastNetRead, timeDiff);
                 lastNetRead = netRead;
 
                 int netWrite = LagUtils.byteToMega(networkInterface.getBytesSent());
-                netWriteDiff = (netWrite - lastNetWrite) / timeDiff;
+                netWriteDiff = getDifference(netWrite, lastNetWrite, timeDiff);
                 lastNetWrite = netWrite;
             }
 
@@ -86,17 +87,21 @@ public class NativeSaveTask implements Runnable {
                 String rootFileSystem = root.toAbsolutePath().toString();
 
                 int diskRead = LagUtils.byteToMega(process.getBytesRead());
-                diskReadDiff = (diskRead - lastDiskRead) / timeDiff;
+                diskReadDiff = getDifference(diskRead, lastDiskRead, timeDiff);
                 lastDiskRead = diskRead;
 
                 int diskWrite = LagUtils.byteToMega(process.getBytesWritten());
-                diskWriteDiff = (diskWrite - lastDiskWrite) / timeDiff;
-                lastDiskWrite = diskRead;
+                diskWriteDiff = getDifference(diskWrite, lastDiskWrite, timeDiff);
+                lastDiskWrite = diskWrite;
             }
         }
 
         lastCheck = currentTime;
         storage.saveNative(mcReadDiff, mcWriteDiff, freeSpace, freeSpacePct, diskReadDiff, diskWriteDiff
                 , netReadDiff, netWriteDiff);
+    }
+
+    private int getDifference(long newVal, long oldVal, long timeDiff) {
+        return (int) ((newVal - oldVal) / timeDiff);
     }
 }

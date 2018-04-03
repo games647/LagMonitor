@@ -1,5 +1,8 @@
 package com.github.games647.lagmonitor.storage;
 
+import org.bukkit.Chunk;
+import org.bukkit.World;
+
 public class WorldData {
 
     private final String worldName;
@@ -9,6 +12,19 @@ public class WorldData {
 
     private int worldSize;
     private int rowId;
+
+    public static WorldData fromWorld(World world) {
+        String worldName = world.getName();
+        int tileEntities = 0;
+        for (Chunk loadedChunk : world.getLoadedChunks()) {
+            tileEntities += loadedChunk.getTileEntities().length;
+        }
+
+        int entities = world.getEntities().size();
+        int chunks = world.getLoadedChunks().length;
+
+        return new WorldData(worldName, chunks, tileEntities, entities);
+    }
 
     public WorldData(String worldName, int loadedChunks, int tileEntities, int entities) {
         this.worldName = worldName;

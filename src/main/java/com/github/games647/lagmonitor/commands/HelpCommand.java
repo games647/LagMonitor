@@ -27,8 +27,6 @@ public class HelpCommand extends LagCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
-
         sender.sendMessage(ChatColor.AQUA + plugin.getName() + "-Help");
 
         int maxWidth = ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH;
@@ -36,7 +34,7 @@ public class HelpCommand extends LagCommand {
             maxWidth = Integer.MAX_VALUE;
         }
 
-        for (Entry<String, Map<String, Object>> entry : commands.entrySet()) {
+        for (Entry<String, Map<String, Object>> entry : plugin.getDescription().getCommands().entrySet()) {
             String commandKey = entry.getKey();
             Map<String, Object> value = entry.getValue();
 

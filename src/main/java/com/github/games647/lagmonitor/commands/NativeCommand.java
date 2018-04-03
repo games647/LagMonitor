@@ -1,7 +1,6 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.NativeData;
 import com.github.games647.lagmonitor.utils.LagUtils;
 
 import java.util.Arrays;
@@ -13,6 +12,7 @@ import oshi.hardware.Baseboard;
 import oshi.hardware.ComputerSystem;
 import oshi.hardware.Firmware;
 import oshi.hardware.HWDiskStore;
+import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.Sensors;
 import oshi.software.os.OSFileStore;
 
@@ -45,8 +45,10 @@ public class NativeCommand extends LagCommand {
     }
 
     private void displayNativeInfo(CommandSender sender, SystemInfo systemInfo) {
+        HardwareAbstractionLayer hardware = systemInfo.getHardware();
+
         //swap and load is already available in the environment command because MBeans already supports this
-        long uptime = TimeUnit.SECONDS.toMillis(systemInfo.getHardware().getProcessor().getSystemUptime());
+        long uptime = TimeUnit.SECONDS.toMillis(hardware.getProcessor().getSystemUptime());
         String uptimeFormat = DurationFormatUtils.formatDurationWords(uptime, false, false);
         sendMessage(sender, "OS Uptime", uptimeFormat);
 
@@ -63,10 +65,11 @@ public class NativeCommand extends LagCommand {
         // sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
 
         //disk
-        printDiskInfo(sender, systemInfo);
+        printDiskInfo(sender, hardware.getDiskStores());
+        displayMounts(sender, systemInfo.getOperatingSystem().getFileSystem().getFileStores());
 
-        printSensorsInfo(sender, systemInfo.getHardware().getSensors());
-        printBoardInfo(sender, systemInfo.getHardware().getComputerSystem());
+        printSensorsInfo(sender, hardware.getSensors());
+        printBoardInfo(sender, hardware.getComputerSystem());
     }
 
     private void printBoardInfo(CommandSender sender, ComputerSystem computerSystem) {
@@ -101,9 +104,8 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "Fan speed (rpm)", Arrays.toString(fanSpeeds));
     }
 
-    private void printDiskInfo(CommandSender sender, SystemInfo systemInfo) {
+    private void printDiskInfo(CommandSender sender, HWDiskStore[] diskStores) {
         //disk read write
-        HWDiskStore[] diskStores = systemInfo.getHardware().getDiskStores();
         long diskReads = Arrays.stream(diskStores).mapToLong(HWDiskStore::getReadBytes).sum();
         long diskWrites = Arrays.stream(diskStores).mapToLong(HWDiskStore::getWriteBytes).sum();
 
@@ -111,17 +113,15 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "Disk write bytes", LagUtils.readableBytes(diskWrites));
 
         sender.sendMessage(PRIMARY_COLOR + "Disks:");
-        for (HWDiskStore disk : systemInfo.getHardware().getDiskStores()) {
+        for (HWDiskStore disk : diskStores) {
             String size = LagUtils.readableBytes(disk.getSize());
             sendMessage(sender, "    " + disk.getName(), disk.getModel() + ' ' + size);
         }
+    }
 
-        NativeData nativeData = plugin.getNativeData();
-        sendMessage(sender, "Open file descriptors", String.valueOf(nativeData.getOpenFileDescriptors()));
-        sendMessage(sender, "Max file descriptors", String.valueOf(nativeData.getMaxFileDescriptors()));
-
+    private void displayMounts(CommandSender sender, OSFileStore[] fileStores) {
         sender.sendMessage(PRIMARY_COLOR + "Mounts:");
-        for (OSFileStore fileStore : systemInfo.getOperatingSystem().getFileSystem().getFileStores()) {
+        for (OSFileStore fileStore : fileStores) {
             printMountInfo(sender, fileStore);
         }
     }
