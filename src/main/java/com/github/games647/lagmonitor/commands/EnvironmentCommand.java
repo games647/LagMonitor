@@ -9,11 +9,12 @@ import java.text.DecimalFormat;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.software.os.OperatingSystem;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 import static com.github.games647.lagmonitor.utils.LagUtils.readableBytes;
 
@@ -26,7 +27,6 @@ public class EnvironmentCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!canExecute(sender, command)) {
-            sendError(sender, "Not whitelisted");
             return true;
         }
 

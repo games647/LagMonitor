@@ -1,8 +1,8 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.utils.LagUtils;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
+import com.github.games647.lagmonitor.utils.LagUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

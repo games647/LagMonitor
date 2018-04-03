@@ -1,8 +1,8 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.utils.LagUtils;
 import com.github.games647.lagmonitor.NativeData;
+import com.github.games647.lagmonitor.utils.LagUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 

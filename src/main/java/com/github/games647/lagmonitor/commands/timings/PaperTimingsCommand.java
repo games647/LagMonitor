@@ -5,7 +5,7 @@ import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
@@ -100,7 +100,7 @@ public class PaperTimingsCommand extends LagCommand {
         List<BaseComponent[]> lines = new ArrayList<>();
         printTimings(lines, lastHistory);
 
-        Pagination pagination = new Pagination("Paper Timings", lines);
+        Pages pagination = new Pages("Paper Timings", lines);
         pagination.send(sender);
 
         plugin.getPageManager().setPagination(sender.getName(), pagination);
@@ -156,7 +156,8 @@ public class PaperTimingsCommand extends LagCommand {
         }
     }
 
-    private void printChildren(Object parent, Object childData, Map<Integer, String> idMap, Collection<BaseComponent[]> lines) {
+    private void printChildren(Object parent, Object childData, Map<Integer, String> idMap,
+                               Collection<BaseComponent[]> lines) {
         int childId = Reflection.getField(DATA_CLASS, "id", Integer.TYPE).get(childData);
 
         String handlerName = idMap.get(childId);

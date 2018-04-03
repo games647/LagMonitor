@@ -2,7 +2,6 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.utils.JavaVersion;
-import com.google.common.base.StandardSystemProperty;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.CompilationMXBean;
@@ -11,14 +10,13 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
-import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class VmCommand extends LagCommand {
 
@@ -32,30 +30,16 @@ public class VmCommand extends LagCommand {
             return true;
         }
 
-        RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
+        //java version info
+        displayJavaVersion(sender);
 
-        //java info
-        sendJavaVersion(sender, JavaVersion.detect());
-
-        sendMessage(sender, "Java release date", System.getProperty("java.version.date", "n/a"));
-        sendMessage(sender, "Java VM", runtimeBean.getVmName() + ' ' + runtimeBean.getVmVersion());
-        sendMessage(sender, "Java vendor", runtimeBean.getVmVendor());
-
-        sendMessage(sender, "Class version", System.getProperty("java.class.version"));
+        //java paths
         sendMessage(sender, "Java lib", System.getProperty("sun.boot.library.path", "Unknown"));
-        sendMessage(sender, "Java home", StandardSystemProperty.JAVA_HOME.value());
+        sendMessage(sender, "Java home", System.getProperty("java.home", "Unknown"));
         sendMessage(sender, "Temp path", System.getProperty("java.io.tmpdir", "Unknown"));
 
-        //vm specification
-        sendMessage(sender, "Spec name", runtimeBean.getSpecName());
-        sendMessage(sender, "Spec vendor", runtimeBean.getSpecVendor());
-        sendMessage(sender, "Spec version", runtimeBean.getSpecVersion());
-
-        CompilationMXBean compileBean = ManagementFactory.getCompilationMXBean();
-        sendMessage(sender, "Compiler name", compileBean.getName());
-        sendMessage(sender, "Compilation time (ms)", String.valueOf(compileBean.getTotalCompilationTime()));
-
-        //class loading
+        displayRuntimeInfo(sender, ManagementFactory.getRuntimeMXBean());
+        displayCompilationInfo(sender, ManagementFactory.getCompilationMXBean());
         displayClassLoading(sender, ManagementFactory.getClassLoadingMXBean());
 
         //garbage collector
@@ -64,6 +48,22 @@ public class VmCommand extends LagCommand {
         }
 
         return true;
+    }
+
+    private void displayCompilationInfo(CommandSender sender, CompilationMXBean compilationBean) {
+        sendMessage(sender, "Compiler name", compilationBean.getName());
+        sendMessage(sender, "Compilation time (ms)", String.valueOf(compilationBean.getTotalCompilationTime()));
+    }
+
+    private void displayRuntimeInfo(CommandSender sender, RuntimeMXBean runtimeBean) {
+        //vm
+        sendMessage(sender, "Java VM", runtimeBean.getVmName() + ' ' + runtimeBean.getVmVersion());
+        sendMessage(sender, "Java vendor", runtimeBean.getVmVendor());
+
+        //vm specification
+        sendMessage(sender, "Spec name", runtimeBean.getSpecName());
+        sendMessage(sender, "Spec vendor", runtimeBean.getSpecVendor());
+        sendMessage(sender, "Spec version", runtimeBean.getSpecVersion());
     }
 
     private void displayCollectorStats(CommandSender sender, GarbageCollectorMXBean collector) {
@@ -78,7 +78,15 @@ public class VmCommand extends LagCommand {
         sendMessage(sender, "Unloaded classes", String.valueOf(classBean.getUnloadedClassCount()));
     }
 
-    private void sendJavaVersion(CommandSender sender, JavaVersion version) {
+    private void displayJavaVersion(CommandSender sender) {
+        JavaVersion currentVersion = JavaVersion.detect();
+        LagCommand.send(sender, formatJavaVersion(currentVersion));
+
+        sendMessage(sender, "Java release date", System.getProperty("java.version.date", "n/a"));
+        sendMessage(sender, "Class version", System.getProperty("java.class.version"));
+    }
+
+    private BaseComponent[] formatJavaVersion(JavaVersion version) {
         ComponentBuilder builder = new ComponentBuilder("Java version: ").color(PRIMARY_COLOR.asBungee())
                 .append(version.getRaw()).color(SECONDARY_COLOR.asBungee());
         if (version.isOutdated()) {
@@ -92,10 +100,6 @@ public class VmCommand extends LagCommand {
                     .append(")").color(ChatColor.WHITE);
         }
 
-        if (sender instanceof Player) {
-            sender.spigot().sendMessage(builder.create());
-        } else {
-            sender.sendMessage(TextComponent.toLegacyText(builder.create()));
-        }
+        return builder.create();
     }
 }

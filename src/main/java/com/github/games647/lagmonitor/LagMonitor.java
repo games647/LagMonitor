@@ -16,7 +16,7 @@ import com.github.games647.lagmonitor.commands.dump.ThreadCommand;
 import com.github.games647.lagmonitor.commands.minecraft.PingCommand;
 import com.github.games647.lagmonitor.commands.minecraft.SystemCommand;
 import com.github.games647.lagmonitor.commands.minecraft.TasksCommand;
-import com.github.games647.lagmonitor.commands.minecraft.TpsHistoryCommand;
+import com.github.games647.lagmonitor.commands.minecraft.TPSCommand;
 import com.github.games647.lagmonitor.commands.timings.PaperTimingsCommand;
 import com.github.games647.lagmonitor.commands.timings.SpigotTimingsCommand;
 import com.github.games647.lagmonitor.inject.CommandInjector;
@@ -49,13 +49,14 @@ import java.sql.SQLException;
 import java.util.Timer;
 import java.util.logging.Level;
 
+import oshi.SystemInfo;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
-import oshi.SystemInfo;
 
 public class LagMonitor extends JavaPlugin {
 
@@ -160,7 +161,7 @@ public class LagMonitor extends JavaPlugin {
                 }
             } else {
                 getLogger().info("JNA not found. " +
-                        "Please download the following to the folder of this plugin to display more data about your setup");
+                        "Please download the this to the folder of this plugin to display more data about your setup");
                 getLogger().info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar");
             }
         }
@@ -265,7 +266,7 @@ public class LagMonitor extends JavaPlugin {
         getCommand("ping").setExecutor(new PingCommand(this));
         getCommand("stacktrace").setExecutor(new StackTraceCommand(this));
         getCommand("thread").setExecutor(new ThreadCommand(this));
-        getCommand("tpshistory").setExecutor(new TpsHistoryCommand(this));
+        getCommand("tpshistory").setExecutor(new TPSCommand(this));
         getCommand("mbean").setExecutor(new MbeanCommand(this));
         getCommand("system").setExecutor(new SystemCommand(this));
         getCommand("env").setExecutor(new EnvironmentCommand(this));

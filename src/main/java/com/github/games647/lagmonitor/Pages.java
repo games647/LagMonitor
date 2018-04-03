@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-public class Pagination {
+public class Pages {
 
     private static final int PAGINATION_LINES = 2;
 
@@ -44,7 +44,7 @@ public class Pagination {
 
     private int lastSentPage = 1;
 
-    public Pagination(String title, List<BaseComponent[]> lines) {
+    public Pages(String title, List<BaseComponent[]> lines) {
         this.title = title;
         this.lines = lines;
     }
@@ -150,7 +150,7 @@ public class Pagination {
             }
 
             sender.sendMessage(headerBuilder.toString());
-            getPage(page, false).stream().map((line) -> {
+            getPage(page, false).stream().map(line -> {
                 StringBuilder lineBuilder = new StringBuilder();
                 for (BaseComponent component : line) {
                     lineBuilder.append(component.toLegacyText());

@@ -79,7 +79,7 @@ commands:
         usage: /<command> [dump]
         permission: ${project.artifactId}.command.heap
     lagpage:
-        description: 'Pagination command for the current pagination session'
+        description: 'Pages command for the current pagination session'
         usage: '/<command> <next/prev/number>'
     jfr:
         description: |

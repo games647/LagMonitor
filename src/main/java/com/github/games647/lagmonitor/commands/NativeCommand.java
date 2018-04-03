@@ -6,11 +6,8 @@ import com.github.games647.lagmonitor.utils.LagUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.FormatStyle;
 import oshi.SystemInfo;
 import oshi.hardware.Baseboard;
 import oshi.hardware.ComputerSystem;
@@ -18,6 +15,12 @@ import oshi.hardware.Firmware;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.Sensors;
 import oshi.software.os.OSFileStore;
+
+import org.apache.commons.lang.time.DurationFormatUtils;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.FormatStyle;
 
 public class NativeCommand extends LagCommand {
 
@@ -32,16 +35,20 @@ public class NativeCommand extends LagCommand {
         }
 
         Optional<SystemInfo> optInfo = plugin.getNativeData().getSystemInfo();
-        if (!optInfo.isPresent()) {
+        if (optInfo.isPresent()) {
+            displayNativeInfo(sender, optInfo.get());
+        } else {
             sendError(sender, NATIVE_NOT_FOUND);
-            return true;
         }
 
-        SystemInfo systemInfo = optInfo.get();
+        return true;
+    }
 
+    private void displayNativeInfo(CommandSender sender, SystemInfo systemInfo) {
         //swap and load is already available in the environment command because MBeans already supports this
-        long uptime = systemInfo.getHardware().getProcessor().getSystemUptime();
-        sendMessage(sender, "OS Uptime", formatUptime(uptime));
+        long uptime = TimeUnit.SECONDS.toMillis(systemInfo.getHardware().getProcessor().getSystemUptime());
+        String uptimeFormat = DurationFormatUtils.formatDurationWords(uptime, false, false);
+        sendMessage(sender, "OS Uptime", uptimeFormat);
 
         // //IO wait
         // double wait = cpuPerc.getWait();
@@ -55,15 +62,14 @@ public class NativeCommand extends LagCommand {
         // long cache = used - actualUsed;
         // sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
 
+        //disk
         printDiskInfo(sender, systemInfo);
-        printSensorsInfo(sender, systemInfo);
-        printBoardInfo(sender, systemInfo);
 
-        return true;
+        printSensorsInfo(sender, systemInfo.getHardware().getSensors());
+        printBoardInfo(sender, systemInfo.getHardware().getComputerSystem());
     }
 
-    private void printBoardInfo(CommandSender sender, SystemInfo systemInfo) {
-        ComputerSystem computerSystem = systemInfo.getHardware().getComputerSystem();
+    private void printBoardInfo(CommandSender sender, ComputerSystem computerSystem) {
         sendMessage(sender, "System Manufacturer", computerSystem.getManufacturer());
         sendMessage(sender, "System model", computerSystem.getModel());
         sendMessage(sender, "Serial number", computerSystem.getSerialNumber());
@@ -86,8 +92,7 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "    Release date", firmware.getReleaseDate().format(formatter));
     }
 
-    private void printSensorsInfo(CommandSender sender, SystemInfo systemInfo) {
-        Sensors sensors = systemInfo.getHardware().getSensors();
+    private void printSensorsInfo(CommandSender sender, Sensors sensors) {
         double cpuTemperature = sensors.getCpuTemperature();
         sendMessage(sender, "CPU Temp °C", String.valueOf(LagUtils.round(cpuTemperature)));
         sendMessage(sender, "Voltage", String.valueOf(LagUtils.round(sensors.getCpuVoltage())));
@@ -117,25 +122,19 @@ public class NativeCommand extends LagCommand {
 
         sender.sendMessage(PRIMARY_COLOR + "Mounts:");
         for (OSFileStore fileStore : systemInfo.getOperatingSystem().getFileSystem().getFileStores()) {
-            String type = fileStore.getType();
-            String desc = fileStore.getDescription();
-
-            long totalSpaceBytes = fileStore.getTotalSpace();
-            String totalSpace = LagUtils.readableBytes(totalSpaceBytes);
-            String usedSpace = LagUtils.readableBytes(totalSpaceBytes - fileStore.getUsableSpace());
-
-            String format = desc + ' ' + type + ' ' + usedSpace + '/' + totalSpace;
-            sendMessage(sender, "    " + fileStore.getMount(), format);
+            printMountInfo(sender, fileStore);
         }
     }
 
-    private String formatUptime(long uptime) {
-        long days = uptime / (60 * 60 * 24);
+    private void printMountInfo(CommandSender sender, OSFileStore fileStore) {
+        String type = fileStore.getType();
+        String desc = fileStore.getDescription();
 
-        long minutes = uptime / 60;
-        long hours = minutes / 60;
-        hours %= 24;
-        minutes %= 60;
-        return days + " days " + hours + " hours " + minutes + " Minutes";
+        long totalSpaceBytes = fileStore.getTotalSpace();
+        String totalSpace = LagUtils.readableBytes(totalSpaceBytes);
+        String usedSpace = LagUtils.readableBytes(totalSpaceBytes - fileStore.getUsableSpace());
+
+        String format = desc + ' ' + type + ' ' + usedSpace + '/' + totalSpace;
+        sendMessage(sender, "    " + fileStore.getMount(), format);
     }
 }

@@ -45,7 +45,6 @@ public class GraphCommand extends LagCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!canExecute(sender, command)) {
-            sendError(sender, "Not whitelisted");
             return true;
         }
 
@@ -107,7 +106,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
         if (renderers.size() > MAX_COMBINED) {
             sendError(player, "Too many graphs");
         } else {
-            CombinedGraph combinedGraph = new CombinedGraph(renderers.toArray(new GraphRenderer[renderers.size()]));
+            CombinedGraph combinedGraph = new CombinedGraph(renderers.toArray(new GraphRenderer[0]));
             MapView view = installRenderer(player, combinedGraph);
             giveMap(player, view);
         }

@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +71,7 @@ public class ThreadCommand extends DumpCommand {
             lines.add(components);
         }
 
-        Pagination pagination = new Pagination("Threads", lines);
+        Pages pagination = new Pages("Threads", lines);
         pagination.send(sender);
         plugin.getPageManager().setPagination(sender.getName(), pagination);
         return true;

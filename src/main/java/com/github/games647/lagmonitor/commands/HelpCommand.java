@@ -43,43 +43,43 @@ public class HelpCommand extends LagCommand {
             String description = ' ' + value.getOrDefault("description", "No description").toString();
             String usage = ((String) value.getOrDefault("usage", '/' + commandKey)).replace("<command>", commandKey);
 
-            TextComponent usageComponent = new TextComponent(usage);
-            usageComponent.setColor(ChatColor.DARK_AQUA);
-            
-            TextComponent descriptionComponent = new TextComponent(description);
-            descriptionComponent.setColor(ChatColor.GOLD);
-            int totalLen = usage.length() + description.length();
-            if (totalLen > maxWidth) {
-                int newDescLeng = maxWidth - usage.length() - 3 - 1;
-                if (newDescLeng < 0) {
-                    newDescLeng = 0;
-                }
-
-                String shortDesc = description.substring(0, newDescLeng) + "...";
-                descriptionComponent.setText(shortDesc);
-
-                ComponentBuilder hoverBuilder = new ComponentBuilder("");
-
-                String separated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
-                for (String line : separated.split("\n")) {
-                    hoverBuilder.append(line + '\n');
-                    hoverBuilder.color(ChatColor.GOLD);
-                }
-
-                descriptionComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hoverBuilder.create()));
-            } else {
-                descriptionComponent.setText(description);
-            }
-
-            usageComponent.addExtra(descriptionComponent);
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                player.spigot().sendMessage(usageComponent);
-            } else {
-                sender.sendMessage(usageComponent.toLegacyText());
-            }
+            TextComponent component = createCommandHelp(usage, description, maxWidth);
+            LagCommand.send(sender, component);
         }
 
         return true;
+    }
+
+    private TextComponent createCommandHelp(String usage, String description, int maxWidth) {
+        TextComponent usageComponent = new TextComponent(usage);
+        usageComponent.setColor(ChatColor.DARK_AQUA);
+
+        TextComponent descriptionComponent = new TextComponent(description);
+        descriptionComponent.setColor(ChatColor.GOLD);
+        int totalLen = usage.length() + description.length();
+        if (totalLen > maxWidth) {
+            int newDescLength = maxWidth - usage.length() - 3 - 1;
+            if (newDescLength < 0) {
+                newDescLength = 0;
+            }
+
+            String shortDesc = description.substring(0, newDescLength) + "...";
+            descriptionComponent.setText(shortDesc);
+
+            ComponentBuilder hoverBuilder = new ComponentBuilder("");
+
+            String separated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
+            for (String line : separated.split("\n")) {
+                hoverBuilder.append(line + '\n');
+                hoverBuilder.color(ChatColor.GOLD);
+            }
+
+            descriptionComponent.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hoverBuilder.create()));
+        } else {
+            descriptionComponent.setText(description);
+        }
+
+        usageComponent.addExtra(descriptionComponent);
+        return usageComponent;
     }
 }

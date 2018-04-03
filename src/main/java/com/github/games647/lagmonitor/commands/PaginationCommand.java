@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 import com.github.games647.lagmonitor.commands.dump.DumpCommand;
 import com.google.common.primitives.Ints;
 
@@ -30,7 +30,7 @@ public class PaginationCommand extends DumpCommand {
             return true;
         }
 
-        Pagination pagination = plugin.getPageManager().getPagination(sender.getName());
+        Pages pagination = plugin.getPageManager().getPagination(sender.getName());
         if (pagination == null) {
             sendError(sender, "You have no pagination session");
             return true;
@@ -61,7 +61,7 @@ public class PaginationCommand extends DumpCommand {
         return true;
     }
 
-    private void onPageNumber(String subCommand, CommandSender sender, Pagination pagination) {
+    private void onPageNumber(String subCommand, CommandSender sender, Pages pagination) {
         Integer page = Ints.tryParse(subCommand);
         if (page == null) {
             sendError(sender, "Unknown subcommand or not a valid page number");
@@ -78,7 +78,7 @@ public class PaginationCommand extends DumpCommand {
         }
     }
 
-    private void onNextPage(Pagination pagination, CommandSender sender) {
+    private void onNextPage(Pages pagination, CommandSender sender) {
         int lastPage = pagination.getLastSentPage();
         if (lastPage >= pagination.getTotalPages(sender instanceof Player)) {
             sendError(sender,"You are already on the last page");
@@ -88,7 +88,7 @@ public class PaginationCommand extends DumpCommand {
         pagination.send(sender, lastPage + 1);
     }
 
-    private void onPrevPage(Pagination pagination, CommandSender sender) {
+    private void onPrevPage(Pages pagination, CommandSender sender) {
         int lastPage = pagination.getLastSentPage();
         if (lastPage <= 1) {
             sendError(sender,"You are already on the first page");
@@ -98,7 +98,7 @@ public class PaginationCommand extends DumpCommand {
         pagination.send(sender, lastPage - 1);
     }
 
-    private void onSave(Pagination pagination, CommandSender sender) {
+    private void onSave(Pages pagination, CommandSender sender) {
         StringBuilder lineBuilder = new StringBuilder();
         for (BaseComponent[] line : pagination.getAllLines()) {
             for (BaseComponent component : line) {
@@ -117,7 +117,7 @@ public class PaginationCommand extends DumpCommand {
         }
     }
 
-    private void onShowAll(Pagination pagination, CommandSender sender) {
+    private void onShowAll(Pages pagination, CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             player.spigot().sendMessage(pagination.buildHeader(1, 1));

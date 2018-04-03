@@ -2,7 +2,7 @@ package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 import com.github.games647.lagmonitor.tasks.MonitorTask;
 
 import java.util.ArrayList;
@@ -34,20 +34,23 @@ public class MonitorCommand extends LagCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!canExecute(sender, command)) {
-            sendError(sender, "Not whitelisted");
             return true;
         }
 
         if (args.length > 0) {
-            String monitorCommand = args[0];
-            if ("start".equalsIgnoreCase(monitorCommand)) {
-                startMonitor(sender);
-            } else if ("stop".equalsIgnoreCase(monitorCommand)) {
-                stopMonitor(sender);
-            } else if ("paste".equalsIgnoreCase(monitorCommand)) {
-                pasteMonitor(sender);
-            } else {
-                sendError(sender, "Invalid command parameter");
+            String monitorCommand = args[0].toLowerCase();
+            switch (monitorCommand) {
+                case "start":
+                    startMonitor(sender);
+                    break;
+                case "stop":
+                    stopMonitor(sender);
+                    break;
+                case "paste":
+                    pasteMonitor(sender);
+                    break;
+                default:
+                    sendError(sender, "Invalid command parameter");
             }
         } else if (monitorTask == null) {
             sendError(sender, "Monitor is not running");
@@ -58,7 +61,7 @@ public class MonitorCommand extends LagCommand {
                 printTrace(lines, 0, rootSample, 0);
             }
 
-            Pagination pagination = new Pagination("Monitor", lines);
+            Pages pagination = new Pages("Monitor", lines);
             pagination.send(sender);
             this.plugin.getPageManager().setPagination(sender.getName(), pagination);
         }
@@ -72,7 +75,7 @@ public class MonitorCommand extends LagCommand {
         long currentTime = current.getTotalTime();
         float timePercent = current.getTimePercent(parentTime);
 
-        String clazz = Pagination.filterPackageNames(current.getClassName());
+        String clazz = Pages.filterPackageNames(current.getClassName());
         String method = current.getMethod();
         lines.add(new ComponentBuilder(space + "[-] ")
                 .append(clazz + '.')

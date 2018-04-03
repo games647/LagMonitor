@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands.minecraft;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 import com.github.games647.lagmonitor.commands.LagCommand;
 
 import java.lang.reflect.Field;
@@ -33,22 +33,8 @@ public class TasksCommand extends LagCommand {
 
         List<BukkitTask> pendingTasks = Bukkit.getScheduler().getPendingTasks();
         for (BukkitTask pendingTask : pendingTasks) {
-            Plugin owner = pendingTask.getOwner();
-            int taskId = pendingTask.getTaskId();
-            boolean sync = pendingTask.isSync();
+            lines.add(formatTask(pendingTask));
 
-            String id = Integer.toString(taskId);
-            if (sync) {
-                id += "-Sync";
-            } else if (Bukkit.getScheduler().isCurrentlyRunning(taskId)) {
-                id += "-Running";
-            }
-
-            lines.add(new ComponentBuilder(owner.getName())
-                    .color(PRIMARY_COLOR.asBungee())
-                    .append('-' + id)
-                    .color(SECONDARY_COLOR.asBungee())
-                    .create());
             Class<?> runnableClass = getRunnableClass(pendingTask);
             if (runnableClass != null) {
                 lines.add(new ComponentBuilder("    Task: ")
@@ -59,10 +45,29 @@ public class TasksCommand extends LagCommand {
             }
         }
 
-        Pagination pagination = new Pagination("Stacktrace", lines);
+        Pages pagination = new Pages("Stacktrace", lines);
         pagination.send(sender);
         plugin.getPageManager().setPagination(sender.getName(), pagination);
         return true;
+    }
+
+    private BaseComponent[] formatTask(BukkitTask pendingTask) {
+        Plugin owner = pendingTask.getOwner();
+        int taskId = pendingTask.getTaskId();
+        boolean sync = pendingTask.isSync();
+
+        String id = Integer.toString(taskId);
+        if (sync) {
+            id += "-Sync";
+        } else if (Bukkit.getScheduler().isCurrentlyRunning(taskId)) {
+            id += "-Running";
+        }
+
+        return new ComponentBuilder(owner.getName())
+                .color(PRIMARY_COLOR.asBungee())
+                .append('-' + id)
+                .color(SECONDARY_COLOR.asBungee())
+                .create();
     }
 
     private Class<?> getRunnableClass(BukkitTask task) {

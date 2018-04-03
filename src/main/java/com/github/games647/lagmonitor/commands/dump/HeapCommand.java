@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands.dump;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 import com.sun.management.HotSpotDiagnosticMXBean;
 
 import java.lang.management.ManagementFactory;
@@ -53,7 +53,7 @@ public class HeapCommand extends DumpCommand {
                 paginatedLines.add(new ComponentBuilder(line).create());
             }
 
-            Pagination pagination = new Pagination("Heap", paginatedLines);
+            Pages pagination = new Pages("Heap", paginatedLines);
             pagination.send(sender);
             plugin.getPageManager().setPagination(sender.getName(), pagination);
         } catch (InstanceNotFoundException instanceNotFoundException) {

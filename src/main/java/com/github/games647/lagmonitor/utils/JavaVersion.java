@@ -1,6 +1,5 @@
 package com.github.games647.lagmonitor.utils;
 
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ComparisonChain;
 
 import java.util.Objects;
@@ -11,6 +10,7 @@ import java.util.regex.Pattern;
 public class JavaVersion implements Comparable<JavaVersion> {
 
     public static final JavaVersion LATEST = new JavaVersion("10", 10, 0, 0, false);
+
     private static final Pattern VERSION_PATTERN = Pattern.compile("((1\\.)?(\\d+))(\\.(\\d+))?(\\.(\\d+))?");
 
     private final String raw;
@@ -54,7 +54,7 @@ public class JavaVersion implements Comparable<JavaVersion> {
     }
 
     public static JavaVersion detect() {
-        return new JavaVersion(StandardSystemProperty.JAVA_VERSION.value());
+        return new JavaVersion(System.getProperty("java.version"));
     }
 
     public String getRaw() {

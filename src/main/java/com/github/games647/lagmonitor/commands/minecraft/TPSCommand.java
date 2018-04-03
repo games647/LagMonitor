@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-public class TpsHistoryCommand extends LagCommand {
+public class TPSCommand extends LagCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     private static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
@@ -29,7 +29,7 @@ public class TpsHistoryCommand extends LagCommand {
     private static final int GRAPH_WIDTH = 60 / 2;
     private static final int GRAPH_LINES = ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT - 3;
 
-    public TpsHistoryCommand(LagMonitor plugin) {
+    public TPSCommand(LagMonitor plugin) {
         super(plugin);
     }
 

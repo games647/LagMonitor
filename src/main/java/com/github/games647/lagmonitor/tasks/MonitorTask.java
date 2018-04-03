@@ -106,16 +106,20 @@ public class MonitorTask extends TimerTask {
     }
 
     @Override
-    public synchronized String toString() {
+    public String toString() {
         ThreadInfo threadInfo = threadMXBean.getThreadInfo(threadId, MAX_DEPTH);
 
         StringBuilder builder = new StringBuilder();
         builder.append(threadInfo.getThreadName());
         builder.append(' ');
-        builder.append(rootNode.getTotalTime()).append("ms");
-        builder.append('\n');
 
-        rootNode.writeString(builder, 1);
+        synchronized (this) {
+            builder.append(rootNode.getTotalTime()).append("ms");
+            builder.append('\n');
+
+            rootNode.writeString(builder, 1);
+        }
+
         return builder.toString();
     }
 }

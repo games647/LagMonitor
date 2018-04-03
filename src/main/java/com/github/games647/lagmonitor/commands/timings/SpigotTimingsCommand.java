@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands.timings;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 import com.github.games647.lagmonitor.commands.LagCommand;
 import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.traffic.Reflection.FieldAccessor;
@@ -64,14 +64,15 @@ public class SpigotTimingsCommand extends LagCommand {
         List<BaseComponent[]> lines = new ArrayList<>();
         sendParsedOutput(handlers, lines, sampleTime);
 
-        Pagination pagination = new Pagination("Paper Timings", lines);
+        Pages pagination = new Pages("Paper Timings", lines);
         pagination.send(sender);
 
         this.plugin.getPageManager().setPagination(sender.getName(), pagination);
         return true;
     }
 
-    private void sendParsedOutput(Iterable<CustomTimingsHandler> handlers, Collection<BaseComponent[]> lines, long sampleTime) {
+    private void sendParsedOutput(Iterable<CustomTimingsHandler> handlers, Collection<BaseComponent[]> lines,
+                                  long sampleTime) {
         Map<String, Timing> timings = new HashMap<>();
         Timing breakdownTiming = new Timing("Breakdown", -1, -1);
         Timing minecraftTiming = new Timing("Minecraft");

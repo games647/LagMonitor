@@ -9,19 +9,19 @@ import com.google.common.base.StandardSystemProperty;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import oshi.software.os.OSProcess;
+
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import oshi.software.os.OSProcess;
 
 import static com.github.games647.lagmonitor.utils.LagUtils.readableBytes;
 
@@ -37,7 +37,7 @@ public class SystemCommand extends LagCommand {
             return true;
         }
 
-        displayRuntimeInfo(sender);
+        displayRuntimeInfo(sender, ManagementFactory.getRuntimeMXBean());
         displayProcessInfo(sender);
         displayUserInfo(sender);
         displayMinecraftInfo(sender);
@@ -55,9 +55,9 @@ public class SystemCommand extends LagCommand {
     }
 
     private void displayProcessInfo(CommandSender sender) {
-        Optional<OSProcess> optProcess = plugin.getNativeData().getProcess();
-
         sender.sendMessage(PRIMARY_COLOR + "Process:");
+
+        Optional<OSProcess> optProcess = plugin.getNativeData().getProcess();
         if (optProcess.isPresent()) {
             OSProcess process = optProcess.get();
 
@@ -72,17 +72,11 @@ public class SystemCommand extends LagCommand {
         }
     }
 
-    private void displayRuntimeInfo(CommandSender sender) {
-        RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
-        long uptime = runtimeBean.getUptime() - 60 * 60 * 1000;
-        String uptimeFormat = new SimpleDateFormat("HH 'hour' mm 'minutes' ss 'seconds'").format(uptime);
+    private void displayRuntimeInfo(CommandSender sender, RuntimeMXBean runtimeBean) {
+        long uptime = runtimeBean.getUptime();
+        String uptimeFormat = DurationFormatUtils.formatDurationWords(uptime, false, false);
 
-        int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
-
-        Runtime runtime = Runtime.getRuntime();
-        long maxMemory = runtime.maxMemory();
-        long freeMemory = runtime.freeMemory();
-        long totalMemory = runtime.totalMemory();
+        displayMemoryInfo(sender, Runtime.getRuntime());
 
         // runtime specific
         sendMessage(sender, "Uptime", uptimeFormat);
@@ -90,12 +84,19 @@ public class SystemCommand extends LagCommand {
         sendMessage(sender, "Classpath", runtimeBean.getClassPath());
         sendMessage(sender, "Library path", runtimeBean.getLibraryPath());
 
+        int threadCount = ManagementFactory.getThreadMXBean().getThreadCount();
+        sendMessage(sender, "Threads", String.valueOf(threadCount));
+    }
+
+    private void displayMemoryInfo(CommandSender sender, Runtime runtime) {
+        long maxMemory = runtime.maxMemory();
+        long freeMemory = runtime.freeMemory();
+        long totalMemory = runtime.totalMemory();
+
         sendMessage(sender, "Reserved used RAM", readableBytes(totalMemory - freeMemory));
         sendMessage(sender, "Reserved free RAM", readableBytes(freeMemory));
         sendMessage(sender, "Reserved RAM", readableBytes(totalMemory));
         sendMessage(sender, "Max RAM", readableBytes(maxMemory));
-
-        sendMessage(sender, "Threads", String.valueOf(threadCount));
     }
 
     private void displayMinecraftInfo(CommandSender sender) {
@@ -110,8 +111,7 @@ public class SystemCommand extends LagCommand {
             sendMessage(sender, "Outgoing Traffic", formattedOutgoing);
         }
 
-        PluginManager pluginManager = Bukkit.getPluginManager();
-        Plugin[] plugins = pluginManager.getPlugins();
+        Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
         sendMessage(sender, "Loaded Plugins", String.valueOf(getEnabledPlugins(plugins) + '/' + plugins.length));
 
         int onlinePlayers = Bukkit.getOnlinePlayers().size();
@@ -123,7 +123,6 @@ public class SystemCommand extends LagCommand {
     }
 
     private void displayWorldInfo(CommandSender sender) {
-        List<World> worlds = Bukkit.getWorlds();
         int entities = 0;
         int chunks = 0;
         int livingEntities = 0;
@@ -131,6 +130,7 @@ public class SystemCommand extends LagCommand {
 
         long usedWorldSize = 0;
 
+        List<World> worlds = Bukkit.getWorlds();
         for (World world : worlds) {
             for (Chunk loadedChunk : world.getLoadedChunks()) {
                 tileEntities += loadedChunk.getTileEntities().length;
@@ -147,7 +147,7 @@ public class SystemCommand extends LagCommand {
         sendMessage(sender, "Entities", String.valueOf(livingEntities + '/' + entities));
         sendMessage(sender, "Tile Entities", String.valueOf(tileEntities));
         sendMessage(sender, "Loaded Chunks", String.valueOf(chunks));
-        sendMessage(sender, "Worlds", String.valueOf(Bukkit.getWorlds().size()));
+        sendMessage(sender, "Worlds", String.valueOf(worlds.size()));
         sendMessage(sender, "World Size", readableBytes(usedWorldSize));
     }
 

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -61,5 +64,14 @@ public abstract class LagCommand implements CommandExecutor {
 
     protected void sendError(CommandSender sender, String msg) {
         sender.sendMessage(ChatColor.DARK_RED + msg);
+    }
+
+    public static void send(CommandSender sender, BaseComponent... components) {
+        //CommandSender#sendMessage(BaseComponent[]) was introduced after 1.8. This is a backwards compatible solution
+        if (sender instanceof Player) {
+            sender.spigot().sendMessage(components);
+        } else {
+            sender.sendMessage(TextComponent.toLegacyText(components));
+        }
     }
 }

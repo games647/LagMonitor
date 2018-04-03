@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.commands;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.Pagination;
+import com.github.games647.lagmonitor.Pages;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -22,7 +22,7 @@ import org.bukkit.command.TabExecutor;
 
 public class StackTraceCommand extends LagCommand implements TabExecutor {
 
-    private static final int MAX_DEPTH = 100;
+    private static final int MAX_DEPTH = 75;
 
     public StackTraceCommand(LagMonitor plugin) {
         super(plugin);
@@ -65,13 +65,13 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
             lines.add(formatTraceElement(stackTrace[i]));
         }
 
-        Pagination pagination = new Pagination("Stacktrace", lines);
+        Pages pagination = new Pages("Stacktrace", lines);
         pagination.send(sender);
         plugin.getPageManager().setPagination(sender.getName(), pagination);
     }
 
     private BaseComponent[] formatTraceElement(StackTraceElement traceElement) {
-        String className = Pagination.filterPackageNames(traceElement.getClassName());
+        String className = Pages.filterPackageNames(traceElement.getClassName());
         String methodName = traceElement.getMethodName();
 
         boolean nativeMethod = traceElement.isNativeMethod();

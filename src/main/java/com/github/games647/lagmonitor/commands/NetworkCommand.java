@@ -6,11 +6,12 @@ import com.github.games647.lagmonitor.utils.LagUtils;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.NetworkParams;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 public class NetworkCommand extends LagCommand {
 

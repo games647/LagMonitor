@@ -24,7 +24,7 @@ public class PingCommand extends LagCommand {
         }
 
         if (args.length > 0) {
-            displayPingOther(sender, command, args);
+            displayPingOther(sender, command, args[0]);
         } else if (sender instanceof Player) {
             displayPingSelf(sender);
         } else {
@@ -48,9 +48,8 @@ public class PingCommand extends LagCommand {
         sender.sendMessage(PRIMARY_COLOR + "Average: " + ChatColor.DARK_GREEN + pingAverage + "ms");
     }
 
-    private void displayPingOther(CommandSender sender, Command command, String[] args) {
+    private void displayPingOther(CommandSender sender, Command command, String playerName) {
         if (sender.hasPermission(command.getPermission() + ".other")) {
-            String playerName = args[0];
             RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(playerName);
             if (sampleHistory == null || !canSee(sender, playerName)) {
                 sendError(sender, "No data for that player " + playerName);
