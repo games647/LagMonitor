@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class LagUtils {
 
@@ -41,8 +42,8 @@ public class LagUtils {
     }
 
     public static long getFolderSize(Logger logger, Path folder) {
-        try {
-            return Files.walk(folder, 3, FileVisitOption.FOLLOW_LINKS)
+        try (Stream<Path> walk = Files.walk(folder, 3, FileVisitOption.FOLLOW_LINKS)) {
+            return walk
                     .parallel()
                     .mapToLong(path -> {
                         try {
