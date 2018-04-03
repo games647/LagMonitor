@@ -9,7 +9,6 @@ import java.lang.management.CompilationMXBean;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.util.List;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -57,20 +56,26 @@ public class VmCommand extends LagCommand {
         sendMessage(sender, "Compilation time (ms)", String.valueOf(compileBean.getTotalCompilationTime()));
 
         //class loading
-        ClassLoadingMXBean classBean = ManagementFactory.getClassLoadingMXBean();
-        sendMessage(sender, "Loaded classes", String.valueOf(classBean.getLoadedClassCount()));
-        sendMessage(sender, "Total loaded", String.valueOf(classBean.getTotalLoadedClassCount()));
-        sendMessage(sender, "Unloaded classes", String.valueOf(classBean.getUnloadedClassCount()));
+        displayClassLoading(sender, ManagementFactory.getClassLoadingMXBean());
 
         //garbage collector
-        List<GarbageCollectorMXBean> gcBean = ManagementFactory.getGarbageCollectorMXBeans();
-        for (GarbageCollectorMXBean collector : gcBean) {
-            sendMessage(sender, "Garbage collector", collector.getName());
-            sendMessage(sender, "    Time (ms)", String.valueOf(collector.getCollectionTime()));
-            sendMessage(sender, "    Count", String.valueOf(collector.getCollectionCount()));
+        for (GarbageCollectorMXBean collector : ManagementFactory.getGarbageCollectorMXBeans()) {
+            displayCollectorStats(sender, collector);
         }
 
         return true;
+    }
+
+    private void displayCollectorStats(CommandSender sender, GarbageCollectorMXBean collector) {
+        sendMessage(sender, "Garbage collector", collector.getName());
+        sendMessage(sender, "    Count", String.valueOf(collector.getCollectionCount()));
+        sendMessage(sender, "    Time (ms)", String.valueOf(collector.getCollectionTime()));
+    }
+
+    private void displayClassLoading(CommandSender sender, ClassLoadingMXBean classBean) {
+        sendMessage(sender, "Loaded classes", String.valueOf(classBean.getLoadedClassCount()));
+        sendMessage(sender, "Total loaded", String.valueOf(classBean.getTotalLoadedClassCount()));
+        sendMessage(sender, "Unloaded classes", String.valueOf(classBean.getUnloadedClassCount()));
     }
 
     private void sendJavaVersion(CommandSender sender, JavaVersion version) {

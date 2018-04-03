@@ -1,24 +1,22 @@
 package com.github.games647.lagmonitor.storage;
 
-import com.github.games647.lagmonitor.LagMonitor;
-
-import org.bukkit.Bukkit;
+import com.github.games647.lagmonitor.tasks.TpsHistoryTask;
 
 public class TpsSaveTask implements Runnable {
 
-    private final LagMonitor plugin;
+    private final TpsHistoryTask tpsHistoryTask;
     private final Storage storage;
 
-    public TpsSaveTask(LagMonitor plugin, Storage storage) {
-        this.plugin = plugin;
+    public TpsSaveTask(TpsHistoryTask tpsHistoryTask, Storage storage) {
+        this.tpsHistoryTask = tpsHistoryTask;
         this.storage = storage;
     }
 
     @Override
     public void run() {
-        float lastSample = plugin.getTpsHistoryTask().getLastSample();
+        float lastSample = tpsHistoryTask.getLastSample();
         if (lastSample > 0 && lastSample < 50) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> storage.saveTps(lastSample));
+            storage.saveTps(lastSample);
         }
     }
 }

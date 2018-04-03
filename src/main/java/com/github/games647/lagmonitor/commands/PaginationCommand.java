@@ -30,24 +30,29 @@ public class PaginationCommand extends DumpCommand {
             return true;
         }
 
-        Pagination pagination = plugin.getPaginationManager().getPagination(sender.getName());
+        Pagination pagination = plugin.getPageManager().getPagination(sender.getName());
         if (pagination == null) {
             sendError(sender, "You have no pagination session");
             return true;
         }
 
         if (args.length > 0) {
-            String subCommand = args[0];
-            if ("next".equalsIgnoreCase(subCommand)) {
-                onNextPage(pagination, sender);
-            } else if ("prev".equalsIgnoreCase(subCommand)) {
-                onPrevPage(pagination, sender);
-            } else if ("all".equalsIgnoreCase(subCommand)) {
-                onShowAll(pagination, sender);
-            } else if ("save".equalsIgnoreCase(subCommand)) {
-                onSave(pagination, sender);
-            } else {
-                onPageNumber(subCommand, sender, pagination);
+            String subCommand = args[0].toLowerCase();
+            switch (subCommand) {
+                case "next":
+                    onNextPage(pagination, sender);
+                    break;
+                case "prev":
+                    onPrevPage(pagination, sender);
+                    break;
+                case "all":
+                    onShowAll(pagination, sender);
+                    break;
+                case "save":
+                    onSave(pagination, sender);
+                    break;
+                default:
+                    onPageNumber(subCommand, sender, pagination);
             }
         } else {
             sendError(sender, "Not enough arguments");

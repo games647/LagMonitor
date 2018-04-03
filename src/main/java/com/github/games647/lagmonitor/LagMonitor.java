@@ -10,7 +10,7 @@ import com.github.games647.lagmonitor.commands.NetworkCommand;
 import com.github.games647.lagmonitor.commands.PaginationCommand;
 import com.github.games647.lagmonitor.commands.StackTraceCommand;
 import com.github.games647.lagmonitor.commands.VmCommand;
-import com.github.games647.lagmonitor.commands.dump.FlightRecorderCommand;
+import com.github.games647.lagmonitor.commands.dump.FlightCommand;
 import com.github.games647.lagmonitor.commands.dump.HeapCommand;
 import com.github.games647.lagmonitor.commands.dump.ThreadCommand;
 import com.github.games647.lagmonitor.commands.minecraft.PingCommand;
@@ -24,7 +24,7 @@ import com.github.games647.lagmonitor.inject.ListenerInjector;
 import com.github.games647.lagmonitor.inject.TaskInjector;
 import com.github.games647.lagmonitor.listeners.BlockingConnectionSelector;
 import com.github.games647.lagmonitor.listeners.GraphListener;
-import com.github.games647.lagmonitor.listeners.PaginationManager;
+import com.github.games647.lagmonitor.listeners.PageManager;
 import com.github.games647.lagmonitor.listeners.ThreadSafetyListener;
 import com.github.games647.lagmonitor.storage.MonitorSaveTask;
 import com.github.games647.lagmonitor.storage.NativeSaveTask;
@@ -52,6 +52,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import oshi.SystemInfo;
@@ -60,14 +61,11 @@ public class LagMonitor extends JavaPlugin {
 
     private static final String JNA_FILE = "jna-4.4.0.jar";
 
-    //the server is pinging the client every 40 Ticks (2 sec) - so check it then
-    //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
-    private static final int PING_INTERVAL = 2 * 20;
     private static final int DETECTION_THRESHOLD = 10;
 
     private final PingManager pingManager = new PingManager(this);
     private final BlockingActionManager actionManager = new BlockingActionManager(this);
-    private final PaginationManager paginationManager = new PaginationManager();
+    private final PageManager pageManager = new PageManager();
     private final TpsHistoryTask tpsHistoryTask = new TpsHistoryTask();
 
     private NativeData nativeData;
@@ -91,8 +89,18 @@ public class LagMonitor extends JavaPlugin {
         }
 
         //register schedule tasks
-        getServer().getScheduler().runTaskTimer(this, tpsHistoryTask, 20L, 20L);
-        getServer().getScheduler().runTaskTimer(this, pingManager, 20L, PING_INTERVAL);
+        BukkitScheduler scheduler = getServer().getScheduler();
+        scheduler.runTaskTimer(this, tpsHistoryTask, 20L, TpsHistoryTask.RUN_INTERVAL);
+        scheduler.runTaskTimer(this, pingManager, 20L, PingManager.PING_INTERVAL);
+
+        //register listeners
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new GraphListener(), this);
+        pluginManager.registerEvents(pageManager, this);
+        pluginManager.registerEvents(pingManager, this);
+
+        //add the player to the list in the case the plugin is loaded at runtime
+        Bukkit.getOnlinePlayers().forEach(pingManager::addPlayer);
 
         if (getConfig().getBoolean("traffic-counter")) {
             try {
@@ -102,36 +110,28 @@ public class LagMonitor extends JavaPlugin {
             }
         }
 
-        //register listeners
-        getServer().getPluginManager().registerEvents(pingManager, this);
-        getServer().getPluginManager().registerEvents(paginationManager, this);
-        getServer().getPluginManager().registerEvents(new GraphListener(), this);
-
-        //add the player to the list in the case the plugin is loaded at runtime
-        Bukkit.getOnlinePlayers().forEach(pingManager::addPlayer);
-
         if (getConfig().getBoolean("thread-safety-check")) {
-            getServer().getPluginManager().registerEvents(new ThreadSafetyListener(actionManager), this);
+            pluginManager.registerEvents(new ThreadSafetyListener(actionManager), this);
         }
 
         if (getConfig().getBoolean("thread-block-detection")) {
-            Bukkit.getScheduler().runTask(this, () -> {
+            scheduler.runTask(this, () -> {
                 blockDetectionTimer = new Timer(getName() + "-Thread-Blocking-Detection");
                 IODetectorTask detectorTask = new IODetectorTask(actionManager, Thread.currentThread());
                 blockDetectionTimer.scheduleAtFixedRate(detectorTask, DETECTION_THRESHOLD, DETECTION_THRESHOLD);
             });
         }
 
-        if (getConfig().getBoolean("socket-block-detection")) {
-            Bukkit.getScheduler().runTask(this, () -> new BlockingConnectionSelector(actionManager).inject());
+        if (getConfig().getBoolean("monitor-database")) {
+            setupMonitoringDatabase();
         }
 
-        if (getConfig().getBoolean("monitor-database")) {
-            setupNativeDatabase();
+        if (getConfig().getBoolean("socket-block-detection")) {
+            scheduler.runTask(this, () -> new BlockingConnectionSelector(actionManager).inject());
         }
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
-            Bukkit.getScheduler().runTask(this, () -> new BlockingSecurityManager(actionManager).inject());
+            scheduler.runTask(this, () -> new BlockingSecurityManager(actionManager).inject());
         }
 
         registerCommands();
@@ -168,7 +168,7 @@ public class LagMonitor extends JavaPlugin {
         nativeData = new NativeData(getLogger(), info);
     }
 
-    private void setupNativeDatabase() {
+    private void setupMonitoringDatabase() {
         try {
             String host = getConfig().getString("host");
             int port = getConfig().getInt("port");
@@ -181,7 +181,7 @@ public class LagMonitor extends JavaPlugin {
             storage.createTables();
 
             BukkitScheduler scheduler = getServer().getScheduler();
-            scheduler.runTaskTimer(this, new TpsSaveTask(this, storage), 20L,
+            scheduler.runTaskTimerAsynchronously(this, new TpsSaveTask(tpsHistoryTask, storage), 20L,
                      getConfig().getInt("tps-save-interval") * 20L);
             //this can run async because it runs independently from the main thread
             scheduler.runTaskTimerAsynchronously(this, new MonitorSaveTask(this, storage),
@@ -205,8 +205,6 @@ public class LagMonitor extends JavaPlugin {
 
         close(monitorTimer);
         monitorTimer = null;
-
-        pingManager.clear();
 
         //restore the security manager
         SecurityManager securityManager = System.getSecurityManager();
@@ -233,8 +231,8 @@ public class LagMonitor extends JavaPlugin {
         }
     }
 
-    public PaginationManager getPaginationManager() {
-        return paginationManager;
+    public PageManager getPageManager() {
+        return pageManager;
     }
 
     public Timer getMonitorTimer() {
@@ -278,12 +276,12 @@ public class LagMonitor extends JavaPlugin {
         getCommand("tasks").setExecutor(new TasksCommand(this));
         getCommand("heap").setExecutor(new HeapCommand(this));
         getCommand("lagpage").setExecutor(new PaginationCommand(this));
-        getCommand("jfr").setExecutor(new FlightRecorderCommand(this));
+        getCommand("jfr").setExecutor(new FlightCommand(this));
         getCommand("network").setExecutor(new NetworkCommand(this));
 
-        //paper moved to class to package co.aikar.timings
         PluginCommand timing = getCommand("timing");
         try {
+            //paper moved to class to package co.aikar.timings
             Class.forName("org.bukkit.command.defaults.TimingsCommand");
             timing.setExecutor(new SpigotTimingsCommand(this));
         } catch (ClassNotFoundException e) {

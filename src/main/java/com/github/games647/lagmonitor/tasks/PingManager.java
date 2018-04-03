@@ -19,6 +19,10 @@ public class PingManager implements Runnable, Listener {
 
     private static final int SAMPLE_SIZE = 5;
 
+    //the server is pinging the client every 40 Ticks (2 sec) - so check it then
+    //https://github.com/bergerkiller/CraftSource/blob/master/net.minecraft.server/PlayerConnection.java#L178
+    public static final int PING_INTERVAL = 2 * 20;
+
     private final Map<String, RollingOverHistory> playerHistory = new HashMap<>();
     private final Plugin plugin;
 
@@ -87,7 +91,7 @@ public class PingManager implements Runnable, Listener {
             if (player.isOnline()) {
                 addPlayer(player);
             }
-        }, 2 * 20L);
+        }, PING_INTERVAL);
     }
 
     @EventHandler

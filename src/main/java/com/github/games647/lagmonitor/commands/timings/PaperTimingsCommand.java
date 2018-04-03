@@ -103,7 +103,7 @@ public class PaperTimingsCommand extends LagCommand {
         Pagination pagination = new Pagination("Paper Timings", lines);
         pagination.send(sender);
 
-        plugin.getPaginationManager().setPagination(sender.getName(), pagination);
+        plugin.getPageManager().setPagination(sender.getName(), pagination);
         return true;
     }
 

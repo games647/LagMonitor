@@ -67,7 +67,7 @@ public class SpigotTimingsCommand extends LagCommand {
         Pagination pagination = new Pagination("Paper Timings", lines);
         pagination.send(sender);
 
-        this.plugin.getPaginationManager().setPagination(sender.getName(), pagination);
+        this.plugin.getPageManager().setPagination(sender.getName(), pagination);
         return true;
     }
 

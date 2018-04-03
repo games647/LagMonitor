@@ -5,6 +5,7 @@ import com.github.games647.lagmonitor.Pagination;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,8 @@ import org.bukkit.command.TabExecutor;
 
 public class StackTraceCommand extends LagCommand implements TabExecutor {
 
+    private static final int MAX_DEPTH = 100;
+
     public StackTraceCommand(LagMonitor plugin) {
         super(plugin);
     }
@@ -33,6 +36,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
         if (args.length > 0) {
             String threadName = args[0];
+
             Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
             for (Map.Entry<Thread, StackTraceElement[]> entry : allStackTraces.entrySet()) {
                 Thread thread = entry.getKey();
@@ -45,8 +49,9 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
             sendError(sender, "No thread with that name found");
         } else {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            printStackTrace(sender, stackTrace);
+            ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+            ThreadInfo threadInfo = threadBean.getThreadInfo(Thread.currentThread().getId(), MAX_DEPTH);
+            printStackTrace(sender, threadInfo.getStackTrace());
         }
 
         return true;
@@ -62,7 +67,7 @@ public class StackTraceCommand extends LagCommand implements TabExecutor {
 
         Pagination pagination = new Pagination("Stacktrace", lines);
         pagination.send(sender);
-        plugin.getPaginationManager().setPagination(sender.getName(), pagination);
+        plugin.getPageManager().setPagination(sender.getName(), pagination);
     }
 
     private BaseComponent[] formatTraceElement(StackTraceElement traceElement) {

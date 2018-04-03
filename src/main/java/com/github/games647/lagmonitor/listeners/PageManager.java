@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PaginationManager implements Listener {
+public class PageManager implements Listener {
 
     private final Map<String, Pagination> pages = new HashMap<>();
 

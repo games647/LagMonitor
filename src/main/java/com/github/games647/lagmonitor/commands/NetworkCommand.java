@@ -25,18 +25,20 @@ public class NetworkCommand extends LagCommand {
         }
 
         Optional<SystemInfo> optInfo = plugin.getNativeData().getSystemInfo();
-        if (!optInfo.isPresent()) {
+        if (optInfo.isPresent()) {
+            displayNetworkInfo(sender, optInfo.get());
+        } else {
             sender.sendMessage(NATIVE_NOT_FOUND);
-            return true;
         }
 
-        SystemInfo systemInfo = optInfo.get();
+        return true;
+    }
+
+    private void displayNetworkInfo(CommandSender sender, SystemInfo systemInfo) {
         displayGlobalNetworkInfo(sender, systemInfo.getOperatingSystem().getNetworkParams());
         for (NetworkIF networkInterface : systemInfo.getHardware().getNetworkIFs()) {
             displayInterfaceInfo(sender, networkInterface);
         }
-
-        return false;
     }
 
     private void displayGlobalNetworkInfo(CommandSender sender, NetworkParams networkParams) {

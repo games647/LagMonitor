@@ -60,7 +60,7 @@ public class MonitorCommand extends LagCommand {
 
             Pagination pagination = new Pagination("Monitor", lines);
             pagination.send(sender);
-            this.plugin.getPaginationManager().setPagination(sender.getName(), pagination);
+            this.plugin.getPageManager().setPagination(sender.getName(), pagination);
         }
 
         return true;

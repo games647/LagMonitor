@@ -55,7 +55,7 @@ public class HeapCommand extends DumpCommand {
 
             Pagination pagination = new Pagination("Heap", paginatedLines);
             pagination.send(sender);
-            plugin.getPaginationManager().setPagination(sender.getName(), pagination);
+            plugin.getPageManager().setPagination(sender.getName(), pagination);
         } catch (InstanceNotFoundException instanceNotFoundException) {
             sendError(sender, NOT_ORACLE_MSG);
         } catch (Exception ex) {
@@ -68,6 +68,7 @@ public class HeapCommand extends DumpCommand {
 
     private void onDump(CommandSender sender) {
         try {
+            //test if this class is available
             Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
 
             //can be useful for dumping heaps in binary format

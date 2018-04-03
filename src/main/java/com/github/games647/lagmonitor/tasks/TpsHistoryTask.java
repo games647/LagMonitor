@@ -4,6 +4,7 @@ import com.github.games647.lagmonitor.utils.RollingOverHistory;
 
 public class TpsHistoryTask implements Runnable {
 
+    public static final int RUN_INTERVAL = 20;
     private static final int ONE_MINUTE = 60;
 
     private final RollingOverHistory minuteSample = new RollingOverHistory(ONE_MINUTE, 20.0F);
@@ -26,8 +27,10 @@ public class TpsHistoryTask implements Runnable {
     }
 
     public float getLastSample() {
-        int lastPos = minuteSample.getCurrentPosition();
-        return minuteSample.getSamples()[lastPos];
+        synchronized (this) {
+            int lastPos = minuteSample.getCurrentPosition();
+            return minuteSample.getSamples()[lastPos];
+        }
     }
 
     @Override
@@ -42,9 +45,11 @@ public class TpsHistoryTask implements Runnable {
         float tps = 1 * 20 * 1000.0F / (timeSpent / (1000 * 1000));
         if (tps >= 0.0F && tps < 25.0F) {
             //Prevent all invalid values
-            minuteSample.add(tps);
-            quarterSample.add(tps);
-            halfHourSample.add(tps);
+            synchronized (this) {
+                minuteSample.add(tps);
+                quarterSample.add(tps);
+                halfHourSample.add(tps);
+            }
         }
     }
 }

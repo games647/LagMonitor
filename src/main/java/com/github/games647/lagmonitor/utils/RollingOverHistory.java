@@ -12,8 +12,7 @@ public class RollingOverHistory {
 
     public RollingOverHistory(int size, float firstValue) {
         this.samples = new float[size];
-        samples[0] = firstValue;
-        total = firstValue;
+        reset(firstValue);
     }
 
     public void add(float sample) {
@@ -58,6 +57,11 @@ public class RollingOverHistory {
 
     public float[] getSamples() {
         return Arrays.copyOf(samples, samples.length);
+    }
+
+    public void reset(float firstVal) {
+        samples[0] = firstVal;
+        total = firstVal;
     }
 
     @Override

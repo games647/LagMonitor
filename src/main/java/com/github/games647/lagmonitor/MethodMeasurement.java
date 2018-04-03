@@ -82,20 +82,6 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, MethodMeasurement> entry : getChildInvokes().entrySet()) {
-            builder.append(entry.getKey()).append("()");
-            builder.append(' ');
-            builder.append(entry.getValue().totalTime).append("ms");
-            builder.append('\n');
-            entry.getValue().writeString(builder, 1);
-        }
-
-        return builder.toString();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -116,5 +102,19 @@ public class MethodMeasurement implements Comparable<MethodMeasurement> {
     @Override
     public int compareTo(MethodMeasurement other) {
         return Long.compare(this.totalTime, other.totalTime);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, MethodMeasurement> entry : getChildInvokes().entrySet()) {
+            builder.append(entry.getKey()).append("()");
+            builder.append(' ');
+            builder.append(entry.getValue().totalTime).append("ms");
+            builder.append('\n');
+            entry.getValue().writeString(builder, 1);
+        }
+
+        return builder.toString();
     }
 }
