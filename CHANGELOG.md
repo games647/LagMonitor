@@ -1,7 +1,12 @@
 # Changelog
 
+## 1.17.1
+
+* Fail safely on native library errors
+
 ## 1.17
 
+* Use faster MethodHandles to lookup the player ping
 * Close all resources after calculating folder size
 * Verify if JFR methods are available in the current VM
 * Enable native driver by default if available

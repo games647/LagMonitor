@@ -91,7 +91,7 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "    Description", firmware.getDescription());
         sendMessage(sender, "    Version", firmware.getVersion());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
         sendMessage(sender, "    Release date", firmware.getReleaseDate().format(formatter));
     }
 

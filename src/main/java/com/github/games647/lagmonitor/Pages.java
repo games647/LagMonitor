@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
@@ -37,7 +37,7 @@ public class Pages {
         return text;
     }
 
-    private final String date = LocalDateTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
+    private final String date = LocalTime.now().format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT));
     private final String title;
 
     private final List<BaseComponent[]> lines;

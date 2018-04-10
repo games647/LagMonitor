@@ -148,17 +148,7 @@ public class LagMonitor extends JavaPlugin {
         } catch (ClassNotFoundException classNotFoundEx) {
             Path jnaPath = getDataFolder().toPath().resolve(JNA_FILE);
             if (Files.exists(jnaPath)) {
-                if (getClassLoader() instanceof URLClassLoader) {
-                    try {
-                        Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                        addUrl.setAccessible(true);
-                        addUrl.invoke(getClassLoader(), jnaPath.toUri().toURL());
-
-                        getLogger().info("Added JNA to the classpath");
-                    } catch (ReflectiveOperationException | MalformedURLException reflectiveEx) {
-                        getLogger().log(Level.INFO, "Cannot add JNA to the classpath", reflectiveEx);
-                    }
-                }
+                appendToClasspath(jnaPath);
             } else {
                 getLogger().info("JNA not found. " +
                         "Please download the this to the folder of this plugin to display more data about your setup");
@@ -166,7 +156,28 @@ public class LagMonitor extends JavaPlugin {
             }
         }
 
+        //test the library
+        try {
+            new SystemInfo().getOperatingSystem().getProcessId();
+        } catch (UnsatisfiedLinkError | NoClassDefFoundError linkError) {
+            getLogger().log(Level.INFO, "Cannot load native library. Continuing without it...", linkError);
+        }
+
         nativeData = new NativeData(getLogger(), info);
+    }
+
+    private void appendToClasspath(Path jnaPath) {
+        if (getClassLoader() instanceof URLClassLoader) {
+            try {
+                Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                addUrl.setAccessible(true);
+                addUrl.invoke(getClassLoader(), jnaPath.toUri().toURL());
+
+                getLogger().info("Added JNA to the classpath");
+            } catch (ReflectiveOperationException | MalformedURLException reflectiveEx) {
+                getLogger().log(Level.INFO, "Cannot add JNA to the classpath", reflectiveEx);
+            }
+        }
     }
 
     private void setupMonitoringDatabase() {

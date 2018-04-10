@@ -25,16 +25,14 @@ server timings and so on.
 * Access to Java environment variables (mbeans)
 * Plugin specific profiles
 * Blocking operations on the main thread check
-* Compatible 1.8+ servers
 * Make Heap and Thread dumps
 * Create Java Flight Recorder dump and analyze it later on your own computer
 * Log the server performance into a MySQL/MariaDB database
-* Free
 
 ## Requirements
 
 * Java 8+
-* Spigot or a fork of it (ex: Paper)
+* Spigot 1.8+ or a fork of it (ex: Paper)
 
 ## Permissions
 
