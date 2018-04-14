@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor.storage;
 
-import com.github.games647.lagmonitor.tasks.TPSHistoryTask;
+import com.github.games647.lagmonitor.task.TPSHistoryTask;
 
 public class TPSSaveTask implements Runnable {
 

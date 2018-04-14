@@ -2,7 +2,7 @@ package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
-import com.github.games647.lagmonitor.utils.LagUtils;
+import com.github.games647.lagmonitor.util.LagUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +14,7 @@ import oshi.SystemInfo;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.OSProcess;
 
-import static com.github.games647.lagmonitor.utils.LagUtils.round;
+import static com.github.games647.lagmonitor.util.LagUtils.round;
 
 public class NativeSaveTask implements Runnable {
 

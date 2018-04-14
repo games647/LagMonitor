@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor;
 
-import com.github.games647.lagmonitor.utils.RollingOverHistory;
+import com.github.games647.lagmonitor.util.RollingOverHistory;
 
 import java.util.Arrays;
 
