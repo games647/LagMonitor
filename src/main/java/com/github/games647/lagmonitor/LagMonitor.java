@@ -159,11 +159,11 @@ public class LagMonitor extends JavaPlugin {
         //test the library
         try {
             new SystemInfo().getOperatingSystem().getProcessId();
+            nativeData = new NativeData(getLogger(), info);
         } catch (UnsatisfiedLinkError | NoClassDefFoundError linkError) {
             getLogger().log(Level.INFO, "Cannot load native library. Continuing without it...", linkError);
+            nativeData = new NativeData(getLogger(), null);
         }
-
-        nativeData = new NativeData(getLogger(), info);
     }
 
     private void appendToClasspath(Path jnaPath) {
