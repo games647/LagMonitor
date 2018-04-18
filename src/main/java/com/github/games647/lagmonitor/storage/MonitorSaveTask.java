@@ -10,7 +10,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -90,7 +89,7 @@ public class MonitorSaveTask implements Runnable {
         Future<Map<UUID, WorldData>> worldFuture = Bukkit.getScheduler()
                 .callSyncMethod(plugin, () -> {
                             List<World> worlds = Bukkit.getWorlds();
-                            HashMap<UUID, WorldData> worldsData = Maps.newHashMapWithExpectedSize(worlds.size());
+                            Map<UUID, WorldData> worldsData = Maps.newHashMapWithExpectedSize(worlds.size());
                             for (World world : worlds) {
                                 worldsData.put(world.getUID(), WorldData.fromWorld(world));
                             }

@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor.command.timings;
+package com.github.games647.lagmonitor.command.timing;
 
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.Pages;

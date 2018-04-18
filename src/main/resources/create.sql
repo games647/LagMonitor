@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}worlds` (
   world_name    VARCHAR(255)      NOT NULL,
   chunks_loaded SMALLINT UNSIGNED NOT NULL,
   tile_entities SMALLINT UNSIGNED NOT NULL,
-  world_size    SMALLINT UNSIGNED NOT NULL,
+  world_size    MEDIUMINT UNSIGNED NOT NULL,
   entities      INT UNSIGNED      NOT NULL,
   FOREIGN KEY (monitor_id) REFERENCES `{prefix}monitor` (monitor_id)
 );

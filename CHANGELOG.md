@@ -2,6 +2,8 @@
 
 ## 1.17.1
 
+* Make the link for monitoring clickable
+* Improve performance of /tasks command using MethodHandles
 * Fail safely on native library errors
 
 ## 1.17

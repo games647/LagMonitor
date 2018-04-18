@@ -3,7 +3,6 @@ package com.github.games647.lagmonitor.util;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
@@ -42,13 +41,14 @@ public class LagUtils {
     }
 
     public static long getFolderSize(Logger logger, Path folder) {
-        try (Stream<Path> walk = Files.walk(folder, 3, FileVisitOption.FOLLOW_LINKS)) {
+        try (Stream<Path> walk = Files.walk(folder, 3)) {
             return walk
                     .parallel()
+                    .filter(Files::isRegularFile)
                     .mapToLong(path -> {
                         try {
                             return Files.size(path);
-                        } catch (IOException e) {
+                        } catch (IOException ioEx) {
                             return 0;
                         }
                     }).sum();

@@ -5,6 +5,7 @@ import com.github.games647.lagmonitor.traffic.Reflection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -50,9 +51,10 @@ public class GraphListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDrop(PlayerDropItemEvent dropItemEvent) {
-        ItemStack mapItem = dropItemEvent.getItemDrop().getItemStack();
+        Item itemDrop = dropItemEvent.getItemDrop();
+        ItemStack mapItem = itemDrop.getItemStack();
         if (isOurGraph(mapItem)) {
-            dropItemEvent.getItemDrop().setItemStack(new ItemStack(Material.AIR));
+            itemDrop.setItemStack(new ItemStack(Material.AIR));
         }
     }
 

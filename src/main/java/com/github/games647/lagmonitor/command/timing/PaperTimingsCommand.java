@@ -1,4 +1,4 @@
-package com.github.games647.lagmonitor.command.timings;
+package com.github.games647.lagmonitor.command.timing;
 
 import co.aikar.timings.TimingHistory;
 import co.aikar.timings.Timings;
