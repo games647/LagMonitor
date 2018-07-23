@@ -53,10 +53,10 @@ public class JavaVersionTest {
 
     @Test
     public void parseJava10() {
-        JavaVersion version = new JavaVersion("10");
+        JavaVersion version = new JavaVersion("10.0.2");
         assertThat(version.getMajor(), is(10));
         assertThat(version.getMinor(), is(0));
-        assertThat(version.getSecurity(), is(0));
+        assertThat(version.getSecurity(), is(2));
         assertThat(version.isOutdated(), is(false));
     }
 

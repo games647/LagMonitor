@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class JavaVersion implements Comparable<JavaVersion> {
 
-    public static final JavaVersion LATEST = new JavaVersion("10", 10, 0, 0, false);
+    public static final JavaVersion LATEST = new JavaVersion("10", 10, 0, 2, false);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("((1\\.)?(\\d+))(\\.(\\d+))?(\\.(\\d+))?");
 
