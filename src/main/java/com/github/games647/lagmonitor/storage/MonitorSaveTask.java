@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.NativeData;
+import com.github.games647.lagmonitor.NativeManager;
 import com.github.games647.lagmonitor.util.LagUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -127,7 +127,7 @@ public class MonitorSaveTask implements Runnable {
             loadAvg = 0;
         }
 
-        NativeData nativeData = plugin.getNativeData();
+        NativeManager nativeData = plugin.getNativeData();
         float systemUsage = round(nativeData.getCPULoad() * 100, 4);
         float processUsage = round(nativeData.getProcessCPULoad() * 100, 4);
 

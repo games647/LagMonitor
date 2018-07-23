@@ -5,8 +5,11 @@ import com.sun.management.UnixOperatingSystemMXBean;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -16,41 +19,88 @@ import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.software.os.OSProcess;
 
-public class NativeData {
+import org.bukkit.Bukkit;
+
+public class NativeManager {
+
+    private static final String JNA_FILE = "jna-4.4.0.jar";
 
     private final Logger logger;
+    private final Path dataFolder;
 
-    private final int pid;
-
-    private final SystemInfo info;
     private final OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+    private SystemInfo info;
 
-    public NativeData(Logger logger, SystemInfo info) {
+    private int pid = -1;
+
+    public NativeManager(Logger logger, Path dataFolder) {
         this.logger = logger;
-        this.info = info;
+        this.dataFolder = dataFolder;
+    }
 
-        if (info == null && !(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
-            logger.severe("You're not using Oracle Java nor using the native library. " +
-                    "You won't be able to read some native data");
+    public void setupNativeAdapter() {
+        if (!doesServerIncludeJNA()) {
+            try {
+                if (!loadExternalJNI() && !(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
+                    logger.severe("You're not using Oracle Java nor using the native library. " +
+                            "You won't be able to read some native data");
+                }
+            } catch (IOException ioEx) {
+                logger.log(Level.WARNING, "Cannot load JNA library. We continue without it", ioEx);
+            }
         }
 
-        if (info == null) {
-            pid = -1;
-        } else {
+        logger.info("Found JNA native library. Enabling extended native data support to display more data");
+        try {
+            info = new SystemInfo();
+
+            //make a test call
             pid = info.getOperatingSystem().getProcessId();
+        } catch (UnsatisfiedLinkError | NoClassDefFoundError linkError) {
+            logger.log(Level.INFO, "Cannot load native library. Continuing without it...", linkError);
+            info = null;
         }
+    }
+
+    private boolean loadExternalJNI() throws IOException {
+        Path jnaPath = dataFolder.resolve(JNA_FILE);
+        if (Files.exists(jnaPath)) {
+            extractJNI(jnaPath);
+            return true;
+        } else {
+            logger.info("JNA not found. " +
+                    "Please download the this to the folder of this plugin to display more data about your setup");
+            logger.info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar");
+        }
+
+        return false;
     }
 
     public Optional<SystemInfo> getSystemInfo() {
         return Optional.ofNullable(info);
     }
 
+    private void extractJNI(Path jnaPath) throws IOException {
+        URLClassLoader jnaLoader = new URLClassLoader(new URL[]{jnaPath.toUri().toURL()});
+
+        String libName = "/com/sun/jna/" + com.sun.jna.Platform.RESOURCE_PREFIX
+                + '/' + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+        com.sun.jna.Native.extractFromResourcePath(libName, jnaLoader);
+    }
+
+    private boolean doesServerIncludeJNA() {
+        try {
+            Class.forName("com.sun.jna.Platform", true, Bukkit.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException classNotFoundEx) {
+            return false;
+        }
+    }
+
     public double getProcessCPULoad() {
         if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
             com.sun.management.OperatingSystemMXBean nativeOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
             return nativeOsBean.getProcessCpuLoad();
-        // } else if (info != null) {
-            // return info.getOperatingSystem().getProcess(pid).getState();
         }
 
         return -1;

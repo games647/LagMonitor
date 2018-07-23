@@ -38,18 +38,11 @@ import com.github.games647.lagmonitor.threading.BlockingSecurityManager;
 import com.github.games647.lagmonitor.threading.Injectable;
 import com.github.games647.lagmonitor.traffic.TrafficReader;
 
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.ProxySelector;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.logging.Level;
-
-import oshi.SystemInfo;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -60,30 +53,26 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class LagMonitor extends JavaPlugin {
 
-    private static final String JNA_FILE = "jna-4.4.0.jar";
-
     private static final int DETECTION_THRESHOLD = 10;
 
     private final PingManager pingManager = new PingManager(this);
     private final BlockingActionManager actionManager = new BlockingActionManager(this);
     private final PageManager pageManager = new PageManager();
     private final TPSHistoryTask tpsHistoryTask = new TPSHistoryTask();
+    private final NativeManager nativeData = new NativeManager(getLogger(), getDataFolder().toPath());
 
-    private NativeData nativeData;
     private TrafficReader trafficReader;
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
 
-    public LagMonitor() {
-        //always debug jna loading
-        System.setProperty("jna.debug_load", String.valueOf(true));
-        System.setProperty("jna.debug_load.jna", String.valueOf(true));
+    @Override
+    public void onLoad() {
+        nativeData.setupNativeAdapter();
     }
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        setupNativeAdapter();
 
         if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
@@ -136,48 +125,6 @@ public class LagMonitor extends JavaPlugin {
         }
 
         registerCommands();
-    }
-
-    private void setupNativeAdapter() {
-        SystemInfo info = null;
-        try {
-            Class.forName("com.sun.jna.Platform");
-            info = new SystemInfo();
-
-            getLogger().info("Found JNA native library. Enabling extended native data support to display more data");
-        } catch (ClassNotFoundException classNotFoundEx) {
-            Path jnaPath = getDataFolder().toPath().resolve(JNA_FILE);
-            if (Files.exists(jnaPath)) {
-                appendToClasspath(jnaPath);
-            } else {
-                getLogger().info("JNA not found. " +
-                        "Please download the this to the folder of this plugin to display more data about your setup");
-                getLogger().info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar");
-            }
-        }
-
-        //test the library
-        try {
-            new SystemInfo().getOperatingSystem().getProcessId();
-            nativeData = new NativeData(getLogger(), info);
-        } catch (UnsatisfiedLinkError | NoClassDefFoundError linkError) {
-            getLogger().log(Level.INFO, "Cannot load native library. Continuing without it...", linkError);
-            nativeData = new NativeData(getLogger(), null);
-        }
-    }
-
-    private void appendToClasspath(Path jnaPath) {
-        if (getClassLoader() instanceof URLClassLoader) {
-            try {
-                Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                addUrl.setAccessible(true);
-                addUrl.invoke(getClassLoader(), jnaPath.toUri().toURL());
-
-                getLogger().info("Added JNA to the classpath");
-            } catch (ReflectiveOperationException | MalformedURLException reflectiveEx) {
-                getLogger().log(Level.INFO, "Cannot add JNA to the classpath", reflectiveEx);
-            }
-        }
     }
 
     private void setupMonitoringDatabase() {
@@ -267,7 +214,7 @@ public class LagMonitor extends JavaPlugin {
         return pingManager;
     }
 
-    public NativeData getNativeData() {
+    public NativeManager getNativeData() {
         return nativeData;
     }
 

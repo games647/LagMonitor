@@ -17,15 +17,15 @@ public class BlockingActionManager implements Listener {
     //feel free to improve the wording of this:
     private static final String THREAD_SAFETY_NOTICE = "As threads **can** run concurrently or in parallel " +
             "shared data access has to be synchronized (thread-safety) in order to prevent " +
-            "unexpected behavior or crashes.";
+            "unexpected behavior or crashes. ";
 
     private static final String SAFETY_METHODS = "You can guarantee thread-safety by " +
             "running the data access always on the same thread, using atomic operations, " +
             "locks (ex: a synchronized block), immutable objects, thread local data " +
-            "or something similar";
+            "or something similar. ";
 
     private static final String COMMON_SAFE = "Common things that are thread-safe: Logging, Bukkit Scheduler, " +
-            "Concurrent collections (ex: ConcurrentHashMap or Collections.synchronized*), ...";
+            "Concurrent collections (ex: ConcurrentHashMap or Collections.synchronized*), ... ";
 
     private final Plugin plugin;
 
@@ -44,7 +44,7 @@ public class BlockingActionManager implements Listener {
         String message = "Plugin {0} is performing a blocking I/O operation ({1}) on the main thread. " +
                 "This could affect the server performance, because the thread pauses until it gets the response. " +
                 "Such operations should be performed asynchronous from the main thread. " +
-                "Keep in mind to keep the code thread-safe.";
+                "Keep in mind to keep the code thread-safe. ";
         logCurrentStack(message, event);
     }
 
@@ -53,7 +53,7 @@ public class BlockingActionManager implements Listener {
             return;
         }
 
-        logCurrentStack("Plugin {0} triggered an synchronous event {1} from an asynchronous Thread.", eventName);
+        logCurrentStack("Plugin {0} triggered an synchronous event {1} from an asynchronous Thread. ", eventName);
         plugin.getLogger().info(THREAD_SAFETY_NOTICE);
         plugin.getLogger().info("Use runTask* (no Async*), scheduleSync* or callSyncMethod to run on the main thread.");
     }
@@ -86,7 +86,7 @@ public class BlockingActionManager implements Listener {
         } else {
             plugin.getLogger().log(Level.WARNING, "The following exception is not an error. " +
                     "It's a hint for the plugin developer to find the source. " +
-                    plugin.getName() + " doesn't prevent this action. It just warns you about it", stackTraceCreator);
+                    plugin.getName() + " doesn't prevent this action. It just warns you about it. ", stackTraceCreator);
         }
     }
 

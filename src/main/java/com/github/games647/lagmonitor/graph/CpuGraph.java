@@ -1,6 +1,6 @@
 package com.github.games647.lagmonitor.graph;
 
-import com.github.games647.lagmonitor.NativeData;
+import com.github.games647.lagmonitor.NativeManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.map.MapCanvas;
@@ -9,14 +9,14 @@ import org.bukkit.plugin.Plugin;
 public class CpuGraph extends GraphRenderer {
 
     private final Plugin plugin;
-    private final NativeData nativeData;
+    private final NativeManager nativeData;
 
     private final Object lock = new Object();
 
     private int systemHeight;
     private int processHeight;
 
-    public CpuGraph(Plugin plugin, NativeData nativeData) {
+    public CpuGraph(Plugin plugin, NativeManager nativeData) {
         super("CPU Usage");
 
         this.plugin = plugin;

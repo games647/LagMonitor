@@ -32,7 +32,7 @@ server timings and so on.
 ## Requirements
 
 * Java 8+
-* Spigot 1.8+ or a fork of it (ex: Paper)
+* Spigot 1.8.8+ or a fork of it (ex: Paper)
 
 ## Permissions
 

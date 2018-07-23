@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.command;
 
 import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.NativeData;
+import com.github.games647.lagmonitor.NativeManager;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -71,7 +71,7 @@ public class EnvironmentCommand extends LagCommand {
 
         displayDiskSpace(sender);
 
-        NativeData nativeData = plugin.getNativeData();
+        NativeManager nativeData = plugin.getNativeData();
         sendMessage(sender, "Open file descriptors", String.valueOf(nativeData.getOpenFileDescriptors()));
         sendMessage(sender, "Max file descriptors", String.valueOf(nativeData.getMaxFileDescriptors()));
 
@@ -84,7 +84,7 @@ public class EnvironmentCommand extends LagCommand {
     }
 
     private void printExtendOsInfo(CommandSender sender) {
-        NativeData nativeData = plugin.getNativeData();
+        NativeManager nativeData = plugin.getNativeData();
 
         //cpu
         double systemCpuLoad = nativeData.getCPULoad();
