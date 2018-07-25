@@ -11,7 +11,8 @@ description: |
 website: ${project.url}
 dev-url: ${project.url}
 
-softdepend: [PacketListenerApi]
+# This plugin don't have to be transformed for compatibility with Minecraft >= 1.13
+api-version: 1.13
 
 commands:
     lagmonitor:
