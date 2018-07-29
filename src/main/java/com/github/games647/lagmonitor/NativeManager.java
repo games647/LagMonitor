@@ -41,9 +41,13 @@ public class NativeManager {
     public void setupNativeAdapter() {
         if (!doesServerIncludeJNA()) {
             try {
-                if (!loadExternalJNI() && !(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
-                    logger.severe("You're not using Oracle Java nor using the native library. " +
-                            "You won't be able to read some native data");
+                if (!loadExternalJNI()) {
+                    if (!(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
+                        logger.severe("You're not using Oracle Java nor using the native library. " +
+                                "You won't be able to read some native data");
+                    }
+
+                    return;
                 }
             } catch (IOException ioEx) {
                 logger.log(Level.WARNING, "Cannot load JNA library. We continue without it", ioEx);
