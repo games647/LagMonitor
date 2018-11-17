@@ -17,5 +17,6 @@ deploy:
   local_dir: test_builds/  # or remove this line to upload from root of repo
   file: LagMonitor.jar
   github_token: e9a471b8694e3b8057e9f0a02d2984e1ee9e5db4 # Set in travis-ci.org dashboard
+  api_key: e9a471b8694e3b8057e9f0a02d2984e1ee9e5db4
   on:
     branch: master
