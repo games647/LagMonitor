@@ -16,6 +16,6 @@ deploy:
   skip_cleanup: true
   local_dir: test_builds/  # or remove this line to upload from root of repo
   file: LagMonitor.jar
-  github_token: 2c708e795b74fd1dc9b6213edeb805d65436192c # Set in travis-ci.org dashboard
+  github_token: e9a471b8694e3b8057e9f0a02d2984e1ee9e5db4 # Set in travis-ci.org dashboard
   on:
     branch: master
