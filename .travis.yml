@@ -11,3 +11,11 @@ script: mvn test -B
 jdk:
   - oraclejdk8
   - oraclejdk9
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: test_builds/  # or remove this line to upload from root of repo
+  file: LagMonitor.jar
+  github_token: 9bo85zYRTj6GGI3QQyx9TQ # Set in travis-ci.org dashboard
+  on:
+    branch: master
