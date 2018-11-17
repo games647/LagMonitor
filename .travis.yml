@@ -12,12 +12,11 @@ jdk:
   - oraclejdk8
   - oraclejdk9
 
-
-  provider: releases
-  skip_cleanup: true
-  local_dir: test_builds/  # or remove this line to upload from root of repo
-  file: LagMonitor.jar
-  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  api_key: $GITHUB_PAT
-  on:
-    branch: master
+provider: releases
+skip_cleanup: true
+local_dir: test_builds/  # or remove this line to upload from root of repo
+file: LagMonitor.jar
+github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+api_key: $GITHUB_PAT
+on:
+ branch: master
