@@ -11,3 +11,4 @@ script: mvn test -B
 jdk:
   - oraclejdk8
   - oraclejdk9
+

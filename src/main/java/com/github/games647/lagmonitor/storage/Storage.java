@@ -30,7 +30,7 @@ public class Storage {
     private final Logger logger;
     private final String prefix;
 
-    public Storage(Logger logger, String host, int port, String database, String user, String pass, String prefix) {
+    public Storage(Logger logger, String host, int port, String database, boolean usessl, String user, String pass, String prefix) {
         this.logger = logger;
 
         this.prefix = prefix;
@@ -42,6 +42,7 @@ public class Storage {
         this.dataSource.setServerName(host);
         this.dataSource.setPort(port);
         this.dataSource.setDatabaseName(database);
+        this.dataSource.setUseSSL(usessl);
     }
 
     public void createTables() throws SQLException {
