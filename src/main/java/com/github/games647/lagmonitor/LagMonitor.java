@@ -19,9 +19,6 @@ import com.github.games647.lagmonitor.command.minecraft.TPSCommand;
 import com.github.games647.lagmonitor.command.minecraft.TasksCommand;
 import com.github.games647.lagmonitor.command.timing.PaperTimingsCommand;
 import com.github.games647.lagmonitor.command.timing.SpigotTimingsCommand;
-import com.github.games647.lagmonitor.inject.CommandInjector;
-import com.github.games647.lagmonitor.inject.ListenerInjector;
-import com.github.games647.lagmonitor.inject.TaskInjector;
 import com.github.games647.lagmonitor.listener.BlockingConnectionSelector;
 import com.github.games647.lagmonitor.listener.GraphListener;
 import com.github.games647.lagmonitor.listener.PageManager;
@@ -46,7 +43,6 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -175,12 +171,6 @@ public class LagMonitor extends JavaPlugin {
         ProxySelector proxySelector = ProxySelector.getDefault();
         if (proxySelector instanceof BlockingConnectionSelector) {
             ((Injectable) proxySelector).restore();
-        }
-
-        for (Plugin plugin : getServer().getPluginManager().getPlugins()) {
-            ListenerInjector.restore(plugin);
-            CommandInjector.restore(plugin);
-            TaskInjector.restore(plugin);
         }
     }
 
