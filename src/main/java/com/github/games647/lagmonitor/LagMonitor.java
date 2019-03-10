@@ -232,10 +232,10 @@ public class LagMonitor extends JavaPlugin {
         PluginCommand timing = getCommand("timing");
         try {
             //paper moved to class to package co.aikar.timings
-            Class.forName("org.bukkit.command.defaults.TimingsCommand");
-            timing.setExecutor(new SpigotTimingsCommand(this));
-        } catch (ClassNotFoundException e) {
+            Class.forName("co.aiker.timings.TimingsIdentifier");
             timing.setExecutor(new PaperTimingsCommand(this));
+        } catch (ClassNotFoundException e) {
+            timing.setExecutor(new SpigotTimingsCommand(this));
         }
     }
 }
