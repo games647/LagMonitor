@@ -28,6 +28,7 @@
         <finalName>${project.name}</finalName>
 
         <plugins>
+            <!-- Add libraries to the plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -60,6 +61,24 @@
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--Expose git variables for version names-->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.6</version>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
                         </goals>
                     </execution>
                 </executions>
