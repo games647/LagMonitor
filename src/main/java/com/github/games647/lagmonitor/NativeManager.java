@@ -51,6 +51,7 @@ public class NativeManager {
                 }
             } catch (IOException ioEx) {
                 logger.log(Level.WARNING, "Cannot load JNA library. We continue without it", ioEx);
+                return;
             }
         }
 
