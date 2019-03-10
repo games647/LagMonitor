@@ -96,6 +96,12 @@ contain new bugs and are likely to be less stable than released versions.
 
 https://ci.codemc.org/job/Games647/job/LagMonitor/changes
 
+## Network requests
+
+This plugin performs network requests to:
+
+* https://paste.enginehub.org - uploading monitor paste command outputs
+
 ## Images
 
 ### Heap command
