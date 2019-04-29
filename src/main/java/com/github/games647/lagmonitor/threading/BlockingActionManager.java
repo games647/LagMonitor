@@ -27,6 +27,13 @@ public class BlockingActionManager implements Listener {
     private static final String COMMON_SAFE = "Common things that are thread-safe: Logging, Bukkit Scheduler, " +
             "Concurrent collections (ex: ConcurrentHashMap or Collections.synchronized*), ... ";
 
+    private static final String BLOCKING_ACTION_MESSAGE = "Plugin {0} is performing a blocking I/O operation ({1}) " +
+            "on the main thread. " +
+            "This could affect the server performance, because the thread pauses until it gets the response. " +
+            "Such operations should be performed asynchronous from the main thread. " +
+            "If this happens on server startup, fixing it can drastically reduce startup time. " +
+            "Keep in mind to keep the code thread-safe. ";
+
     private final Plugin plugin;
 
     private final Set<PluginViolation> violations = Sets.newConcurrentHashSet();
@@ -41,10 +48,7 @@ public class BlockingActionManager implements Listener {
             return;
         }
 
-        String message = "Plugin {0} is performing a blocking I/O operation ({1}) on the main thread. " +
-                "This could affect the server performance, because the thread pauses until it gets the response. " +
-                "Such operations should be performed asynchronous from the main thread. " +
-                "Keep in mind to keep the code thread-safe. ";
+        String message = BLOCKING_ACTION_MESSAGE;
         logCurrentStack(message, event);
     }
 
