@@ -10,13 +10,13 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import oshi.software.os.OSProcess;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -76,7 +76,7 @@ public class SystemCommand extends LagCommand {
 
     private void displayRuntimeInfo(CommandSender sender, RuntimeMXBean runtimeBean) {
         long uptime = runtimeBean.getUptime();
-        String uptimeFormat = DurationFormatUtils.formatDurationWords(uptime, false, false);
+        String uptimeFormat = LagMonitor.formatDuration(Duration.ofMillis(uptime));
 
         displayMemoryInfo(sender, Runtime.getRuntime());
 

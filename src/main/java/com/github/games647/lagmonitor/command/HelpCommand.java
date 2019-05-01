@@ -11,7 +11,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -66,8 +65,8 @@ public class HelpCommand extends LagCommand {
 
             ComponentBuilder hoverBuilder = new ComponentBuilder("");
 
-            String separated = WordUtils.wrap(description, HOVER_MAX_LENGTH, "\n", false);
-            for (String line : separated.split("\n")) {
+            String[] separated = ChatPaginator.wordWrap(description, HOVER_MAX_LENGTH);
+            for (String line : separated) {
                 hoverBuilder.append(line + '\n');
                 hoverBuilder.color(ChatColor.GOLD);
             }

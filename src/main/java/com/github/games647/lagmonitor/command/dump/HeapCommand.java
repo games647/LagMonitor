@@ -16,7 +16,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -24,6 +23,8 @@ public class HeapCommand extends DumpCommand {
 
     private static final String HEAP_COMMAND = "gcClassHistogram";
     private static final boolean DUMP_DEAD_OBJECTS = false;
+
+    private static final String[] EMPTY_STRING = {};
 
     public HeapCommand(LagMonitor plugin) {
         super(plugin, "heap", "hprof");
@@ -48,7 +49,7 @@ public class HeapCommand extends DumpCommand {
 
         List<BaseComponent[]> paginatedLines = new ArrayList<>();
         try {
-            String reply = invokeDiagnosticCommand(HEAP_COMMAND, ArrayUtils.EMPTY_STRING_ARRAY);
+            String reply = invokeDiagnosticCommand(HEAP_COMMAND, EMPTY_STRING);
             for (String line : reply.split("\n")) {
                 paginatedLines.add(new ComponentBuilder(line).create());
             }

@@ -38,6 +38,7 @@ import com.github.games647.lagmonitor.traffic.TrafficReader;
 import java.net.ProxySelector;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Timer;
 import java.util.logging.Level;
 
@@ -237,5 +238,13 @@ public class LagMonitor extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             timing.setExecutor(new SpigotTimingsCommand(this));
         }
+    }
+
+    public static String formatDuration(Duration duration) {
+        return String.format("%d' days '%d' hours '%d' minutes '%d' seconds'",
+                duration.toDays(),
+                duration.toHours(),
+                duration.toMinutes(),
+                duration.getSeconds());
     }
 }

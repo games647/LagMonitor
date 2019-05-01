@@ -4,6 +4,7 @@ import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.MethodMeasurement;
 import com.github.games647.lagmonitor.Pages;
 import com.github.games647.lagmonitor.task.MonitorTask;
+import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +19,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -73,7 +73,7 @@ public class MonitorCommand extends LagCommand {
     }
 
     private void printTrace(List<BaseComponent[]> lines, long parentTime, MethodMeasurement current, int depth) {
-        String space = StringUtils.repeat(" ", depth);
+        String space = Strings.repeat(" ", depth);
 
         long currentTime = current.getTotalTime();
         float timePercent = current.getTimePercent(parentTime);

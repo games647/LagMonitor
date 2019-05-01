@@ -3,6 +3,7 @@ package com.github.games647.lagmonitor.command;
 import com.github.games647.lagmonitor.LagMonitor;
 import com.github.games647.lagmonitor.util.LagUtils;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +17,6 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.Sensors;
 import oshi.software.os.OSFileStore;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -49,7 +49,7 @@ public class NativeCommand extends LagCommand {
 
         //swap and load is already available in the environment command because MBeans already supports this
         long uptime = TimeUnit.SECONDS.toMillis(hardware.getProcessor().getSystemUptime());
-        String uptimeFormat = DurationFormatUtils.formatDurationWords(uptime, false, false);
+        String uptimeFormat = LagMonitor.formatDuration(Duration.ofMillis(uptime));
         sendMessage(sender, "OS Uptime", uptimeFormat);
 
         // //IO wait

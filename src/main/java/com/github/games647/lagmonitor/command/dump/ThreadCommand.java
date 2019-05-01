@@ -19,13 +19,13 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class ThreadCommand extends DumpCommand {
 
     private static final String DUMP_COMMAND = "threadPrint";
+    private static final String[] EMPTY_STRING_ARRAY = {};
 
     public ThreadCommand(LagMonitor plugin) {
         super(plugin, "thread", "tdump");
@@ -79,7 +79,7 @@ public class ThreadCommand extends DumpCommand {
 
     private void onDump(CommandSender sender) {
         try {
-            String result = invokeDiagnosticCommand(DUMP_COMMAND, ArrayUtils.EMPTY_STRING_ARRAY);
+            String result = invokeDiagnosticCommand(DUMP_COMMAND, EMPTY_STRING_ARRAY);
 
             Path dumpFile = getNewDumpFile();
             Files.write(dumpFile, Collections.singletonList(result));
