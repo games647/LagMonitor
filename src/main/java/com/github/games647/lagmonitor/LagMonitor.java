@@ -51,6 +51,9 @@ import org.bukkit.scheduler.BukkitScheduler;
 public class LagMonitor extends JavaPlugin {
 
     private static final int DETECTION_THRESHOLD = 10;
+    private static final int HOURS_PER_DAY = 24;
+    private static final int MINUTES_PER_HOUR = 60;
+    private static final int SECONDS_PER_MINUTE = 60;
 
     private final PingManager pingManager = new PingManager(this);
     private final BlockingActionManager actionManager = new BlockingActionManager(this);
@@ -241,10 +244,11 @@ public class LagMonitor extends JavaPlugin {
     }
 
     public static String formatDuration(Duration duration) {
-        return String.format("%d' days '%d' hours '%d' minutes '%d' seconds'",
+        long seconds = duration.getSeconds();
+        return String.format("'%d' days '%d' hours '%d' minutes '%d' seconds'",
                 duration.toDays(),
-                duration.toHours(),
-                duration.toMinutes(),
-                duration.getSeconds());
+                duration.toHours() % HOURS_PER_DAY,
+                duration.toMinutes() % MINUTES_PER_HOUR,
+                duration.getSeconds() % SECONDS_PER_MINUTE);
     }
 }
