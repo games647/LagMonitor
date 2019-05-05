@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}monitor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `{prefix}native` (
-  `native_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `mc_read` smallint(5) unsigned DEFAULT NULL,
   `mc_write` smallint(5) unsigned DEFAULT NULL,
   `free_space` int(10) unsigned DEFAULT NULL,
