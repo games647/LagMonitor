@@ -115,7 +115,7 @@ public class GraphCommand extends LagCommand implements TabExecutor {
     private void giveMap(Player player, MapView mapView) {
         PlayerInventory inventory = player.getInventory();
 
-        ItemStack mapItem = new ItemStack(Material.MAP, 1, mapView.getId());
+        ItemStack mapItem = new ItemStack(Material.MAP, 1, (short) mapView.getId());
         inventory.addItem(mapItem);
 
         player.sendMessage(ChatColor.DARK_GREEN + "You received a map with the graph");
