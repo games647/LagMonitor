@@ -19,8 +19,6 @@ import oshi.software.os.OSFileStore;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.FormatStyle;
 
 public class NativeCommand extends LagCommand {
 
@@ -91,8 +89,7 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "    Description", firmware.getDescription());
         sendMessage(sender, "    Version", firmware.getVersion());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
-        sendMessage(sender, "    Release date", firmware.getReleaseDate().format(formatter));
+        sendMessage(sender, "    Release date", firmware.getReleaseDate());
     }
 
     private void printSensorsInfo(CommandSender sender, Sensors sensors) {

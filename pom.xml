@@ -113,7 +113,7 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.14.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -127,7 +127,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.14.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -135,8 +135,8 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-            <!--Use an old version to synchronize JNA 4.3 with the version in Paper -->
-            <version>3.4.3</version>
+            <!--Use an old version to synchronize JNA 4.5.2 with the version in Paper (visible in pom.xml of Paper) -->
+            <version>3.9.1</version>
         </dependency>
 
         <!--Logging API required by oshi-->
@@ -174,7 +174,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.18.0</version>
+            <version>2.27.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
