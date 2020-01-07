@@ -50,9 +50,14 @@ public abstract class GraphRenderer extends MapRenderer {
             drawText(canvas, MAX_WIDTH / 2, MAX_HEIGHT / 2, title);
 
             //count indicators
-            drawText(canvas, MAX_WIDTH, TEXT_HEIGHT, Integer.toString(maxValue));
-            drawText(canvas, MAX_WIDTH, MAX_HEIGHT / 2, Integer.toString(maxValue / 2));
-            drawText(canvas, MAX_WIDTH, MAX_HEIGHT, Integer.toString(0));
+            String maxText = Integer.toString(maxValue);
+            drawText(canvas, MAX_WIDTH - Math.floorDiv(getTextWidth(maxText), 2), TEXT_HEIGHT, maxText);
+
+            String midText = Integer.toString(maxValue / 2);
+            drawText(canvas, MAX_WIDTH - Math.floorDiv(getTextWidth(midText), 2), MAX_HEIGHT / 2, midText);
+
+            String zeroText = Integer.toString(0);
+            drawText(canvas, MAX_WIDTH - Math.floorDiv(getTextWidth(zeroText), 2), MAX_HEIGHT, zeroText);
 
             nextPosX++;
         }
@@ -86,7 +91,11 @@ public abstract class GraphRenderer extends MapRenderer {
     }
 
     protected void drawText(MapCanvas canvas, int midX, int midY, String text) {
-        int textWidth = MinecraftFont.Font.getWidth(text);
+        int textWidth = getTextWidth(text);
         canvas.drawText(midX - (textWidth / 2), midY - (TEXT_HEIGHT / 2), MinecraftFont.Font, text);
+    }
+
+    private int getTextWidth(String text) {
+        return MinecraftFont.Font.getWidth(text);
     }
 }
