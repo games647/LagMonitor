@@ -75,7 +75,7 @@ public class NativeManager {
         } else {
             logger.info("JNA not found. " +
                     "Please download the this to the folder of this plugin to display more data about your setup");
-            logger.info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar");
+            logger.info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar");
         }
 
         return false;
@@ -124,7 +124,7 @@ public class NativeManager {
             com.sun.management.OperatingSystemMXBean nativeOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
             return nativeOsBean.getSystemCpuLoad();
         } else if (info != null) {
-            return info.getHardware().getProcessor().getSystemCpuLoad();
+            return info.getHardware().getProcessor().getSystemLoadAverage(1)[0];
         }
 
         return -1;
@@ -189,7 +189,7 @@ public class NativeManager {
             com.sun.management.OperatingSystemMXBean nativeOsBean = (com.sun.management.OperatingSystemMXBean) osBean;
             return nativeOsBean.getTotalSwapSpaceSize();
         } else if (info != null) {
-            return info.getHardware().getMemory().getSwapTotal();
+            return info.getHardware().getMemory().getVirtualMemory().getSwapTotal();
         }
 
         return -1;

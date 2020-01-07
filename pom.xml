@@ -37,10 +37,6 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
-                            <pattern>org.threeten.bp</pattern>
-                            <shadedPattern>lagmonitor.bp</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>oshi</pattern>
                             <shadedPattern>lagmonitor.oshi</shadedPattern>
                         </relocation>
@@ -135,8 +131,13 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-            <!--Use an old version to synchronize JNA 4.5.2 with the version in Paper (visible in pom.xml of Paper) -->
-            <version>3.9.1</version>
+            <version>4.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-demo</artifactId>
+            <version>4.3.0</version>
         </dependency>
 
         <!--Logging API required by oshi-->

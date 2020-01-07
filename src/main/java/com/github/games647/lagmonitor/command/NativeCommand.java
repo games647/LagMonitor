@@ -16,6 +16,7 @@ import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.Sensors;
 import oshi.software.os.OSFileStore;
+import oshi.software.os.OperatingSystem;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -44,9 +45,10 @@ public class NativeCommand extends LagCommand {
 
     private void displayNativeInfo(CommandSender sender, SystemInfo systemInfo) {
         HardwareAbstractionLayer hardware = systemInfo.getHardware();
+        OperatingSystem operatingSystem = systemInfo.getOperatingSystem();
 
         //swap and load is already available in the environment command because MBeans already supports this
-        long uptime = TimeUnit.SECONDS.toMillis(hardware.getProcessor().getSystemUptime());
+        long uptime = TimeUnit.SECONDS.toMillis(operatingSystem.getSystemUptime());
         String uptimeFormat = LagMonitor.formatDuration(Duration.ofMillis(uptime));
         sendMessage(sender, "OS Uptime", uptimeFormat);
 
@@ -64,7 +66,7 @@ public class NativeCommand extends LagCommand {
 
         //disk
         printDiskInfo(sender, hardware.getDiskStores());
-        displayMounts(sender, systemInfo.getOperatingSystem().getFileSystem().getFileStores());
+        displayMounts(sender, operatingSystem.getFileSystem().getFileStores());
 
         printSensorsInfo(sender, hardware.getSensors());
         printBoardInfo(sender, hardware.getComputerSystem());
