@@ -79,6 +79,19 @@ public class NativeCommand extends LagCommand {
 
         printSensorsInfo(sender, hardware.getSensors());
         printBoardInfo(sender, hardware.getComputerSystem());
+
+        printRAMInfo(sender, hardware.getMemory().getPhysicalMemory());
+    }
+
+    private void printRAMInfo(CommandSender sender, PhysicalMemory[] physicalMemories) {
+        sender.sendMessage(PRIMARY_COLOR + "Memory:");
+        for (PhysicalMemory memory : physicalMemories) {
+            sendMessage(sender, "    Label", memory.getBankLabel());
+            sendMessage(sender, "    Manufacturer", memory.getManufacturer());
+            sendMessage(sender, "    Type", memory.getMemoryType());
+            sendMessage(sender, "    Capacity", LagUtils.readableBytes(memory.getCapacity()));
+            sendMessage(sender, "    Clock speed", String.valueOf(memory.getClockSpeed()));
+        }
     }
 
     private void printBoardInfo(CommandSender sender, ComputerSystem computerSystem) {
