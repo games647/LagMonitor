@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
+import oshi.hardware.CentralProcessor.ProcessorIdentifier;
 import oshi.software.os.OperatingSystem;
 
 import org.bukkit.command.Command;
@@ -42,7 +43,7 @@ public class EnvironmentCommand extends LagCommand {
 
             OperatingSystem osInfo = systemInfo.getOperatingSystem();
             sendMessage(sender, "OS family", osInfo.getFamily());
-            sendMessage(sender, "OS version", osInfo.getVersion().toString());
+            sendMessage(sender, "OS version", osInfo.getVersionInfo().toString());
             sendMessage(sender, "OS Manufacturer", osInfo.getManufacturer());
 
             sendMessage(sender, "Total processes", String.valueOf(osInfo.getProcessCount()));
@@ -53,13 +54,14 @@ public class EnvironmentCommand extends LagCommand {
         sender.sendMessage(PRIMARY_COLOR + "CPU:");
         if (optInfo.isPresent()) {
             CentralProcessor processor = optInfo.get().getHardware().getProcessor();
+            ProcessorIdentifier identifier = processor.getProcessorIdentifier();
 
-            sendMessage(sender, "    Vendor", processor.getVendor());
-            sendMessage(sender, "    Family", processor.getFamily());
-            sendMessage(sender, "    Name", processor.getName());
-            sendMessage(sender, "    Model", processor.getModel());
-            sendMessage(sender, "    Id", processor.getIdentifier());
-            sendMessage(sender, "    Vendor freq", String.valueOf(processor.getVendorFreq()));
+            sendMessage(sender, "    Vendor", identifier.getVendor());
+            sendMessage(sender, "    Family", identifier.getFamily());
+            sendMessage(sender, "    Name", identifier.getName());
+            sendMessage(sender, "    Model", identifier.getModel());
+            sendMessage(sender, "    Id", identifier.getIdentifier());
+            sendMessage(sender, "    Vendor freq", String.valueOf(identifier.getVendorFreq()));
             sendMessage(sender, "    Physical Cores", String.valueOf(processor.getPhysicalProcessorCount()));
         }
 
