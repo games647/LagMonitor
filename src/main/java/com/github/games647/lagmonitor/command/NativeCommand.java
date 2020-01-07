@@ -9,11 +9,13 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import oshi.SystemInfo;
+import oshi.demo.DetectVM;
 import oshi.hardware.Baseboard;
 import oshi.hardware.ComputerSystem;
 import oshi.hardware.Firmware;
 import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.PhysicalMemory;
 import oshi.hardware.Sensors;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
@@ -51,6 +53,13 @@ public class NativeCommand extends LagCommand {
         long uptime = TimeUnit.SECONDS.toMillis(operatingSystem.getSystemUptime());
         String uptimeFormat = LagMonitor.formatDuration(Duration.ofMillis(uptime));
         sendMessage(sender, "OS Uptime", uptimeFormat);
+
+        String startTime = LagMonitor.formatDuration(Duration.ofMillis(uptime));
+        sendMessage(sender, "OS Start time", startTime);
+
+        sendMessage(sender, "CPU Freq", Arrays.toString(hardware.getProcessor().getCurrentFreq()));
+        sendMessage(sender, "CPU Max Freq", String.valueOf(hardware.getProcessor().getMaxFreq()));
+        sendMessage(sender, "VM Hypervisor", DetectVM.identifyVM());
 
         // //IO wait
         // double wait = cpuPerc.getWait();
