@@ -23,7 +23,7 @@ import org.bukkit.Bukkit;
 
 public class NativeManager {
 
-    private static final String JNA_FILE = "jna-4.4.0.jar";
+    private static final String JNA_FILE = "jna-5.5.0.jar";
 
     private final Logger logger;
     private final Path dataFolder;
