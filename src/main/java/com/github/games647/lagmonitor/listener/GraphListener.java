@@ -3,7 +3,6 @@ package com.github.games647.lagmonitor.listener;
 import com.github.games647.lagmonitor.graph.GraphRenderer;
 import com.github.games647.lagmonitor.traffic.Reflection;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -14,6 +13,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 public class GraphListener implements Listener {
@@ -54,18 +55,23 @@ public class GraphListener implements Listener {
         Item itemDrop = dropItemEvent.getItemDrop();
         ItemStack mapItem = itemDrop.getItemStack();
         if (isOurGraph(mapItem)) {
-            itemDrop.setItemStack(new ItemStack(Material.AIR));
+            mapItem.setAmount(0);
         }
     }
 
-    private boolean isOurGraph(ItemStack mapItem) {
-        if (mapItem == null || mapItem.getType() != Material.MAP) {
+    private boolean isOurGraph(ItemStack item) {
+        if (item == null || item.getType() != Material.FILLED_MAP) {
             return false;
         }
 
-        short mapId = mapItem.getDurability();
-        MapView map = Bukkit.getMap(mapId);
-        return map != null && map.getRenderers().stream()
+        ItemMeta meta = item.getItemMeta();
+        if (!(meta instanceof MapMeta)) {
+            return false;
+        }
+
+        MapMeta mapMeta = (MapMeta) meta;
+        MapView mapView = mapMeta.getMapView();
+        return mapView != null && mapView.getRenderers().stream()
                 .anyMatch(GraphRenderer.class::isInstance);
     }
 }

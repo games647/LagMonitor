@@ -137,7 +137,7 @@ public class MonitorCommand extends LagCommand {
                 sendError(sender, "Error occurred. Please check the console");
             } else {
                 String profileUrl = reportUrl + ".profile";
-                sender.spigot().sendMessage(new ComponentBuilder("Report url: " + profileUrl)
+                send(sender, new ComponentBuilder("Report url: " + profileUrl)
                         .color(ChatColor.GREEN)
                         .event(new ClickEvent(Action.OPEN_URL, profileUrl))
                         .create());

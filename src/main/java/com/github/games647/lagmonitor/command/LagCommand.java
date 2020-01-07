@@ -40,7 +40,7 @@ public abstract class LagCommand implements CommandExecutor {
         aliases.add(cmd.getName());
         for (String alias : aliases) {
             List<String> aliasWhitelist = config.getStringList("whitelist-" + alias);
-            if (aliasWhitelist != null && !aliasWhitelist.isEmpty()) {
+            if (!aliasWhitelist.isEmpty()) {
                 return aliasWhitelist.contains(sender.getName());
             }
         }

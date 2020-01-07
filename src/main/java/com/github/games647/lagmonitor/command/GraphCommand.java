@@ -23,6 +23,8 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 import static java.util.stream.Collectors.toList;
@@ -115,9 +117,15 @@ public class GraphCommand extends LagCommand implements TabExecutor {
     private void giveMap(Player player, MapView mapView) {
         PlayerInventory inventory = player.getInventory();
 
-        ItemStack mapItem = new ItemStack(Material.MAP, 1, (short) mapView.getId());
-        inventory.addItem(mapItem);
+        ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
+        ItemMeta meta = mapItem.getItemMeta();
+        if (meta instanceof MapMeta) {
+            MapMeta mapMeta = (MapMeta) meta;
+            mapMeta.setMapView(mapView);
+            mapItem.setItemMeta(meta);
+        }
 
+        inventory.addItem(mapItem);
         player.sendMessage(ChatColor.DARK_GREEN + "You received a map with the graph");
     }
 
