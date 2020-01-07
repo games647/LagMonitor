@@ -21,7 +21,8 @@ public abstract class LagCommand implements CommandExecutor {
     protected static final ChatColor PRIMARY_COLOR = ChatColor.DARK_AQUA;
     protected static final ChatColor SECONDARY_COLOR = ChatColor.GRAY;
 
-    protected static final String NATIVE_NOT_FOUND = "Native library not found. Please download it to see this data";
+    protected static final String NATIVE_NOT_FOUND = "Native library not found. Please download it and place it " +
+            "inside configuration folder of this plugin to see this data";
 
     protected final LagMonitor plugin;
 

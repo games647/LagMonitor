@@ -134,14 +134,21 @@
         <!-- Native data API -->
         <dependency>
             <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core</artifactId>
-            <version>4.3.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.oshi</groupId>
+            <!--  demo includes the normal version too          -->
             <artifactId>oshi-demo</artifactId>
             <version>4.3.0</version>
+            <!-- Excludes the libraries below, because we only need the DetectVm class which has no dependencies on
+            the libraries below-->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--Logging API required by oshi-->
