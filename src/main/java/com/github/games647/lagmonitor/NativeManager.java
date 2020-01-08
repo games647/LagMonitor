@@ -5,6 +5,7 @@ import com.sun.management.UnixOperatingSystemMXBean;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileStore;
@@ -18,8 +19,6 @@ import java.util.logging.Logger;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.software.os.OSProcess;
-
-import org.bukkit.Bukkit;
 
 public class NativeManager {
 
@@ -39,20 +38,18 @@ public class NativeManager {
     }
 
     public void setupNativeAdapter() {
-        if (!doesServerIncludeJNA()) {
-            try {
-                if (!loadExternalJNI()) {
-                    if (!(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
-                        logger.severe("You're not using Oracle Java nor using the native library. " +
-                                "You won't be able to read some native data");
-                    }
-
-                    return;
+        try {
+            if (!loadExternalJNI()) {
+                if (!(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
+                    logger.severe("You're not using Oracle Java nor using the native library. " +
+                            "You won't be able to read some native data");
                 }
-            } catch (IOException ioEx) {
-                logger.log(Level.WARNING, "Cannot load JNA library. We continue without it", ioEx);
+
                 return;
             }
+        } catch (IOException | ReflectiveOperationException ex) {
+            logger.log(Level.WARNING, "Cannot load JNA library. We continue without it", ex);
+            return;
         }
 
         logger.info("Found JNA native library. Enabling extended native data support to display more data");
@@ -67,7 +64,7 @@ public class NativeManager {
         }
     }
 
-    private boolean loadExternalJNI() throws IOException {
+    private boolean loadExternalJNI() throws IOException, ReflectiveOperationException {
         Path jnaPath = dataFolder.resolve(JNA_FILE);
         if (Files.exists(jnaPath)) {
             extractJNI(jnaPath);
@@ -85,21 +82,16 @@ public class NativeManager {
         return Optional.ofNullable(info);
     }
 
-    private void extractJNI(Path jnaPath) throws IOException {
-        URLClassLoader jnaLoader = new URLClassLoader(new URL[]{jnaPath.toUri().toURL()});
+    private void extractJNI(Path jnaPath) throws IOException, ReflectiveOperationException {
+        Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        addUrlMethod.setAccessible(true);
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        addUrlMethod.invoke(classLoader, jnaPath.toUri().toURL());
 
         String libName = "/com/sun/jna/" + com.sun.jna.Platform.RESOURCE_PREFIX
                 + '/' + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
-        com.sun.jna.Native.extractFromResourcePath(libName, jnaLoader);
-    }
-
-    private boolean doesServerIncludeJNA() {
-        try {
-            Class.forName("com.sun.jna.Platform", true, Bukkit.class.getClassLoader());
-            return true;
-        } catch (ClassNotFoundException classNotFoundEx) {
-            return false;
-        }
+        com.sun.jna.Native.extractFromResourcePath(libName, classLoader);
     }
 
     public double getProcessCPULoad() {

@@ -53,6 +53,8 @@
                         <excludes>
                             <!-- Exclude native drivers by default for user security reasons -->
                             <exclude>net.java.dev.jna:jna</exclude>
+<!--                            Already included in demo-->
+                            <exclude>com.github.oshi:oshi-core</exclude>
                         </excludes>
                     </artifactSet>
                 </configuration>
@@ -144,18 +146,7 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
             </exclusions>
-        </dependency>
-
-        <!--Logging API required by oshi-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.25</version>
         </dependency>
 
         <!--MySQL driver that is included in Spigot-->
