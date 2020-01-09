@@ -31,7 +31,7 @@ public class BlockingActionManager implements Listener {
             "on the main thread. " +
             "This could affect the server performance, because the thread pauses until it gets the response. " +
             "Such operations should be performed asynchronous from the main thread. " +
-            "If this happens on server startup, fixing it can drastically reduce startup time. " +
+            "Besides gameplay performance it could also improve startup time. " +
             "Keep in mind to keep the code thread-safe. ";
 
     private final Plugin plugin;
