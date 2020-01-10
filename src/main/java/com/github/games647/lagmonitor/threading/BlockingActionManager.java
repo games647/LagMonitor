@@ -48,8 +48,7 @@ public class BlockingActionManager implements Listener {
             return;
         }
 
-        String message = BLOCKING_ACTION_MESSAGE;
-        logCurrentStack(message, event);
+        logCurrentStack(BLOCKING_ACTION_MESSAGE, event);
     }
 
     public void checkThreadSafety(String eventName) {

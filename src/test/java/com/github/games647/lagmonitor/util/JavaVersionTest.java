@@ -1,97 +1,97 @@
 package com.github.games647.lagmonitor.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaVersionTest {
 
     @Test
     public void detectDeveloperVersion() {
-        assertThat(JavaVersion.detect(), notNullValue());
+        assertNotNull(JavaVersion.detect());
     }
 
     @Test
     public void parseJava8() {
         JavaVersion version = new JavaVersion("1.8.0_161");
-        assertThat(version.getMajor(), is(8));
-        assertThat(version.getMinor(), is(8));
-        assertThat(version.getSecurity(), is(1));
-        assertThat(version.isOutdated(), is(true));
+        assertEquals(8, version.getMajor());
+        assertEquals(8, version.getMinor());
+        assertEquals(1, version.getSecurity());
+        assertTrue(version.isOutdated());
     }
 
     @Test
     public void parseJava9() {
         JavaVersion version = new JavaVersion("9.0.4");
-        assertThat(version.getMajor(), is(9));
-        assertThat(version.getMinor(), is(0));
-        assertThat(version.getSecurity(), is(4));
-        assertThat(version.isOutdated(), is(true));
+        assertEquals(9, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(4, version.getSecurity());
+        assertTrue(version.isOutdated());
     }
 
     @Test
     public void parseJava9EarlyAccess() {
         JavaVersion version = new JavaVersion("9-ea");
-        assertThat(version.getMajor(), is(9));
-        assertThat(version.getMinor(), is(0));
-        assertThat(version.getSecurity(), is(0));
-        assertThat(version.isPreRelease(), is(true));
-        assertThat(version.isOutdated(), is(true));
+        assertEquals(9, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(0, version.getSecurity());
+        assertTrue(version.isPreRelease());
+        assertTrue(version.isOutdated());
     }
 
     @Test
     public void parseJava9WithVendorSuffix() {
         JavaVersion version = new JavaVersion("9-Ubuntu");
-        assertThat(version.getMajor(), is(9));
-        assertThat(version.getMinor(), is(0));
-        assertThat(version.getSecurity(), is(0));
-        assertThat(version.isOutdated(), is(true));
+        assertEquals(9, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(0, version.getSecurity());
+        assertTrue(version.isOutdated());
     }
 
     @Test
     public void parseJava10() {
-        JavaVersion version = new JavaVersion("10.0.2");
-        assertThat(version.getMajor(), is(10));
-        assertThat(version.getMinor(), is(0));
-        assertThat(version.getSecurity(), is(2));
-        assertThat(version.isOutdated(), is(false));
+        JavaVersion version = new JavaVersion("13.0.1");
+        assertEquals(13, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getSecurity());
+        assertFalse(version.isOutdated());
     }
 
     @Test
     public void parseJava10Internal() {
         JavaVersion version = new JavaVersion("10-internal");
-        assertThat(version.getMajor(), is(10));
-        assertThat(version.getMinor(), is(0));
-        assertThat(version.getSecurity(), is(0));
-        assertThat(version.isPreRelease(), is(true));
-        assertThat(version.isOutdated(), is(true));
+        assertEquals(10, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(0, version.getSecurity());
+        assertTrue(version.isPreRelease());
+        assertTrue(version.isOutdated());
     }
 
     @Test
     public void comparePreRelease() {
         JavaVersion lower = new JavaVersion("10-internal");
         JavaVersion higher = new JavaVersion("10");
-        assertThat(lower.compareTo(higher), is(-1));
+        assertEquals(-1, lower.compareTo(higher));
 
         lower = new JavaVersion("9.0.3");
         higher = new JavaVersion("9.0.4");
-        assertThat(higher.compareTo(lower), is(1));
+        assertEquals(1, higher.compareTo(lower));
     }
 
     @Test
     public void compareMajor() {
         JavaVersion lower = new JavaVersion("1.8.0_161");
         JavaVersion higher = new JavaVersion("10");
-        assertThat(higher.compareTo(lower), is(1));
+        assertEquals(1, higher.compareTo(lower));
     }
 
     @Test
     public void compareEqual() {
         JavaVersion lower = new JavaVersion("10-Ubuntu");
         JavaVersion higher = new JavaVersion("10");
-        assertThat(lower.compareTo(higher), is(0));
+        assertEquals(0, lower.compareTo(higher));
     }
 }
