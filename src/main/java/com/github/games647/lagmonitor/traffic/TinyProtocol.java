@@ -109,7 +109,7 @@ public abstract class TinyProtocol {
             List<Object> list = Reflection.getField(serverConnection.getClass(), List.class, i).get(serverConnection);
 
             for (Object item : list) {
-                if (!ChannelFuture.class.isInstance(item)) {
+                if (!(item instanceof ChannelFuture)) {
                     break;
                 }
 

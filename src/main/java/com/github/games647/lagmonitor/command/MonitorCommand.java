@@ -59,7 +59,7 @@ public class MonitorCommand extends LagCommand {
             sendError(sender, "Monitor is not running");
         } else {
             List<BaseComponent[]> lines = new ArrayList<>();
-            synchronized (monitorTask) {
+            synchronized (this) {
                 MethodMeasurement rootSample = monitorTask.getRootSample();
                 printTrace(lines, 0, rootSample, 0);
             }
@@ -116,10 +116,12 @@ public class MonitorCommand extends LagCommand {
         if (monitorTask == null && timer == null) {
             sendError(sender, "Monitor is not running");
         } else {
-            timer.cancel();
-            timer.purge();
             monitorTask = null;
-            plugin.setMonitorTimer(null);
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+                plugin.setMonitorTimer(null);
+            }
 
             sender.sendMessage(ChatColor.DARK_GREEN + "Monitor stopped");
         }

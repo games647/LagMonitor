@@ -30,7 +30,8 @@ public class Storage {
     private final Logger logger;
     private final String prefix;
 
-    public Storage(Logger logger, String host, int port, String database, boolean usessl, String user, String pass, String prefix) {
+    public Storage(Logger logger, String host, int port, String database, boolean usessl,
+                   String user, String pass, String prefix) {
         this.logger = logger;
 
         this.prefix = prefix;

@@ -52,11 +52,11 @@ public class JavaVersionTest {
     }
 
     @Test
-    public void parseJava10() {
-        JavaVersion version = new JavaVersion("13.0.1");
+    public void parseJava13() {
+        JavaVersion version = new JavaVersion("13.0.2");
         assertEquals(13, version.getMajor());
         assertEquals(0, version.getMinor());
-        assertEquals(1, version.getSecurity());
+        assertEquals(2, version.getSecurity());
         assertFalse(version.isOutdated());
     }
 
@@ -75,9 +75,12 @@ public class JavaVersionTest {
         JavaVersion lower = new JavaVersion("10-internal");
         JavaVersion higher = new JavaVersion("10");
         assertEquals(-1, lower.compareTo(higher));
+    }
 
-        lower = new JavaVersion("9.0.3");
-        higher = new JavaVersion("9.0.4");
+    @Test
+    public void compareMinor() {
+        JavaVersion lower = new JavaVersion("9.0.3");
+        JavaVersion higher = new JavaVersion("9.0.4");
         assertEquals(1, higher.compareTo(lower));
     }
 

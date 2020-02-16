@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class JavaVersion implements Comparable<JavaVersion> {
 
-    public static final JavaVersion LATEST = new JavaVersion("13.0.1", 13, 0, 1, false);
+    public static final JavaVersion LATEST = new JavaVersion("13.0.1", 13, 0, 2, false);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("((1\\.)?(\\d+))(\\.(\\d+))?(\\.(\\d+))?");
 
@@ -44,7 +44,7 @@ public class JavaVersion implements Comparable<JavaVersion> {
             // Minor releases containing changes beyond security fixes are multiples of 20. Security releases based on
             // the previous minor release are odd numbers incremented by five, or by six if necessary in order to keep
             // the update number odd.
-            int update = Integer.parseInt(version.substring(version.indexOf('_') + 1, version.length()));
+            int update = Integer.parseInt(version.substring(version.indexOf('_') + 1));
             minor = update / 20;
             security = update % 20;
         } else {
