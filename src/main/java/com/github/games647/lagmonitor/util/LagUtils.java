@@ -1,5 +1,7 @@
 package com.github.games647.lagmonitor.util;
 
+import com.google.common.base.Enums;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -8,6 +10,8 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+
+import org.bukkit.Material;
 
 public class LagUtils {
 
@@ -26,6 +30,14 @@ public class LagUtils {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
         return bd.floatValue();
+    }
+
+    /**
+     * Check if the current server version supports filled maps and MapView.setView methods.
+     * @return true if supported
+     */
+    public static boolean isFilledMapSupported() {
+        return Enums.getIfPresent(Material.class, "FILLED_MAP").isPresent();
     }
 
     public static String readableBytes(long bytes) {

@@ -7,6 +7,7 @@ import com.github.games647.lagmonitor.graph.CpuGraph;
 import com.github.games647.lagmonitor.graph.GraphRenderer;
 import com.github.games647.lagmonitor.graph.HeapGraph;
 import com.github.games647.lagmonitor.graph.ThreadsGraph;
+import com.github.games647.lagmonitor.util.LagUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,12 +118,17 @@ public class GraphCommand extends LagCommand implements TabExecutor {
     private void giveMap(Player player, MapView mapView) {
         PlayerInventory inventory = player.getInventory();
 
-        ItemStack mapItem = new ItemStack(Material.FILLED_MAP, 1);
-        ItemMeta meta = mapItem.getItemMeta();
-        if (meta instanceof MapMeta) {
-            MapMeta mapMeta = (MapMeta) meta;
-            mapMeta.setMapView(mapView);
-            mapItem.setItemMeta(meta);
+        ItemStack mapItem;
+        if (LagUtils.isFilledMapSupported()) {
+            mapItem = new ItemStack(Material.FILLED_MAP, 1);
+            ItemMeta meta = mapItem.getItemMeta();
+            if (meta instanceof MapMeta) {
+                MapMeta mapMeta = (MapMeta) meta;
+                mapMeta.setMapView(mapView);
+                mapItem.setItemMeta(meta);
+            }
+        } else {
+            mapItem = new ItemStack(Material.MAP, 1, (short) mapView.getId());
         }
 
         inventory.addItem(mapItem);
