@@ -44,6 +44,9 @@ public class Storage {
         this.dataSource.setPort(port);
         this.dataSource.setDatabaseName(database);
         this.dataSource.setUseSSL(usessl);
+
+        this.dataSource.setCachePrepStmts(true);
+        this.dataSource.setUseServerPreparedStmts(true);
     }
 
     public void createTables() throws SQLException {
