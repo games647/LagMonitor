@@ -5,24 +5,24 @@ import io.netty.buffer.ByteBufHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.bukkit.plugin.Plugin;
 
 public class TrafficReader extends TinyProtocol {
 
-    private final AtomicLong incomingBytes = new AtomicLong();
-    private final AtomicLong outgoingBytes = new AtomicLong();
+    private final LongAdder incomingBytes = new LongAdder();
+    private final LongAdder outgoingBytes = new LongAdder();
 
     public TrafficReader(Plugin plugin) {
         super(plugin);
     }
 
-    public AtomicLong getIncomingBytes() {
+    public LongAdder getIncomingBytes() {
         return incomingBytes;
     }
 
-    public AtomicLong getOutgoingBytes() {
+    public LongAdder getOutgoingBytes() {
         return outgoingBytes;
     }
 
@@ -47,9 +47,9 @@ public class TrafficReader extends TinyProtocol {
         if (bytes != null) {
             int readableBytes = bytes.readableBytes();
             if (incoming) {
-                incomingBytes.getAndAdd(readableBytes);
+                incomingBytes.add(readableBytes);
             } else {
-                outgoingBytes.getAndAdd(readableBytes);
+                outgoingBytes.add(readableBytes);
             }
         }
     }

@@ -111,8 +111,8 @@ public class SystemCommand extends LagCommand {
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
-            String formattedIncoming = readableBytes(trafficReader.getIncomingBytes().get());
-            String formattedOutgoing = readableBytes(trafficReader.getOutgoingBytes().get());
+            String formattedIncoming = readableBytes(trafficReader.getIncomingBytes().longValue());
+            String formattedOutgoing = readableBytes(trafficReader.getOutgoingBytes().longValue());
             sendMessage(sender, "Incoming Traffic", formattedIncoming);
             sendMessage(sender, "Outgoing Traffic", formattedOutgoing);
         }

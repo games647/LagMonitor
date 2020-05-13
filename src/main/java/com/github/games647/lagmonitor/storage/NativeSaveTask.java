@@ -45,11 +45,11 @@ public class NativeSaveTask implements Runnable {
 
         TrafficReader trafficReader = plugin.getTrafficReader();
         if (trafficReader != null) {
-            int mcRead = LagUtils.byteToMega(trafficReader.getIncomingBytes().get());
+            int mcRead = LagUtils.byteToMega(trafficReader.getIncomingBytes().longValue());
             mcReadDiff = getDifference(mcRead, lastMcRead, timeDiff);
             lastMcRead = mcRead;
 
-            int mcWrite = LagUtils.byteToMega(trafficReader.getOutgoingBytes().get());
+            int mcWrite = LagUtils.byteToMega(trafficReader.getOutgoingBytes().longValue());
             mcWriteDiff = getDifference(mcWrite, lastMcWrite, timeDiff);
             lastMcWrite = mcWrite;
         }
