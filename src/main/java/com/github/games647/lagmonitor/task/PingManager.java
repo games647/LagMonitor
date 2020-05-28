@@ -7,7 +7,7 @@ import com.github.games647.lagmonitor.util.RollingOverHistory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,13 +31,11 @@ public class PingManager implements Runnable, Listener {
 
     private static final boolean pingMethodAvailable;
 
-    private static final MethodHandle pingField;
-    private static final MethodHandle getHandleMethod;
+    private static final MethodHandle pingFromPlayerHandle;
 
     static {
         pingMethodAvailable = isPingMethodAvailable();
 
-        MethodHandle localHandle = null;
         MethodHandle localPing = null;
         if (!pingMethodAvailable) {
             Class<?> craftPlayerClass = Reflection.getCraftBukkitClass("entity.CraftPlayer");
@@ -45,18 +43,24 @@ public class PingManager implements Runnable, Listener {
 
             Lookup lookup = MethodHandles.publicLookup();
             try {
-                Method getHandleMethod = craftPlayerClass.getDeclaredMethod("getHandle");
-                localHandle = lookup.unreflect(getHandleMethod);
+                MethodType type = MethodType.methodType(entityPlayer);
+                MethodHandle getHandle = lookup.findVirtual(craftPlayerClass, "getHandle", type)
+                        // allow interface with invokeExact
+                        .asType(MethodType.methodType(Player.class));
 
-                localPing = lookup.findGetter(entityPlayer, "ping", Integer.TYPE);
+                MethodHandle pingField = lookup.findGetter(entityPlayer, "ping", Integer.TYPE);
+
+                // combine the handles to invoke it only once
+                // *getPing(getHandle*) -> add the result of getHandle to the next getPing call
+                // a call to this handle will get the ping from a player instance
+                localPing = MethodHandles.collectArguments(pingField, 0, getHandle);
             } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException reflectiveEx) {
                 Logger logger = JavaPlugin.getPlugin(LagMonitor.class).getLogger();
                 logger.log(Level.WARNING, "Cannot find ping field/method", reflectiveEx);
             }
         }
 
-        getHandleMethod = localHandle;
-        pingField = localPing;
+        pingFromPlayerHandle = localPing;
     }
 
     private final Map<String, RollingOverHistory> playerHistory = new HashMap<>();
@@ -100,8 +104,7 @@ public class PingManager implements Runnable, Listener {
 
     private int getReflectionPing(Player player) {
         try {
-            Object entityPlayer = getHandleMethod.invoke(player);
-            return (int) pingField.invoke(entityPlayer);
+            return (int) pingFromPlayerHandle.invokeExact(player);
         } catch (Exception ex) {
             return -1;
         } catch (Throwable throwable) {

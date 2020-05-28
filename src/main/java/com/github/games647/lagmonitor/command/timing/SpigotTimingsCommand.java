@@ -33,7 +33,7 @@ public class SpigotTimingsCommand extends TimingCommand {
 
     //these timings will be in the breakdown report
     private static final String EXCLUDE_IDENTIFIER = "** ";
-
+    //TODO: Change to MethodHandles
     public SpigotTimingsCommand(LagMonitor plugin) {
         super(plugin);
     }

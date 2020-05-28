@@ -89,7 +89,7 @@ public class TasksCommand extends LagCommand {
 
     private Class<?> getRunnableClass(BukkitTask task) {
         try {
-            return taskHandle.invoke(task).getClass();
+            return taskHandle.invokeExact(task).getClass();
         } catch (Exception ex) {
             //ignore
         } catch (Throwable throwable) {

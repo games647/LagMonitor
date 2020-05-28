@@ -1,8 +1,10 @@
 package com.github.games647.lagmonitor.listener;
 
 import com.github.games647.lagmonitor.graph.GraphRenderer;
-import com.github.games647.lagmonitor.traffic.Reflection;
 import com.github.games647.lagmonitor.util.LagUtils;
+
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,9 +28,10 @@ public class GraphListener implements Listener {
     public GraphListener() {
         boolean mainHandMethodEx = false;
         try {
-            Reflection.getMethod(PlayerInventory.class, "getItemInMainHand");
+            MethodType type = MethodType.methodType(ItemStack.class);
+            MethodHandles.publicLookup().findVirtual(PlayerInventory.class, "getItemInMainHand", type);
             mainHandMethodEx = true;
-        } catch (IllegalStateException notFoundEx) {
+        } catch (ReflectiveOperationException notFoundEx) {
             //default to false
         }
 

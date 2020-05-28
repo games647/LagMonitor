@@ -51,6 +51,7 @@ import static com.github.games647.lagmonitor.util.LagUtils.round;
  */
 public class PaperTimingsCommand extends TimingCommand {
 
+    //TODO: Change to MethodHandles
     private static final String TIMINGS_PACKAGE = "co.aikar.timings";
 
     private static final String EXPORT_CLASS = TIMINGS_PACKAGE + '.' + "TimingsExport";
