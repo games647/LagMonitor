@@ -52,11 +52,11 @@ public class JavaVersionTest {
     }
 
     @Test
-    public void parseJava13() {
-        JavaVersion version = new JavaVersion("13.0.2");
-        assertEquals(13, version.getMajor());
+    public void parseJava14() {
+        JavaVersion version = new JavaVersion("14.0.1");
+        assertEquals(14, version.getMajor());
         assertEquals(0, version.getMinor());
-        assertEquals(2, version.getSecurity());
+        assertEquals(1, version.getSecurity());
         assertFalse(version.isOutdated());
     }
 
