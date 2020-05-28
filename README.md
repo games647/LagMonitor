@@ -102,6 +102,17 @@ This plugin performs network requests to:
 
 * https://paste.enginehub.org - uploading monitor paste command outputs
 
+## Reproducible builds
+
+This project supports reproducible builds for enhanced security. In short, this means that the source code matches
+the generated built jar file. Outputs could vary by operating system (line endings), different JDK
+versions and build timestamp. You can extract this using 
+[build-info](https://github.com/apache/maven-studies/tree/maven-buildinfo-plugin). Once you have
+the configuration to use the same line endings and JDK version, you can use the following command
+to inject a custom build timestamp in order to complete the configuration.
+
+`mvn clean install -Dproject.build.outputTimestamp=DATE`
+
 ## Images
 
 ### Heap command

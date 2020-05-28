@@ -30,11 +30,20 @@
         <finalName>${project.name}</finalName>
 
         <plugins>
+            <!-- Force an update to the this plugins to allow reproducible builds -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <!-- According to the Maven wiki, we have to use at least 3.2 for reproducible builds -->
+                <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
+                <version>3.2.0</version>
+            </plugin>
+
             <!-- Add libraries to the plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.2.3</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
