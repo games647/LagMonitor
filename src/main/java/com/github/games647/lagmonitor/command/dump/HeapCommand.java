@@ -36,25 +36,27 @@ public class HeapCommand extends DumpCommand {
             return true;
         }
 
+        String filter = null;
         if (args.length > 0) {
             String subCommand = args[0];
             if ("dump".equalsIgnoreCase(subCommand)) {
                 onDump(sender);
+                return true;
             } else {
-                sendError(sender, "Unknown subcommand");
+                filter = args[0];
             }
-
-            return true;
         }
 
         List<BaseComponent[]> paginatedLines = new ArrayList<>();
         try {
             String reply = invokeDiagnosticCommand(HEAP_COMMAND, EMPTY_STRING);
             for (String line : reply.split("\n")) {
-                paginatedLines.add(new ComponentBuilder(line).create());
+                if(filter == null || line.contains(filter)) {
+                    paginatedLines.add(new ComponentBuilder(line).create());
+                }
             }
 
-            Pages pagination = new Pages("Heap", paginatedLines);
+            Pages pagination = new Pages("Heap" + (filter == null ? "" : " - " + filter), paginatedLines);
             pagination.send(sender);
             plugin.getPageManager().setPagination(sender.getName(), pagination);
         } catch (InstanceNotFoundException instanceNotFoundException) {
