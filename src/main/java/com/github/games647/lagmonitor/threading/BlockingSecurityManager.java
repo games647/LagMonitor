@@ -9,7 +9,7 @@ import java.util.Set;
 public class BlockingSecurityManager extends SecurityManager implements Injectable {
 
     private final BlockingActionManager actionManager;
-    private final Set<String> fileWhitelist = ImmutableSet.of(".jar", "session.lock");
+    private final Set<String> allowedFiles = ImmutableSet.of(".jar", "session.lock");
 
     private SecurityManager delegate;
 
@@ -45,7 +45,7 @@ public class BlockingSecurityManager extends SecurityManager implements Injectab
         String actions = permission.getActions();
         return permission instanceof FilePermission
                 && actions.contains("read")
-                && fileWhitelist.stream().noneMatch(ignored -> permission.getName().contains(ignored));
+                && allowedFiles.stream().noneMatch(ignored -> permission.getName().contains(ignored));
     }
 
     @Override

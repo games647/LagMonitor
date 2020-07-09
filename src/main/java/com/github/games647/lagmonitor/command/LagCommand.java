@@ -30,7 +30,7 @@ public abstract class LagCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    private boolean isCommandWhitelisted(Command cmd, CommandSender sender) {
+    private boolean isCommandAllowed(Command cmd, CommandSender sender) {
         if (!(sender instanceof Player)) {
             return true;
         }
@@ -40,19 +40,19 @@ public abstract class LagCommand implements CommandExecutor {
         Collection<String> aliases = new ArrayList<>(cmd.getAliases());
         aliases.add(cmd.getName());
         for (String alias : aliases) {
-            List<String> aliasWhitelist = config.getStringList("whitelist-" + alias);
-            if (!aliasWhitelist.isEmpty()) {
-                return aliasWhitelist.contains(sender.getName());
+            List<String> aliasAllowed = config.getStringList("allow-" + alias);
+            if (!aliasAllowed.isEmpty()) {
+                return aliasAllowed.contains(sender.getName());
             }
         }
 
-        //whitelist doesn't exist
+        // allowlist doesn't exist
         return true;
     }
 
     public boolean canExecute(CommandSender sender, Command cmd) {
-        if (!isCommandWhitelisted(cmd, sender)) {
-            sendError(sender, "Command not whitelisted for you!");
+        if (!isCommandAllowed(cmd, sender)) {
+            sendError(sender, "Command not allowed for you!");
             return false;
         }
 

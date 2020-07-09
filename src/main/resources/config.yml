@@ -69,19 +69,19 @@ monitor-save-interval: 900
 #   * Minecraft process specific writes and reads
 native-save-interval: 1200
 
-# A permissions independent way to whitelist certain commands
+# A permissions independent way to allow certain commands
 #
-# Everything starts with 'whitelist-' and then the command name
+# Everything starts with 'allow-' and then the command name
 #
 # You can add as many commands as you want to
-# If the command doesn't exist here it won't be whitelisted at all
+# If the command doesn't exist here it won't be allowed at all
 # Everyone who has the permission for that command can then use it.
 #
 # Here an example for the native command:
-# whitelist-native:
+# allow-native:
 #     - PlayerName
 #     - Example
-whitelist-commandname:
+allow-commandname:
     - PlayerName
     - Example
 
