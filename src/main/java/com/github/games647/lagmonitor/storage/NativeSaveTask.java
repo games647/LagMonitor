@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import oshi.SystemInfo;
@@ -67,9 +68,9 @@ public class NativeSaveTask implements Runnable {
 
         Optional<SystemInfo> systemInfo = plugin.getNativeData().getSystemInfo();
         if (systemInfo.isPresent()) {
-            NetworkIF[] networkIfs = systemInfo.get().getHardware().getNetworkIFs();
-            if (networkIfs.length > 0) {
-                NetworkIF networkInterface = networkIfs[0];
+            List<NetworkIF> networkIfs = systemInfo.get().getHardware().getNetworkIFs();
+            if (!networkIfs.isEmpty()) {
+                NetworkIF networkInterface = networkIfs.get(0);
 
                 int netRead = LagUtils.byteToMega(networkInterface.getBytesRecv());
                 netReadDiff = getDifference(netRead, lastNetRead, timeDiff);

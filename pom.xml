@@ -152,7 +152,7 @@
             <groupId>com.github.oshi</groupId>
             <!--  demo includes the normal version too          -->
             <artifactId>oshi-demo</artifactId>
-            <version>4.4.2</version>
+            <version>5.2.2</version>
             <!-- Excludes the libraries below, because we only need the DetectVm class which has no dependencies on
             the libraries below-->
             <exclusions>
