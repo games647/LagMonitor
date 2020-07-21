@@ -5,6 +5,7 @@ import com.github.games647.lagmonitor.util.LagUtils;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -83,7 +84,7 @@ public class NativeCommand extends LagCommand {
         printRAMInfo(sender, hardware.getMemory().getPhysicalMemory());
     }
 
-    private void printRAMInfo(CommandSender sender, PhysicalMemory[] physicalMemories) {
+    private void printRAMInfo(CommandSender sender, List<PhysicalMemory> physicalMemories) {
         sender.sendMessage(PRIMARY_COLOR + "Memory:");
         for (PhysicalMemory memory : physicalMemories) {
             sendMessage(sender, "    Label", memory.getBankLabel());
@@ -125,10 +126,10 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "Fan speed (rpm)", Arrays.toString(fanSpeeds));
     }
 
-    private void printDiskInfo(CommandSender sender, HWDiskStore[] diskStores) {
+    private void printDiskInfo(CommandSender sender, List<HWDiskStore> diskStores) {
         //disk read write
-        long diskReads = Arrays.stream(diskStores).mapToLong(HWDiskStore::getReadBytes).sum();
-        long diskWrites = Arrays.stream(diskStores).mapToLong(HWDiskStore::getWriteBytes).sum();
+        long diskReads = diskStores.stream().mapToLong(HWDiskStore::getReadBytes).sum();
+        long diskWrites = diskStores.stream().mapToLong(HWDiskStore::getWriteBytes).sum();
 
         sendMessage(sender, "Disk read bytes", LagUtils.readableBytes(diskReads));
         sendMessage(sender, "Disk write bytes", LagUtils.readableBytes(diskWrites));
@@ -140,7 +141,7 @@ public class NativeCommand extends LagCommand {
         }
     }
 
-    private void displayMounts(CommandSender sender, OSFileStore[] fileStores) {
+    private void displayMounts(CommandSender sender, List<OSFileStore> fileStores) {
         sender.sendMessage(PRIMARY_COLOR + "Mounts:");
         for (OSFileStore fileStore : fileStores) {
             printMountInfo(sender, fileStore);
