@@ -12,7 +12,7 @@ website: ${project.url}
 dev-url: ${project.url}
 
 # This plugin don't have to be transformed for compatibility with Minecraft >= 1.13
-api-version: 1.13
+api-version: 1.16
 
 libraries:
     - net.java.dev.jna:jna:5.8.0
