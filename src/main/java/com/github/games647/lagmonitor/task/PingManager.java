@@ -1,11 +1,15 @@
 package com.github.games647.lagmonitor.task;
 
+import com.github.games647.lagmonitor.ping.PaperPing;
 import com.github.games647.lagmonitor.ping.PingFetcher;
 import com.github.games647.lagmonitor.ping.ReflectionPing;
+import com.github.games647.lagmonitor.ping.SpigotPing;
 import com.github.games647.lagmonitor.util.RollingOverHistory;
+import com.google.common.collect.Lists;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -34,17 +38,16 @@ public class PingManager implements Runnable, Listener {
 
     private PingFetcher initializePingFetchur()
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        // List<Class<? extends PingFetcher>> fetchurs = Lists.newArrayList(
-        //         SpigotPing.class, PaperPing.class, ReflectionPing.class
-        // );
-        // for (Class<? extends PingFetcher> fetchurClass : fetchurs) {
-        //     PingFetcher fetchur = fetchurClass.getDeclaredConstructor().newInstance();
-        //     if (fetchur.isAvailable())
-        //         return fetchur;
-        // }
-        return new ReflectionPing();
+        List<Class<? extends PingFetcher>> fetchurs = Lists.newArrayList(
+                SpigotPing.class, PaperPing.class, ReflectionPing.class
+        );
+        for (Class<? extends PingFetcher> fetchurClass : fetchurs) {
+            PingFetcher fetchur = fetchurClass.getDeclaredConstructor().newInstance();
+            if (fetchur.isAvailable())
+                return fetchur;
+        }
 
-        // throw new NoSuchMethodException("No valid ping fetcher found");
+        throw new NoSuchMethodException("No valid ping fetcher found");
     }
 
     @Override
