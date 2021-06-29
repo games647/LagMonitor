@@ -35,33 +35,33 @@ public class PingCommand extends LagCommand {
     }
 
     private void displayPingSelf(CommandSender sender) {
-        RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(sender.getName());
-        if (sampleHistory == null) {
+        RollingOverHistory history = plugin.getPingManager().map(m -> m.getHistory(sender.getName())).orElse(null);
+        if (history == null) {
             sendError(sender, "Sorry there is currently no data available");
             return;
         }
 
-        int lastPing = (int) sampleHistory.getLastSample();
+        int lastPing = (int) history.getLastSample();
         sender.sendMessage(PRIMARY_COLOR + "Your ping is: " + ChatColor.DARK_GREEN + lastPing + "ms");
 
-        float pingAverage = (float) (Math.round(sampleHistory.getAverage() * 100.0) / 100.0);
+        float pingAverage = (float) (Math.round(history.getAverage() * 100.0) / 100.0);
         sender.sendMessage(PRIMARY_COLOR + "Average: " + ChatColor.DARK_GREEN + pingAverage + "ms");
     }
 
     private void displayPingOther(CommandSender sender, Command command, String playerName) {
         if (sender.hasPermission(command.getPermission() + ".other")) {
-            RollingOverHistory sampleHistory = plugin.getPingManager().getHistory(playerName);
-            if (sampleHistory == null || !canSee(sender, playerName)) {
+            RollingOverHistory history = plugin.getPingManager().map(m -> m.getHistory(sender.getName())).orElse(null);
+            if (history == null || !canSee(sender, playerName)) {
                 sendError(sender, "No data for that player " + playerName);
                 return;
             }
 
-            int lastPing = (int) sampleHistory.getLastSample();
+            int lastPing = (int) history.getLastSample();
 
             sender.sendMessage(ChatColor.WHITE + playerName + PRIMARY_COLOR + "'s ping is: "
                     + ChatColor.DARK_GREEN + lastPing + "ms");
 
-            float pingAverage = LagUtils.round(sampleHistory.getAverage());
+            float pingAverage = LagUtils.round(history.getAverage());
             sender.sendMessage(PRIMARY_COLOR + "Average: " + ChatColor.DARK_GREEN + pingAverage + "ms");
         } else {
             sendError(sender, "You don't have enough permission");

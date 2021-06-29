@@ -39,6 +39,7 @@ import java.net.ProxySelector;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.logging.Level;
 
@@ -55,12 +56,12 @@ public class LagMonitor extends JavaPlugin {
     private static final int MINUTES_PER_HOUR = 60;
     private static final int SECONDS_PER_MINUTE = 60;
 
-    private final PingManager pingManager = new PingManager(this);
     private final BlockingActionManager actionManager = new BlockingActionManager(this);
     private final PageManager pageManager = new PageManager();
     private final TPSHistoryTask tpsHistoryTask = new TPSHistoryTask();
     private final NativeManager nativeData = new NativeManager(getLogger(), getDataFolder().toPath());
 
+    private PingManager pingManager;
     private TrafficReader trafficReader;
     private Timer blockDetectionTimer;
     private Timer monitorTimer;
@@ -76,6 +77,12 @@ public class LagMonitor extends JavaPlugin {
 
         if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
             saveResource("default.jfc", false);
+        }
+
+        try {
+            pingManager = new PingManager(this);
+        } catch (ReflectiveOperationException reflectiveEx) {
+            getLogger().log(Level.SEVERE, "Cannot initialize ping manager", reflectiveEx);
         }
 
         //register schedule tasks
@@ -205,8 +212,8 @@ public class LagMonitor extends JavaPlugin {
         return tpsHistoryTask;
     }
 
-    public PingManager getPingManager() {
-        return pingManager;
+    public Optional<PingManager> getPingManager() {
+        return Optional.ofNullable(pingManager);
     }
 
     public NativeManager getNativeData() {
