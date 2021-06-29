@@ -10,7 +10,6 @@ import com.github.games647.lagmonitor.traffic.Reflection;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.Maps;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -87,7 +86,7 @@ public class PaperTimingsCommand extends TimingCommand {
 
         TimingHistory lastHistory = history.peek();
         if (lastHistory == null) {
-            sendError(sender, "Not enough data collected yet");
+            sendError(sender, "Not enough data collected yet. You need to wait at least 5min after server startup");
             return;
         }
 
@@ -108,10 +107,11 @@ public class PaperTimingsCommand extends TimingCommand {
         Map<?, ?> groups = Reflection.getField(TIMINGS_PACKAGE + ".TimingIdentifier", "GROUP_MAP", Map.class).get(null);
         for (Object group : groups.values()) {
             String groupName = Reflection.getField(group.getClass(), "name", String.class).get(group);
-            Iterable<?> handlers = Reflection.getField(group.getClass(), "handlers", ArrayDeque.class).get(group);
+            Iterable<?> handlers = Reflection.getField(group.getClass(), "handlers", List.class).get(group);
             for (Object handler : handlers) {
                 int id = Reflection.getField(HANDLER_CLASS, "id", Integer.TYPE).get(handler);
-                String name = Reflection.getField(HANDLER_CLASS, "name", String.class).get(handler);
+                Object identifier = Reflection.getField(HANDLER_CLASS, "identifier", Object.class).get(handler);
+                String name = Reflection.getField(identifier.getClass(), "name", String.class).get(identifier);
                 if (name.contains("Combined")) {
                     idHandler.put(id, "Combined " + groupName);
                 } else {
