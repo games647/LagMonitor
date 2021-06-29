@@ -64,6 +64,12 @@
                             <pattern>org.slf4j</pattern>
                             <shadedPattern>lagmonitor.slf4j</shadedPattern>
                         </relocation>
+                        <artifactSet>
+                            <excludes>
+                                <!-- Exclude native drivers by default for user security reasons -->
+                                <exclude>net.java.dev.jna:jna</exclude>
+                            </excludes>
+                        </artifactSet>
                     </relocations>
                 </configuration>
                 <executions>
