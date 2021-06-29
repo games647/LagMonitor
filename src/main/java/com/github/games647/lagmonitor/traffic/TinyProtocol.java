@@ -28,8 +28,8 @@ import org.bukkit.plugin.Plugin;
 public abstract class TinyProtocol {
 
     // Looking up ServerConnection
-    private static final Class<Object> SERVER_CLASS = Reflection.getUntypedClass("{nms}.MinecraftServer");
-    private static final Class<Object> CONNECTION_CLASS = Reflection.getUntypedClass("{nms}.ServerConnection");
+    private static final Class<Object> SERVER_CLASS = (Class<Object>) Reflection.getMinecraftClass("MinecraftServer", "MinecraftServer");
+    private static final Class<Object> CONNECTION_CLASS = (Class<Object>) Reflection.getMinecraftClass("ServerConnection", "network.ServerConnection");
     private static final Reflection.MethodInvoker GET_SERVER = Reflection.getMethod("{obc}.CraftServer", "getServer");
     private static final FieldAccessor<Object> GET_CONNECTION = Reflection.getField(SERVER_CLASS, CONNECTION_CLASS, 0);
 

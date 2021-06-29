@@ -20,21 +20,21 @@ public class ReflectionPing implements PingFetcher {
     static {
         MethodHandle localPing = null;
         Class<?> craftPlayerClass = Reflection.getCraftBukkitClass("entity.CraftPlayer");
-        Class<?> entityPlayer = Reflection.getMinecraftClass("EntityPlayer");
+        String playerClazz = "EntityPlayer";
+        Class<?> entityPlayer = Reflection.getMinecraftClass(playerClazz, "level." + playerClazz);
 
         Lookup lookup = MethodHandles.publicLookup();
         try {
             MethodType type = MethodType.methodType(entityPlayer);
-            MethodHandle getHandle = lookup.findVirtual(craftPlayerClass, "getHandle", type)
-                    // allow interface with invokeExact
-                    .asType(MethodType.methodType(Player.class));
-
+            MethodHandle getHandle = lookup.findVirtual(craftPlayerClass, "getHandle", type);
             MethodHandle pingField = lookup.findGetter(entityPlayer, "ping", Integer.TYPE);
 
             // combine the handles to invoke it only once
             // *getPing(getHandle*) -> add the result of getHandle to the next getPing call
             // a call to this handle will get the ping from a player instance
-            localPing = MethodHandles.collectArguments(pingField, 0, getHandle);
+            localPing = MethodHandles.collectArguments(pingField, 0, getHandle)
+                    // allow interface with invokeExact
+                    .asType(MethodType.methodType(int.class, Player.class));
         } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException reflectiveEx) {
             Logger logger = JavaPlugin.getPlugin(LagMonitor.class).getLogger();
             logger.log(Level.WARNING, "Cannot find ping field/method", reflectiveEx);

@@ -81,7 +81,8 @@ public final class Reflection {
 
     // Deduce the net.minecraft.server.v* package
     private static final String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
-    private static final String NMS_PREFIX = OBC_PREFIX.replace("org.bukkit.craftbukkit", "net.minecraft.server");
+    private static final String NMS_PREFIX = "net.minecraft.server";
+    private static final String NMS_PREFIX_VERSIONED = OBC_PREFIX.replace("org.bukkit.craftbukkit", NMS_PREFIX);
     private static final String VERSION = OBC_PREFIX.replace("org.bukkit.craftbukkit", "").replace(".", "");
 
     // Variable replacement
@@ -335,8 +336,12 @@ public final class Reflection {
      * @param name - the name of the class, excluding the package.
      * @throws IllegalArgumentException If the class doesn't exist.
      */
-    public static Class<?> getMinecraftClass(String name) {
-        return getCanonicalClass(NMS_PREFIX + '.' + name);
+    public static Class<?> getMinecraftClass(String name, String alias) {
+        try {
+            return Class.forName(NMS_PREFIX + '.' + alias);
+        } catch (ClassNotFoundException e) {
+            return getCanonicalClass(NMS_PREFIX_VERSIONED + '.' + name);
+        }
     }
 
     /**
@@ -379,7 +384,7 @@ public final class Reflection {
 
             // Expand all detected variables
             if ("nms".equalsIgnoreCase(variable)) {
-                replacement = NMS_PREFIX;
+                replacement = NMS_PREFIX_VERSIONED;
             } else if ("obc".equalsIgnoreCase(variable)) {
                 replacement = OBC_PREFIX;
             } else if ("version".equalsIgnoreCase(variable)) {
