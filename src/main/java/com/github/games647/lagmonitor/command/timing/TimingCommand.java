@@ -26,6 +26,7 @@ public abstract class TimingCommand extends LagCommand {
             return true;
         }
 
+        sendTimings(sender);
         return true;
     }
 

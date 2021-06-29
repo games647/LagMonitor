@@ -43,8 +43,6 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.logging.Level;
 
-import oshi.util.FileUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
@@ -75,10 +73,6 @@ public class LagMonitor extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        FileUtil.readPropertiesFromFilename("oshi.vmmacaddr.properties");
-        // FileUtil.readPropertiesFromFilename("oshi.vmmacaddr.properties");
-        // FileUtil.readPropertiesFromFilename("oshi.vmmacaddr.properties");
-
         saveDefaultConfig();
 
         if (Files.notExists(getDataFolder().toPath().resolve("default.jfc"))) {
@@ -249,7 +243,7 @@ public class LagMonitor extends JavaPlugin {
         PluginCommand timing = getCommand("timing");
         try {
             //paper moved to class to package co.aikar.timings
-            Class.forName("co.aiker.timings.TimingsIdentifier");
+            Class.forName("co.aikar.timings.Timing");
             timing.setExecutor(new PaperTimingsCommand(this));
         } catch (ClassNotFoundException e) {
             timing.setExecutor(new SpigotTimingsCommand(this));
