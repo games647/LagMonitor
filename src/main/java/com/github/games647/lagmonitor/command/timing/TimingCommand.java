@@ -20,7 +20,7 @@ public abstract class TimingCommand extends LagCommand {
             return true;
         }
 
-        if (isTimingsEnabled()) {
+        if (!isTimingsEnabled()) {
             sendError(sender,"The server deactivated timing reports");
             sendError(sender,"Go to paper.yml or spigot.yml and activate timings");
             return true;
