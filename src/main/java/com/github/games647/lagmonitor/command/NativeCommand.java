@@ -62,18 +62,6 @@ public class NativeCommand extends LagCommand {
         sendMessage(sender, "CPU Max Freq", String.valueOf(hardware.getProcessor().getMaxFreq()));
         sendMessage(sender, "VM Hypervisor", DetectVM.identifyVM());
 
-        // //IO wait
-        // double wait = cpuPerc.getWait();
-        // sender.sendMessage(PRIMARY_COLOR + "CPU Wait (I/O): " + SECONDARY_COLOR + wait + '%');
-        //
-        // Mem mem = sigar.getMem();
-        // //included cache
-        // long actualUsed = mem.getActualUsed();
-        // long used = mem.getUsed();
-        //
-        // long cache = used - actualUsed;
-        // sender.sendMessage(PRIMARY_COLOR + "Memory Cache: " + SECONDARY_COLOR + Sigar.formatSize(cache));
-
         //disk
         printDiskInfo(sender, hardware.getDiskStores());
         displayMounts(sender, operatingSystem.getFileSystem().getFileStores());

@@ -22,6 +22,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
+        <oshi.version>5.7.5</oshi.version>
     </properties>
 
     <build>
@@ -50,20 +51,20 @@
                         <relocation>
                             <pattern>oshi</pattern>
                             <shadedPattern>lagmonitor.oshi</shadedPattern>
+                            <excludes>
+                                <exclude>*.properties</exclude>
+                                <exclude>oshi.architecture.properties</exclude>
+                                <exclude>oshi.linux.filename.properties</exclude>
+                                <exclude>oshi.macos.versions.properties</exclude>
+                                <exclude>oshi.properties</exclude>
+                                <exclude>oshi.vmmacaddr.properties</exclude>
+                            </excludes>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>
                             <shadedPattern>lagmonitor.slf4j</shadedPattern>
                         </relocation>
                     </relocations>
-                    <artifactSet>
-                        <excludes>
-                            <!-- Exclude native drivers by default for user security reasons -->
-                            <exclude>net.java.dev.jna:jna</exclude>
-                            <!--                            Already included in demo-->
-                            <exclude>com.github.oshi:oshi-core</exclude>
-                        </excludes>
-                    </artifactSet>
                 </configuration>
                 <executions>
                     <execution>
@@ -150,9 +151,8 @@
         <!-- Native data API -->
         <dependency>
             <groupId>com.github.oshi</groupId>
-            <!--  demo includes the normal version too          -->
             <artifactId>oshi-demo</artifactId>
-            <version>5.6.0</version>
+            <version>${oshi.version}</version>
             <!-- Excludes the libraries below, because we only need the DetectVm class which has no dependencies on
             the libraries below-->
             <exclusions>
@@ -160,7 +160,19 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jfree</groupId>
+                    <artifactId>jfreechart</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Include core explicitly in order to ship the default configuration files in it -->
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <!-- 5.7.5 uses JNA 5.8, so this needs to adjusted in the plugin.yml -->
+            <version>${oshi.version}</version>
         </dependency>
 
         <!--MySQL driver that is included in Spigot-->

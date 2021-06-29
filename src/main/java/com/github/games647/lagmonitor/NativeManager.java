@@ -5,9 +5,6 @@ import com.sun.management.UnixOperatingSystemMXBean;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,20 +35,6 @@ public class NativeManager {
     }
 
     public void setupNativeAdapter() {
-        try {
-            if (!loadExternalJNI()) {
-                if (!(osBean instanceof com.sun.management.OperatingSystemMXBean)) {
-                    logger.severe("You're not using Oracle Java nor using the native library. " +
-                            "You won't be able to read some native data");
-                }
-
-                return;
-            }
-        } catch (IOException | ReflectiveOperationException ex) {
-            logger.log(Level.WARNING, "Cannot load JNA library. We continue without it", ex);
-            return;
-        }
-
         logger.info("Found JNA native library. Enabling extended native data support to display more data");
         try {
             info = new SystemInfo();
@@ -64,34 +47,8 @@ public class NativeManager {
         }
     }
 
-    private boolean loadExternalJNI() throws IOException, ReflectiveOperationException {
-        Path jnaPath = dataFolder.resolve(JNA_FILE);
-        if (Files.exists(jnaPath)) {
-            extractJNI(jnaPath);
-            return true;
-        } else {
-            logger.info("JNA not found. " +
-                    "Please download the this to the folder of this plugin to display more data about your setup");
-            logger.info("https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar");
-        }
-
-        return false;
-    }
-
     public Optional<SystemInfo> getSystemInfo() {
         return Optional.ofNullable(info);
-    }
-
-    private void extractJNI(Path jnaPath) throws IOException, ReflectiveOperationException {
-        Method addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-        addUrlMethod.setAccessible(true);
-
-        ClassLoader classLoader = getClass().getClassLoader();
-        addUrlMethod.invoke(classLoader, jnaPath.toUri().toURL());
-
-        String libName = "/com/sun/jna/" + com.sun.jna.Platform.RESOURCE_PREFIX
-                + '/' + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
-        com.sun.jna.Native.extractFromResourcePath(libName, classLoader);
     }
 
     public double getProcessCPULoad() {
