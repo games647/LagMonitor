@@ -1,17 +1,16 @@
 package com.github.games647.lagmonitor.task;
 
-import com.github.games647.lagmonitor.LagMonitor;
-import com.github.games647.lagmonitor.traffic.Reflection;
+import com.github.games647.lagmonitor.ping.PaperPing;
+import com.github.games647.lagmonitor.ping.PingFetcher;
+import com.github.games647.lagmonitor.ping.ReflectionPing;
+import com.github.games647.lagmonitor.ping.SpigotPing;
 import com.github.games647.lagmonitor.util.RollingOverHistory;
+import com.google.common.collect.Lists;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.invoke.MethodType;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class PingManager implements Runnable, Listener {
 
@@ -29,45 +27,27 @@ public class PingManager implements Runnable, Listener {
     public static final int PING_INTERVAL = 2 * 20;
     private static final int SAMPLE_SIZE = 5;
 
-    private static final boolean pingMethodAvailable;
-
-    private static final MethodHandle pingFromPlayerHandle;
-
-    static {
-        pingMethodAvailable = isPingMethodAvailable();
-
-        MethodHandle localPing = null;
-        if (!pingMethodAvailable) {
-            Class<?> craftPlayerClass = Reflection.getCraftBukkitClass("entity.CraftPlayer");
-            Class<?> entityPlayer = Reflection.getMinecraftClass("EntityPlayer");
-
-            Lookup lookup = MethodHandles.publicLookup();
-            try {
-                MethodType type = MethodType.methodType(entityPlayer);
-                MethodHandle getHandle = lookup.findVirtual(craftPlayerClass, "getHandle", type)
-                        // allow interface with invokeExact
-                        .asType(MethodType.methodType(Player.class));
-
-                MethodHandle pingField = lookup.findGetter(entityPlayer, "ping", Integer.TYPE);
-
-                // combine the handles to invoke it only once
-                // *getPing(getHandle*) -> add the result of getHandle to the next getPing call
-                // a call to this handle will get the ping from a player instance
-                localPing = MethodHandles.collectArguments(pingField, 0, getHandle);
-            } catch (NoSuchMethodException | IllegalAccessException | NoSuchFieldException reflectiveEx) {
-                Logger logger = JavaPlugin.getPlugin(LagMonitor.class).getLogger();
-                logger.log(Level.WARNING, "Cannot find ping field/method", reflectiveEx);
-            }
-        }
-
-        pingFromPlayerHandle = localPing;
-    }
-
     private final Map<String, RollingOverHistory> playerHistory = new HashMap<>();
     private final Plugin plugin;
+    private final PingFetcher pingFetcher;
 
-    public PingManager(Plugin plugin) {
+    public PingManager(Plugin plugin) throws ReflectiveOperationException {
+        this.pingFetcher = initializePingFetchur();
         this.plugin = plugin;
+    }
+
+    private PingFetcher initializePingFetchur()
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        List<Class<? extends PingFetcher>> fetchurs = Lists.newArrayList(
+                SpigotPing.class, PaperPing.class, ReflectionPing.class
+        );
+        for (Class<? extends PingFetcher> fetchurClass : fetchurs) {
+            PingFetcher fetchur = fetchurClass.getDeclaredConstructor().newInstance();
+            if (fetchur.isAvailable())
+                return fetchur;
+        }
+
+        throw new NoSuchMethodException("No valid ping fetchur found");
     }
 
     @Override
@@ -75,7 +55,7 @@ public class PingManager implements Runnable, Listener {
         playerHistory.forEach((playerName, history) -> {
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
-                int ping = getPing(player);
+                int ping = pingFetcher.getPing(player);
                 history.add(ping);
             }
         });
@@ -86,30 +66,12 @@ public class PingManager implements Runnable, Listener {
     }
 
     public void addPlayer(Player player) {
-        int reflectionPing = getPing(player);
-        playerHistory.put(player.getName(), new RollingOverHistory(SAMPLE_SIZE, reflectionPing));
+        int ping = pingFetcher.getPing(player);
+        playerHistory.put(player.getName(), new RollingOverHistory(SAMPLE_SIZE, ping));
     }
 
     public void removePlayer(Player player) {
         playerHistory.remove(player.getName());
-    }
-
-    private int getPing(Player player) {
-        if (pingMethodAvailable) {
-            return player.spigot().getPing();
-        }
-
-        return getReflectionPing(player);
-    }
-
-    private int getReflectionPing(Player player) {
-        try {
-            return (int) pingFromPlayerHandle.invokeExact(player);
-        } catch (Exception ex) {
-            return -1;
-        } catch (Throwable throwable) {
-            throw (Error) throwable;
-        }
     }
 
     @EventHandler
@@ -129,15 +91,5 @@ public class PingManager implements Runnable, Listener {
 
     public void clear() {
         playerHistory.clear();
-    }
-
-    private static boolean isPingMethodAvailable() {
-        try {
-            //Only available in Paper
-            Player.Spigot.class.getDeclaredMethod("getPing");
-            return true;
-        } catch (NoSuchMethodException noSuchMethodEx) {
-            return false;
-        }
     }
 }
