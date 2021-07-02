@@ -21,7 +21,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <junit.jupiter.version>5.7.0</junit.jupiter.version>
+        <junit.jupiter.version>5.7.2</junit.jupiter.version>
         <oshi.version>5.7.5</oshi.version>
     </properties>
 
@@ -185,7 +185,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.48</version>
+            <version>8.0.23</version>
             <scope>provided</scope>
         </dependency>
 
@@ -216,7 +216,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.10.0</version>
+            <version>3.11.2</version>
             <scope>test</scope>
         </dependency>
 

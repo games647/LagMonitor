@@ -1,7 +1,7 @@
 package com.github.games647.lagmonitor.storage;
 
 import com.google.common.collect.Lists;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.mysql.cj.jdbc.MysqlDataSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,10 +43,23 @@ public class Storage {
         this.dataSource.setServerName(host);
         this.dataSource.setPort(port);
         this.dataSource.setDatabaseName(database);
-        this.dataSource.setUseSSL(usessl);
 
-        this.dataSource.setCachePrepStmts(true);
-        this.dataSource.setUseServerPreparedStmts(true);
+        tryFeature(dataSource, source -> source.setUseSSL(usessl), "Failed to configure use ssl - using to default");
+        tryFeature(dataSource, source -> source.setCachePrepStmts(true), "Failed to enable caching of statements");
+        tryFeature(dataSource, source -> source.setUseServerPrepStmts(true), "Failed to enable server caching");
+    }
+
+    @FunctionalInterface
+    private interface FeatureTester {
+        void run(MysqlDataSource dataSource) throws SQLException;
+    }
+
+    private void tryFeature(MysqlDataSource dataSource, FeatureTester task, String errorMsg) {
+        try {
+            task.run(dataSource);
+        } catch (SQLException sqlEx) {
+            this.logger.log(Level.WARNING, errorMsg, sqlEx);
+        }
     }
 
     public void createTables() throws SQLException {
