@@ -2,7 +2,7 @@
 # ${-} are variables from Maven (pom.xml) which will be replaced after the build
 name: ${project.name}
 version: ${project.version}-${git.commit.id.abbrev}
-main: ${project.groupId}.${project.artifactId}.${project.name}
+main: com.github.games647.lagmonitor.LagMonitor
 
 # meta data for plugin managers
 authors: [games647, 'https://github.com/games647/LagMonitor/graphs/contributors']

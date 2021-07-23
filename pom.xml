@@ -1,117 +1,54 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.games647</groupId>
-    <!--This have to be in lowercase because it's used by plugin.yml-->
     <artifactId>lagmonitor</artifactId>
+    <version>1.17.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>LagMonitor</name>
-    <version>1.17.2-SNAPSHOT</version>
+    <name>Lagmonitor</name>
 
-    <url>https://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
-    <description>
-        Monitors your Minecraft server for Lags
-    </description>
-
+    <description>Monitors your Minecraft server for Lags</description>
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-
-        <junit.jupiter.version>5.7.2</junit.jupiter.version>
         <oshi.version>5.7.5</oshi.version>
     </properties>
 
     <build>
-        <defaultGoal>install</defaultGoal>
-        <!--Just use the project name to replace an old version of the plugin if the user does only copy-paste-->
-        <finalName>${project.name}</finalName>
-
         <plugins>
-            <!-- Force an update to the this plugins to allow reproducible builds -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <!-- According to the Maven wiki, we have to use at least 3.2 for reproducible builds -->
-                <!-- https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-                <version>3.2.0</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
             </plugin>
-
-            <!-- Add libraries to the plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <relocations>
-                        <relocation>
-                            <pattern>oshi</pattern>
-                            <shadedPattern>lagmonitor.oshi</shadedPattern>
-                            <excludes>
-                                <exclude>*.properties</exclude>
-                                <exclude>oshi.architecture.properties</exclude>
-                                <exclude>oshi.linux.filename.properties</exclude>
-                                <exclude>oshi.macos.versions.properties</exclude>
-                                <exclude>oshi.properties</exclude>
-                                <exclude>oshi.vmmacaddr.properties</exclude>
-                            </excludes>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.slf4j</pattern>
-                            <shadedPattern>lagmonitor.slf4j</shadedPattern>
-                        </relocation>
-                    </relocations>
-                    <artifactSet>
-                        <excludes>
-                            <!-- Exclude native drivers by default for user security reasons -->
-                            <exclude>net.java.dev.jna:jna</exclude>
-                        </excludes>
-                    </artifactSet>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!--Expose git variables for version names-->
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>4.0.4</version>
-                <configuration>
-                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>get-the-git-infos</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Testing plugin-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
             </plugin>
         </plugins>
-
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <!--Replace variables-->
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -123,7 +60,14 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
         <!--Paper repository-->
         <repository>
             <id>paper-repo</id>
@@ -140,18 +84,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--Server API for Spigot-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Native data API -->
@@ -173,12 +110,12 @@
             </exclusions>
         </dependency>
 
-        <!-- Include core explicitly in order to ship the default configuration files in it -->
+        <!--Netty work library of Minecraft - This is added to read the amount of bytes which are sent or received-->
         <dependency>
-            <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core</artifactId>
-            <!-- 5.7.5 uses JNA 5.8, so this needs to adjusted in the plugin.yml -->
-            <version>${oshi.version}</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.45.Final</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--MySQL driver that is included in Spigot-->
@@ -189,42 +126,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--Netty work library of Minecraft - This is added to read the amount of bytes which are sent or received-->
+        <!--Server API for Paper Timings API-->
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
-            <version>4.1.45.Final</version>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!--JUnit 5-->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!--Mocking library-->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.11.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
