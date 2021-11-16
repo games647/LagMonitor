@@ -111,7 +111,7 @@ public class FlightCommand extends DumpCommand {
             throws MalformedObjectNameException, ReflectionException, MBeanException, InstanceNotFoundException {
         Path dumpFile = getNewDumpFile();
         String reply = invokeDiagnosticCommand(DUMP_COMMAND
-                , "filename=" + dumpFile.toAbsolutePath(), "name=" + recordingName, "compress=true");
+                , "filename=" + dumpFile.toAbsolutePath(), "name=" + recordingName);
 
         sender.sendMessage(reply);
     }
