@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>LagMonitor</name>
-    <version>1.17.2-SNAPSHOT</version>
+    <version>1.17.2</version>
 
     <url>https://dev.bukkit.org/bukkit-plugins/LagMonitor/</url>
     <description>
