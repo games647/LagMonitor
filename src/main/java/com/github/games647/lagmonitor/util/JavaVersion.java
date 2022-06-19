@@ -40,7 +40,7 @@ public class JavaVersion implements Comparable<JavaVersion> {
         major = Optional.ofNullable(matcher.group(3)).map(Integer::parseInt).orElse(0);
         if (major == 8) {
             // If you have a better solution feel free to contribute
-            // Source: http://openjdk.java.net/jeps/223
+            // Source: https://openjdk.java.net/jeps/223
             // Minor releases containing changes beyond security fixes are multiples of 20. Security releases based on
             // the previous minor release are odd numbers incremented by five, or by six if necessary in order to keep
             // the update number odd.
