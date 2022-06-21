@@ -56,9 +56,9 @@ public class BlockingActionManager implements Listener {
             return;
         }
 
-        logCurrentStack("Plugin {0} triggered an synchronous event {1} from an asynchronous Thread. ", eventName);
-        plugin.getLogger().info(THREAD_SAFETY_NOTICE);
-        plugin.getLogger().info("Use runTask* (no Async*), scheduleSync* or callSyncMethod to run on the main thread.");
+        logCurrentStack("Plugin {0} triggered an synchronous event {1} from an asynchronous Thread. "
+            + THREAD_SAFETY_NOTICE
+            + "Use runTask* (no Async*), scheduleSync* or callSyncMethod to run on the main thread.", eventName);
     }
 
     public void logCurrentStack(String format, String eventName) {
