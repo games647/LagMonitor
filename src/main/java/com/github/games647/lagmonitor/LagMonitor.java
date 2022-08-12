@@ -128,7 +128,9 @@ public class LagMonitor extends JavaPlugin {
         }
 
         if (getConfig().getBoolean("securityMangerBlockingCheck")) {
-            scheduler.runTask(this, () -> new BlockingSecurityManager(actionManager).inject());
+            if (Runtime.version().feature() < 17) {
+                scheduler.runTask(this, () -> new BlockingSecurityManager(actionManager).inject());
+            }
         }
 
         registerCommands();
@@ -139,12 +141,12 @@ public class LagMonitor extends JavaPlugin {
             String host = getConfig().getString("host");
             int port = getConfig().getInt("port");
             String database = getConfig().getString("database");
-            boolean usessl = getConfig().getBoolean("usessl");
+            boolean useSSL = getConfig().getBoolean("useSSL");
 
             String username = getConfig().getString("username");
             String password = getConfig().getString("password");
             String tablePrefix = getConfig().getString("tablePrefix");
-            Storage storage = new Storage(getLogger(), host, port, database, usessl, username, password, tablePrefix);
+            Storage storage = new Storage(getLogger(), host, port, database, useSSL, username, password, tablePrefix);
             storage.createTables();
 
             BukkitScheduler scheduler = getServer().getScheduler();
