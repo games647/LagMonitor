@@ -6,7 +6,7 @@ Gives you the possibility to monitor your server performance. This plugin is bas
 Java Mission Control, both provided by Oracle. This plugin gives you the possibility to use the features provided by
 these tools also in Minecraft itself. This might be useful for server owners/administrators who cannot use the tools.
 
-Furthermore it especially made for Minecraft itself. So you can also check your TPS (Ticks per seconds), player ping,
+Furthermore, it is especially made for Minecraft itself. So you can also check your TPS (Ticks per second), player ping,
 server timings and so on.
 
 ## Features
@@ -109,7 +109,7 @@ the generated built jar file. Outputs could vary by operating system (line endin
 versions and build timestamp. You can extract this using 
 [build-info](https://github.com/apache/maven-studies/tree/maven-buildinfo-plugin). Once you have
 the configuration to use the same line endings and JDK version, you can use the following command
-to inject a custom build timestamp in order to complete the configuration.
+to inject a custom build timestamp to complete the configuration.
 
 `mvn clean install -Dproject.build.outputTimestamp=DATE`
 
