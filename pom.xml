@@ -23,7 +23,7 @@
         <maven.compiler.release>10</maven.compiler.release>
 
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
-        <oshi.version>6.2.2</oshi.version>
+        <oshi.version>6.4.0</oshi.version>
     </properties>
 
     <build>
