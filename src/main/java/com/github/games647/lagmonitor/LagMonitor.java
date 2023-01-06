@@ -152,7 +152,7 @@ public class LagMonitor extends JavaPlugin {
             BukkitScheduler scheduler = getServer().getScheduler();
             scheduler.runTaskTimerAsynchronously(this, new TPSSaveTask(tpsHistoryTask, storage), 20L,
                      getConfig().getInt("tps-save-interval") * 20L);
-            //this can run async because it runs independently from the main thread
+            //this can run async because it runs independently of the main thread
             scheduler.runTaskTimerAsynchronously(this, new MonitorSaveTask(this, storage),
                     20L,getConfig().getInt("monitor-save-interval") * 20L);
             scheduler.runTaskTimerAsynchronously(this, new NativeSaveTask(this, storage),
