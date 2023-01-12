@@ -62,10 +62,6 @@
                                 <exclude>oshi.vmmacaddr.properties</exclude>
                             </excludes>
                         </relocation>
-                        <relocation>
-                            <pattern>org.slf4j</pattern>
-                            <shadedPattern>lagmonitor.slf4j</shadedPattern>
-                        </relocation>
                     </relocations>
                     <artifactSet>
                         <excludes>
@@ -140,16 +136,6 @@
             <artifactId>paper-api</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.md-5</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!--Server API for Spigot-->
@@ -177,6 +163,13 @@
                     <artifactId>jfreechart</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- JDK logging bridge to forward logging messages to the plugin logger -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>2.0.6</version>
         </dependency>
 
         <!-- Include core explicitly in order to ship the default configuration files in it -->

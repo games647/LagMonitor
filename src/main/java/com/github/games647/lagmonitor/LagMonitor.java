@@ -23,6 +23,7 @@ import com.github.games647.lagmonitor.listener.BlockingConnectionSelector;
 import com.github.games647.lagmonitor.listener.GraphListener;
 import com.github.games647.lagmonitor.listener.PageManager;
 import com.github.games647.lagmonitor.listener.ThreadSafetyListener;
+import com.github.games647.lagmonitor.logging.ForwardingLoggerFactory;
 import com.github.games647.lagmonitor.storage.MonitorSaveTask;
 import com.github.games647.lagmonitor.storage.NativeSaveTask;
 import com.github.games647.lagmonitor.storage.Storage;
@@ -68,6 +69,8 @@ public class LagMonitor extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        ForwardingLoggerFactory.PARENT_LOGGER = getLogger();
+
         nativeData.setupNativeAdapter();
     }
 
