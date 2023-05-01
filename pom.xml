@@ -23,7 +23,7 @@
         <maven.compiler.release>10</maven.compiler.release>
 
         <!-- 5.7.5 uses JNA 5.12.1, so this needs to adjusted in the plugin.yml -->
-        <junit.jupiter.version>5.9.2</junit.jupiter.version>
+        <junit.jupiter.version>5.9.3</junit.jupiter.version>
         <oshi.version>6.4.1</oshi.version>
 
         <spigotApi>1.19.4-R0.1-SNAPSHOT</spigotApi>
