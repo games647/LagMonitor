@@ -24,7 +24,7 @@
 
         <!-- 5.7.5 uses JNA 5.12.1, so this needs to adjusted in the plugin.yml -->
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
-        <oshi.version>6.4.1</oshi.version>
+        <oshi.version>6.4.2</oshi.version>
 
         <spigotApi>1.19.4-R0.1-SNAPSHOT</spigotApi>
     </properties>
